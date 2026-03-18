@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String      @id @default(cuid())
+  username     String      @unique
+  displayName  String
+  passwordHash String
+  status       AdminStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model SiteSetting {
+  id                  String   @id @default("site")
+  siteNameZh          String   @default("浙江大学学生天文爱好者协会")
+  siteNameEn          String   @default("Zhejiang University Astronomical Amateur Association")
+  heroTitleZh         String   @default("你好，我们是浙江大学学生天文爱好者协会")
+  heroTitleEn         String   @default("Hello, There is ZJUAAA HOME")
+  heroSubtitleZh      String   @default("追逐星辰的浙大人")
+  heroSubtitleEn      String   @default("Star gazers based in ZJU")
+  manifestoZh         String   @default("由此，上达群星")
+  manifestoEn         String   @default("Per Aspera Ad Astra.")
+  primaryButtonZh     String   @default("社团概览")
+  primaryButtonEn     String   @default("View All Works")
+  primaryButtonHref   String   @default("/about")
+  secondaryButtonZh   String   @default("加入我们")
+  secondaryButtonEn   String   @default("Join Us")
+  secondaryButtonHref String   @default("/join-us")
+  joinFormUrl         String   @default("https://example.com/join")
+  contactFormUrl      String   @default("https://example.com/contact")
+  bilibiliUrl         String   @default("https://space.bilibili.com/")
+  heroImagePath       String?
+  logoImagePath       String?
+  cardTheme          String   @default("dark")
+  wechatLabel         String   @default("ZJUAAA_")
+  qqLabel             String   @default("3389651066")
+  contactEmail        String   @default("contact@example.com")
+  addressZh           String   @default("浙江省杭州市西湖区三墩镇余杭塘路866号浙江大学紫金港校区东四教学楼502-1")
+  addressEn           String   @default("Room 502-1, Teaching Building East 4, Zijingang Campus, Zhejiang University")
+  aboutIntroZh        String   @default("浙江大学学生天文爱好者协会成立于2002年，是浙江大学学术科技类社团。我们围绕天文、科普和公益三大主题，持续组织观星、课程、讲座与科普传播。")
+  aboutIntroEn        String   @default("ZJUAAA was founded in 2002 as an academic student association focused on astronomy, science communication, and public engagement.")
+  academicDeptZh      String   @default("学术部负责观测器材、天文课程、内部知识分享与专业活动支持，是社团最硬核的内容力量。")
+  publicDeptZh        String   @default("公关部负责大型活动策划、对外联络与项目推进，承担社团组织与协调的核心工作。")
+  mediaDeptZh         String   @default("宣传部负责平面、视频、图文与多平台传播，把星空带到更多人眼前。")
+  joinIntroZh         String   @default("无论你是刚接触天文的新同学，还是已经开始观测与拍摄的爱好者，都欢迎加入我们。")
+  joinBenefitsZh      String   @default("会员可优先参与观星活动、加入知识分享群、获取活动信息与社团周边。")
+  joinPosterNoteZh    String   @default("这里将展示纳新海报、部门介绍和第三方报名入口。")
+  alumniNamesZh       String   @default("历届成员名单可在此维护，每行一个姓名。")
+  updatedAt           DateTime @updatedAt
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  title     String
+  category  String   @default("shared")
+  filePath  String
+  mimeType  String
+  altZh     String?
+  altEn     String?
+  width     Int?
+  height    Int?
+  fileSize  Int?
+  createdAt DateTime @default(now())
+}
+
+model KnowledgePost {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  titleZh     String
+  titleEn     String?
+  summaryZh   String?
+  summaryEn   String?
+  author      String
+  coverImagePath String?
+  externalUrl String?
+  markdownZh  String        @default("")
+  markdownEn  String?
+  status      ContentStatus @default(DRAFT)
+  isFeatured  Boolean       @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model ManualChapter {
+  id         String        @id @default(cuid())
+  slug       String        @unique
+  chapterNo  String
+  titleZh    String
+  titleEn    String?
+  author     String?
+  summaryZh  String?
+  coverImagePath String?
+  markdownZh String        @default("")
+  markdownEn String?
+  sortOrder  Int           @default(0)
+  status     ContentStatus @default(DRAFT)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+model ActivityNotice {
+  id          String        @id @default(cuid())
+  titleZh     String
+  titleEn     String?
+  summaryZh   String?
+  summaryEn   String?
+  coverImagePath String?
+  locationZh  String?
+  locationEn  String?
+  externalUrl String?
+  startAt     DateTime?
+  endAt       DateTime?
+  status      ContentStatus @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model AstroPhoto {
+  id                 String        @id @default(cuid())
+  slug               String        @unique
+  titleZh            String
+  titleEn            String?
+  photographer       String
+  imagePath          String?
+  descriptionZh      String?
+  descriptionEn      String?
+  skyRegionZh        String?
+  skyRegionEn        String?
+  locationZh         String?
+  locationEn         String?
+  equipmentMainLens  String?
+  equipmentCamera    String?
+  equipmentMount     String?
+  equipmentFilter    String?
+  equipmentSoftware  String?
+  status             ContentStatus @default(DRAFT)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+enum AdminStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}

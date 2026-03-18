@@ -1,0 +1,31 @@
+# next
+.next
+
+# dependencies
+node_modules/
+
+# env
+.env
+.env.*
+
+# build
+dist
+coverage
+
+# uploads
+public/uploads/
+
+# logs
+*.log
+
+# prisma
+prisma/dev.db
+prisma/dev.db-shm
+prisma/dev.db-wal
+
+# cache
+tsconfig.tsbuildinfo
+
+# OS
+.DS_Store
+Thumbs.db
