@@ -35,7 +35,7 @@ export function AstroPhotoEditor({ action, submitLabel, mediaOptions = [], initi
       {!initialValues?.id ? (
         <label>
           <span>Slug</span>
-          <input name="slug" type="text" defaultValue={initialValues?.slug || ""} placeholder="m42" />
+          <input name="slug" type="text" defaultValue={initialValues?.slug || ""} placeholder="不填则自动生成" />
         </label>
       ) : null}
 
@@ -47,11 +47,21 @@ export function AstroPhotoEditor({ action, submitLabel, mediaOptions = [], initi
       <div className="admin-form-grid">
         <label>
           <span>作品标题</span>
-          <input name="titleZh" type="text" defaultValue={initialValues?.titleZh || ""} required />
+          <input
+            name="titleZh"
+            type="text"
+            defaultValue={initialValues?.titleZh || ""}
+            placeholder="不填则按时间自动生成"
+          />
         </label>
         <label>
-          <span>摄影者</span>
-          <input name="photographer" type="text" defaultValue={initialValues?.photographer || ""} required />
+          <span>拍摄者</span>
+          <input
+            name="photographer"
+            type="text"
+            defaultValue={initialValues?.photographer || ""}
+            placeholder="不填则默认使用“天小协”"
+          />
         </label>
       </div>
 
@@ -92,7 +102,7 @@ export function AstroPhotoEditor({ action, submitLabel, mediaOptions = [], initi
 
       <div className="admin-form-grid">
         <label>
-          <span>赤道仪 / 跟踪设备</span>
+          <span>赤道仪 / 云台</span>
           <input name="equipmentMount" type="text" defaultValue={initialValues?.equipmentMount || ""} />
         </label>
         <label>

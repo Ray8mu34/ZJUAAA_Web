@@ -19,6 +19,7 @@ type PostEditorProps = {
     author?: string;
     coverImagePath?: string | null;
     externalUrl?: string | null;
+    isFeatured?: boolean;
   };
 };
 
@@ -60,8 +61,13 @@ export function PostEditor({ action, submitLabel, mediaOptions = [], initialValu
         <input name="summaryZh" type="text" defaultValue={initialValues?.summaryZh || ""} />
       </label>
 
+      <label className="admin-checkbox-row">
+        <input name="isFeatured" type="checkbox" defaultChecked={Boolean(initialValues?.isFeatured)} />
+        <span>设为首页科普精选</span>
+      </label>
+
       <label>
-        <span>公众号文章链接</span>
+        <span>公众号原文链接</span>
         <input
           name="externalUrl"
           type="url"

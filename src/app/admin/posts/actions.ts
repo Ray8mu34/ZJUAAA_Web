@@ -13,12 +13,16 @@ function slugify(value: string) {
     .replace(/-+/g, "-");
 }
 
+function getIsFeatured(formData: FormData) {
+  return formData.get("isFeatured") === "on";
+}
+
 export async function createKnowledgePost(formData: FormData) {
   const titleZh = String(formData.get("titleZh") || "").trim();
   const author = String(formData.get("author") || "").trim();
 
   if (!titleZh || !author) {
-    throw new Error("标题和作者不能为空。");
+    throw new Error("文章标题和作者不能为空。");
   }
 
   const rawSlug = String(formData.get("slug") || "").trim();
@@ -42,10 +46,12 @@ export async function createKnowledgePost(formData: FormData) {
       coverImagePath: String(formData.get("coverImagePath") || "").trim() || null,
       externalUrl: String(formData.get("externalUrl") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
-      markdownEn: String(formData.get("markdownEn") || "").trim() || null
+      markdownEn: String(formData.get("markdownEn") || "").trim() || null,
+      isFeatured: getIsFeatured(formData)
     }
   });
 
+  revalidatePath("/");
   revalidatePath("/knowledge");
   revalidatePath("/admin/posts");
 }
@@ -64,10 +70,12 @@ export async function updateKnowledgePost(formData: FormData) {
       coverImagePath: String(formData.get("coverImagePath") || "").trim() || null,
       externalUrl: String(formData.get("externalUrl") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
-      markdownEn: String(formData.get("markdownEn") || "").trim() || null
+      markdownEn: String(formData.get("markdownEn") || "").trim() || null,
+      isFeatured: getIsFeatured(formData)
     }
   });
 
+  revalidatePath("/");
   revalidatePath("/knowledge");
   revalidatePath("/knowledge/[slug]", "page");
   revalidatePath("/admin/posts");
@@ -85,6 +93,7 @@ export async function setKnowledgePostStatus(formData: FormData) {
     }
   });
 
+  revalidatePath("/");
   revalidatePath("/knowledge");
   revalidatePath("/admin/posts");
 }
@@ -93,6 +102,7 @@ export async function deleteKnowledgePost(formData: FormData) {
   const id = String(formData.get("id") || "");
   await prisma.knowledgePost.delete({ where: { id } });
 
+  revalidatePath("/");
   revalidatePath("/knowledge");
   revalidatePath("/admin/posts");
 }

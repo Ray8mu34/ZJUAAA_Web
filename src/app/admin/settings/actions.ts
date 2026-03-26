@@ -11,19 +11,25 @@ export async function updateSecondaryContent(formData: FormData) {
     update: {
       contactEmail: String(formData.get("contactEmail") || ""),
       aboutIntroZh: String(formData.get("aboutIntroZh") || ""),
-      aboutIntroEn: String(formData.get("aboutIntroEn") || ""),
       academicDeptZh: String(formData.get("academicDeptZh") || ""),
       publicDeptZh: String(formData.get("publicDeptZh") || ""),
       mediaDeptZh: String(formData.get("mediaDeptZh") || ""),
-      joinIntroZh: String(formData.get("joinIntroZh") || ""),
-      joinBenefitsZh: String(formData.get("joinBenefitsZh") || ""),
-      joinPosterNoteZh: String(formData.get("joinPosterNoteZh") || ""),
-      alumniNamesZh: String(formData.get("alumniNamesZh") || "")
+      knowledgeIntroZh: String(formData.get("knowledgeIntroZh") || ""),
+      activitiesIntroZh: String(formData.get("activitiesIntroZh") || ""),
+      galleryIntroZh: String(formData.get("galleryIntroZh") || ""),
+      manualIntroZh: String(formData.get("manualIntroZh") || ""),
+      contactIntroZh: String(formData.get("contactIntroZh") || ""),
+      aboutGalleryImagePaths: String(formData.get("aboutGalleryImagePaths") || ""),
+      alumniGroupsJson: String(formData.get("alumniGroupsJson") || "")
     }
   });
 
   revalidatePath("/about");
-  revalidatePath("/join-us");
   revalidatePath("/contact");
+  revalidatePath("/join-us");
+  revalidatePath("/knowledge");
+  revalidatePath("/activities");
+  revalidatePath("/astrophotography");
+  revalidatePath("/manual");
   revalidatePath("/admin/settings");
 }

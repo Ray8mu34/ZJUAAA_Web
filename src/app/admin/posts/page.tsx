@@ -25,15 +25,15 @@ export default async function AdminPostsPage() {
     <div className="admin-stack">
       <section className="admin-card">
         <h2>新增科普文章</h2>
-        <p className="muted">填写标题、作者、封面和公众号链接后，发布即可出现在前台“知识科普”页面。</p>
+        <p className="muted">录入文章标题、作者、封面和公众号原文链接后，发布即可在前台展示。</p>
         <PostEditor action={createKnowledgePost} submitLabel="新增科普文章" mediaOptions={mediaOptions} />
       </section>
 
       <section className="admin-card">
-        <h2>已保存内容</h2>
+        <h2>已有文章</h2>
         <div className="admin-stack">
           {posts.length === 0 ? (
-            <div className="empty-state">还没有科普文章。先新增一篇，保存后这里就会出现可编辑的条目。</div>
+            <div className="empty-state">还没有科普文章。先新增一篇内容再回来管理。</div>
           ) : (
             posts.map((post) => (
               <details className="post-item post-item-collapsible" key={post.id}>
@@ -44,6 +44,7 @@ export default async function AdminPostsPage() {
                       <span>slug: {post.slug}</span>
                       <span>作者：{post.author}</span>
                       <span>状态：{post.status}</span>
+                      {post.isFeatured ? <span>首页精选</span> : null}
                     </div>
                   </div>
                 </summary>
@@ -60,7 +61,8 @@ export default async function AdminPostsPage() {
                       summaryZh: post.summaryZh,
                       author: post.author,
                       coverImagePath: post.coverImagePath,
-                      externalUrl: post.externalUrl
+                      externalUrl: post.externalUrl,
+                      isFeatured: post.isFeatured
                     }}
                   />
 
@@ -76,11 +78,11 @@ export default async function AdminPostsPage() {
                       <input type="hidden" name="id" value={post.id} />
                       <input type="hidden" name="status" value="DRAFT" />
                       <button className="button-ghost" type="submit">
-                        设为草稿
+                        转为草稿
                       </button>
                     </form>
                     <a className="button-ghost" href={post.externalUrl || "#"} target="_blank" rel="noreferrer">
-                      查看链接
+                      查看外链
                     </a>
                     <form action={deleteKnowledgePost}>
                       <input type="hidden" name="id" value={post.id} />

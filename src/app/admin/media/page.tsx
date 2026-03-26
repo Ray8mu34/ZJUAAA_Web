@@ -1,8 +1,7 @@
-import Image from "next/image";
-
+import { AdminMediaGrid } from "@/components/admin/admin-media-grid";
 import { prisma } from "@/lib/db";
 
-import { deleteMediaAsset, uploadMediaAsset } from "./actions";
+import { uploadMediaAsset } from "./actions";
 
 const categoryLabels: Record<string, string> = {
   shared: "通用",
@@ -10,7 +9,8 @@ const categoryLabels: Record<string, string> = {
   knowledge: "知识科普",
   manual: "天文手册",
   activity: "社团活动",
-  gallery: "天文摄影"
+  gallery: "天文摄影",
+  internal: "内建"
 };
 
 export default async function AdminMediaPage() {
@@ -22,7 +22,11 @@ export default async function AdminMediaPage() {
     <div className="admin-stack">
       <section className="admin-card">
         <h2>上传图片</h2>
-        <p className="muted">媒体库供全站复用。支持单张或批量上传，上传时选择用途分类，后续会更容易筛选。</p>
+        <p className="muted">
+          媒体库供全站复用。上传时选择用途分类，后续在首页、手册、活动、摄影等模块里会更容易筛选。单张图片目前支持到
+          50MB。
+        </p>
+
         <form action={uploadMediaAsset} className="admin-form">
           <div className="admin-form-grid">
             <label>
@@ -45,6 +49,7 @@ export default async function AdminMediaPage() {
                 <option value="manual">天文手册</option>
                 <option value="activity">社团活动</option>
                 <option value="gallery">天文摄影</option>
+                <option value="internal">内建</option>
               </select>
             </label>
             <label>
@@ -61,29 +66,20 @@ export default async function AdminMediaPage() {
 
       <section className="admin-card">
         <h2>现有图片</h2>
-        <div className="media-grid">
-          {assets.length === 0 ? (
-            <div className="empty-state">媒体库里还没有图片。先上传后，就可以在各个内容模块里直接选图了。</div>
-          ) : (
-            assets.map((asset) => (
-              <article className="media-card" key={asset.id}>
-                <div className="media-preview">
-                  <Image src={asset.filePath} alt={asset.altZh || asset.title} fill sizes="240px" />
-                </div>
-                <strong>{asset.title}</strong>
-                <p className="tag">{categoryLabels[asset.category] || asset.category}</p>
-                <p className="muted">{asset.filePath}</p>
-                <p className="muted">{asset.mimeType}</p>
-                <form action={deleteMediaAsset}>
-                  <input type="hidden" name="id" value={asset.id} />
-                  <button className="button-ghost danger-text" type="submit">
-                    删除图片
-                  </button>
-                </form>
-              </article>
-            ))
-          )}
-        </div>
+        {assets.length === 0 ? (
+          <div className="empty-state">媒体库里还没有图片。先上传后，就可以在各个内容模块里直接选图了。</div>
+        ) : (
+          <AdminMediaGrid
+            assets={assets.map((asset) => ({
+              id: asset.id,
+              title: asset.title,
+              filePath: asset.filePath,
+              mimeType: asset.mimeType,
+              category: asset.category
+            }))}
+            categoryLabels={categoryLabels}
+          />
+        )}
       </section>
     </div>
   );

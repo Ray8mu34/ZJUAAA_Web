@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import "@/app/globals.css";
+import "katex/dist/katex.min.css";
 
 export const metadata: Metadata = {
   title: "ZJUAAA",

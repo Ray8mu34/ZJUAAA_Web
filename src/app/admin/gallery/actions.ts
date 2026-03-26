@@ -2,34 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 
+import { createUniqueAstroPhotoSlug, generateDefaultAstroPhotoTitle } from "@/lib/astro-photo";
 import { prisma } from "@/lib/db";
 
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\u4e00-\u9fa5\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
+const DEFAULT_PHOTOGRAPHER = "天小协";
 
 export async function createAstroPhoto(formData: FormData) {
-  const titleZh = String(formData.get("titleZh") || "").trim();
-  const photographer = String(formData.get("photographer") || "").trim();
-
-  if (!titleZh || !photographer) {
-    throw new Error("作品标题和拍摄者不能为空。");
-  }
-
+  const rawTitle = String(formData.get("titleZh") || "").trim();
+  const titleZh = rawTitle || generateDefaultAstroPhotoTitle();
+  const photographer = String(formData.get("photographer") || "").trim() || DEFAULT_PHOTOGRAPHER;
   const rawSlug = String(formData.get("slug") || "").trim();
-  const baseSlug = slugify(rawSlug || titleZh) || `astro-${Date.now()}`;
-  let slug = baseSlug;
-  let suffix = 1;
-
-  while (await prisma.astroPhoto.findUnique({ where: { slug } })) {
-    suffix += 1;
-    slug = `${baseSlug}-${suffix}`;
-  }
+  const slug = await createUniqueAstroPhotoSlug(rawSlug || titleZh);
 
   await prisma.astroPhoto.create({
     data: {
@@ -48,10 +31,12 @@ export async function createAstroPhoto(formData: FormData) {
       equipmentCamera: String(formData.get("equipmentCamera") || "").trim() || null,
       equipmentMount: String(formData.get("equipmentMount") || "").trim() || null,
       equipmentFilter: String(formData.get("equipmentFilter") || "").trim() || null,
-      equipmentSoftware: String(formData.get("equipmentSoftware") || "").trim() || null
+      equipmentSoftware: String(formData.get("equipmentSoftware") || "").trim() || null,
+      status: "PUBLISHED"
     }
   });
 
+  revalidatePath("/");
   revalidatePath("/astrophotography");
   revalidatePath("/admin/gallery");
 }
@@ -62,9 +47,9 @@ export async function updateAstroPhoto(formData: FormData) {
   await prisma.astroPhoto.update({
     where: { id },
     data: {
-      titleZh: String(formData.get("titleZh") || "").trim(),
+      titleZh: String(formData.get("titleZh") || "").trim() || generateDefaultAstroPhotoTitle(),
       titleEn: String(formData.get("titleEn") || "").trim() || null,
-      photographer: String(formData.get("photographer") || "").trim(),
+      photographer: String(formData.get("photographer") || "").trim() || DEFAULT_PHOTOGRAPHER,
       imagePath: String(formData.get("imagePath") || "").trim() || null,
       descriptionZh: String(formData.get("descriptionZh") || "").trim() || null,
       descriptionEn: String(formData.get("descriptionEn") || "").trim() || null,
@@ -80,6 +65,7 @@ export async function updateAstroPhoto(formData: FormData) {
     }
   });
 
+  revalidatePath("/");
   revalidatePath("/astrophotography");
   revalidatePath("/astrophotography/[slug]", "page");
   revalidatePath("/admin/gallery");
@@ -87,13 +73,14 @@ export async function updateAstroPhoto(formData: FormData) {
 
 export async function setAstroPhotoStatus(formData: FormData) {
   const id = String(formData.get("id") || "");
-  const status = String(formData.get("status") || "DRAFT") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  const status = String(formData.get("status") || "PUBLISHED") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
   await prisma.astroPhoto.update({
     where: { id },
     data: { status }
   });
 
+  revalidatePath("/");
   revalidatePath("/astrophotography");
   revalidatePath("/admin/gallery");
 }
@@ -102,6 +89,7 @@ export async function deleteAstroPhoto(formData: FormData) {
   const id = String(formData.get("id") || "");
   await prisma.astroPhoto.delete({ where: { id } });
 
+  revalidatePath("/");
   revalidatePath("/astrophotography");
   revalidatePath("/admin/gallery");
 }

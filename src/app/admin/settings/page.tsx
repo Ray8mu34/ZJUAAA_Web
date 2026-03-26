@@ -1,61 +1,99 @@
+import { AboutGalleryEditor } from "@/components/admin/about-gallery-editor";
+import { AlumniGroupsEditor } from "@/components/admin/alumni-groups-editor";
 import { prisma } from "@/lib/db";
 
 import { updateSecondaryContent } from "./actions";
 
 export default async function AdminSettingsPage() {
-  const setting = await prisma.siteSetting.upsert({
-    where: { id: "site" },
-    create: { id: "site" },
-    update: {}
-  });
+  const [setting, assets] = await Promise.all([
+    prisma.siteSetting.upsert({
+      where: { id: "site" },
+      create: { id: "site" },
+      update: {}
+    }),
+    prisma.mediaAsset.findMany({
+      where: {
+        category: {
+          in: ["shared", "site", "gallery"]
+        }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 200
+    })
+  ]);
+
+  const mediaOptions = assets.map((asset) => ({
+    id: asset.id,
+    title: asset.title,
+    filePath: asset.filePath,
+    category: asset.category
+  }));
 
   return (
     <section className="admin-card">
-      <h2>次级页面内容设置</h2>
-      <p className="muted">这里用于维护关于我们、加入我们和联系我们页面的主要文字内容。</p>
+      <h2>页面内容设置</h2>
+      <p className="muted">这里维护各页面说明文案、“关于我们”照片墙，以及历届成员名单。</p>
+
       <form action={updateSecondaryContent} className="admin-form">
         <label>
           <span>联系邮箱</span>
           <input name="contactEmail" defaultValue={setting.contactEmail} />
         </label>
+
         <label>
-          <span>关于我们简介（中文）</span>
-          <textarea name="aboutIntroZh" rows={5} defaultValue={setting.aboutIntroZh} />
+          <span>关于我们介绍</span>
+          <textarea name="aboutIntroZh" rows={4} defaultValue={setting.aboutIntroZh} />
         </label>
+
+        <div className="admin-form-grid">
+          <label>
+            <span>知识科普页面说明</span>
+            <textarea name="knowledgeIntroZh" rows={3} defaultValue={setting.knowledgeIntroZh} />
+          </label>
+          <label>
+            <span>社团活动页面说明</span>
+            <textarea name="activitiesIntroZh" rows={3} defaultValue={setting.activitiesIntroZh} />
+          </label>
+        </div>
+
+        <div className="admin-form-grid">
+          <label>
+            <span>天文摄影页面说明</span>
+            <textarea name="galleryIntroZh" rows={3} defaultValue={setting.galleryIntroZh} />
+          </label>
+          <label>
+            <span>天文手册页面说明</span>
+            <textarea name="manualIntroZh" rows={3} defaultValue={setting.manualIntroZh} />
+          </label>
+        </div>
+
         <label>
-          <span>关于我们简介（英文）</span>
-          <textarea name="aboutIntroEn" rows={4} defaultValue={setting.aboutIntroEn} />
+          <span>联系我们页面说明</span>
+          <textarea name="contactIntroZh" rows={3} defaultValue={setting.contactIntroZh} />
         </label>
+
+        <div className="admin-form-grid">
+          <label>
+            <span>学术部门介绍</span>
+            <textarea name="academicDeptZh" rows={3} defaultValue={setting.academicDeptZh} />
+          </label>
+          <label>
+            <span>科普部门介绍</span>
+            <textarea name="publicDeptZh" rows={3} defaultValue={setting.publicDeptZh} />
+          </label>
+        </div>
+
         <label>
-          <span>学术部介绍</span>
-          <textarea name="academicDeptZh" rows={3} defaultValue={setting.academicDeptZh} />
-        </label>
-        <label>
-          <span>公关部介绍</span>
-          <textarea name="publicDeptZh" rows={3} defaultValue={setting.publicDeptZh} />
-        </label>
-        <label>
-          <span>宣传部介绍</span>
+          <span>摄影 / 宣传部门介绍</span>
           <textarea name="mediaDeptZh" rows={3} defaultValue={setting.mediaDeptZh} />
         </label>
-        <label>
-          <span>加入我们简介</span>
-          <textarea name="joinIntroZh" rows={4} defaultValue={setting.joinIntroZh} />
-        </label>
-        <label>
-          <span>会员权益</span>
-          <textarea name="joinBenefitsZh" rows={4} defaultValue={setting.joinBenefitsZh} />
-        </label>
-        <label>
-          <span>纳新海报说明</span>
-          <textarea name="joinPosterNoteZh" rows={3} defaultValue={setting.joinPosterNoteZh} />
-        </label>
-        <label>
-          <span>历届成员名单（每行一个）</span>
-          <textarea name="alumniNamesZh" rows={8} defaultValue={setting.alumniNamesZh} />
-        </label>
+
+        <AboutGalleryEditor initialValue={setting.aboutGalleryImagePaths} options={mediaOptions} />
+
+        <AlumniGroupsEditor initialValue={setting.alumniGroupsJson} options={mediaOptions} />
+
         <button className="button-link" type="submit">
-          保存页面内容
+          保存页面内容设置
         </button>
       </form>
     </section>

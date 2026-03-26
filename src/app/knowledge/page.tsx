@@ -44,7 +44,9 @@ export default async function KnowledgePage({
           <div className="section-head">
             <div>
               <h2>知识科普</h2>
-              <p className="muted">这里展示科普文章封面与摘要。点击卡片后，会跳转到你们的公众号原文。</p>
+              <p className="muted">
+                {setting.knowledgeIntroZh || "这里展示科普文章封面与摘要。点击卡片后，会跳转到你们的公众号原文。"}
+              </p>
             </div>
             <p className="muted">共 {posts.length} 篇内容</p>
           </div>
@@ -60,14 +62,14 @@ export default async function KnowledgePage({
             {posts.length === 0 ? (
               <div className={cardClassName}>
                 <strong>还没有已发布的科普文章</strong>
-                <p>可以先去后台发布内容，前台这里会自动显示。</p>
+                <p>你们可以先去后台新增科普文章，填写封面、摘要和公众号链接，再点击“发布”。</p>
               </div>
             ) : (
               posts.map((post) => (
                 <article className={cardClassName} key={post.id}>
                   <MediaFrame src={post.coverImagePath} alt={post.titleZh} className="content-cover" label="科普封面" />
                   <strong>{post.titleZh}</strong>
-                  <p>{post.summaryZh || "点击后可跳转到公众号原文查看完整内容。"}</p>
+                  <p>{post.summaryZh || "点击后查看文章详情。"}</p>
                   <p className="muted">作者：{post.author}</p>
                   <a
                     className="button-secondary"

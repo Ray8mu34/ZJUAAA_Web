@@ -15,12 +15,15 @@ export default async function ContactPage() {
           <div className="section-head">
             <div>
               <h2>联系我们</h2>
-              <p className="muted">联系方式会从站点设置中读取，后续可直接在后台修改。</p>
+              <p className="muted">
+                {setting?.contactIntroZh || "欢迎通过微信、QQ、邮箱或报名表单与我们取得联系。"}
+              </p>
             </div>
           </div>
+
           <div className="cards-grid">
             <article className="content-card">
-              <strong>微信号</strong>
+              <strong>微信公众号</strong>
               <p>{setting?.wechatLabel || "ZJUAAA_"}</p>
             </article>
             <article className="content-card">
@@ -28,18 +31,25 @@ export default async function ContactPage() {
               <p>{setting?.qqLabel || "3389651066"}</p>
             </article>
             <article className="content-card">
-              <strong>邮箱</strong>
+              <strong>联系邮箱</strong>
               <p>{setting?.contactEmail || "contact@example.com"}</p>
             </article>
             <article className="content-card">
               <strong>联系地址</strong>
-              <p>{setting?.addressZh || "浙江大学紫金港校区东四教学楼 502-1"}</p>
+              <p>{setting?.addressZh || "浙江大学紫金港校区"}</p>
             </article>
           </div>
-          <div className="section" />
-          <a className="button-primary" href={setting?.contactFormUrl || "https://example.com/contact"}>
-            前往联系表单
-          </a>
+
+          <div className="contact-cta-row">
+            <a
+              className="button-primary"
+              href={setting?.joinFormUrl || "https://example.com/join"}
+              rel="noreferrer"
+              target="_blank"
+            >
+              填写纳新报名表单
+            </a>
+          </div>
         </div>
       </main>
       <SiteFooter />

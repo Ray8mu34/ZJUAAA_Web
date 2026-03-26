@@ -24,8 +24,8 @@ export async function SiteFooter() {
 
             <div className="footer-cn-copy footer-cn-copy-small">
               <p>
-                浙江大学学生天文爱好者协会(ZJUAAA)成立于 2002 年，是一个由学生自发组织的、以学术性为基础、
-                集科普教育与志愿活动于一身的学术科技类社团。
+                浙江大学学生天文爱好者协会成立于 2002 年，是一个由学生自发组织、以学术性为基础，
+                集科普教育与志愿活动于一身的学生社团。
               </p>
               <div className="footer-cn-socials">
                 <span>微信</span>
@@ -39,8 +39,8 @@ export async function SiteFooter() {
           <div className="footer-cn-links">
             <div>
               <h3>社团发展</h3>
-              <a href="/join-us">社团纳新</a>
-              <a href="/about">推广渠道</a>
+              <a href="/contact">社团纳新</a>
+              <a href="/about">社团照片</a>
             </div>
             <div>
               <h3>社团构成</h3>
@@ -52,14 +52,16 @@ export async function SiteFooter() {
               <a href="/knowledge">科普推文</a>
               <a href="/activities">上山观星</a>
               <a href="/activities">路边天文</a>
-              <a href="/manual">精品课程</a>
+              <a href="/manual">天文手册</a>
               <a href="/activities">天文讲座</a>
               <a href="/activities">品牌联动</a>
             </div>
             <div>
               <h3>关于我们</h3>
               <a href="/contact">联系方式</a>
-              <a href={setting?.contactFormUrl || "/contact"}>技术支持</a>
+              <a href={setting?.joinFormUrl || "/contact"} target="_blank" rel="noreferrer">
+                填写纳新表单
+              </a>
             </div>
           </div>
         </div>

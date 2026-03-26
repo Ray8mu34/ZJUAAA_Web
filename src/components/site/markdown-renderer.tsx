@@ -1,5 +1,7 @@
 import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 function normalizeHeadingText(value: string) {
   return value
@@ -37,7 +39,8 @@ export function MarkdownRenderer({ content }: { content: string }) {
   return (
     <div className="markdown-body">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeKatex]}
         components={{
           img: ({ src, alt }) => <img className="markdown-image" src={src || ""} alt={alt || ""} />,
           h1: ({ children }) => {

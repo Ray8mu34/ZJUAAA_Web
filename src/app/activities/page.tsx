@@ -44,9 +44,11 @@ export default async function ActivitiesPage({
           <div className="section-head">
             <div>
               <h2>社团活动</h2>
-              <p className="muted">这里展示活动卡片信息。点击按钮后，会跳转到公众号文章或外部活动页面。</p>
+              <p className="muted">
+                {setting.activitiesIntroZh || "这里展示社团活动卡片信息。点击按钮后，会跳转到公众号文章或外部活动页面。"}
+              </p>
             </div>
-            <p className="muted">共 {notices.length} 场活动</p>
+            <p className="muted">共 {notices.length} 项活动</p>
           </div>
 
           <form className="search-form" action="/activities">
@@ -60,18 +62,16 @@ export default async function ActivitiesPage({
             {notices.length === 0 ? (
               <article className={cardClassName}>
                 <strong>还没有已发布活动</strong>
-                <p>可以先去后台新增活动预告，填写时间、地点、封面和外部链接，再点击“发布”。</p>
+                <p>你们可以先去后台新增活动预告，填写时间、地点、封面和公众号链接，再点击“发布”。</p>
               </article>
             ) : (
               notices.map((notice) => (
                 <article className={cardClassName} key={notice.id}>
                   <MediaFrame src={notice.coverImagePath} alt={notice.titleZh} className="content-cover" label="活动封面" />
                   <strong>{notice.titleZh}</strong>
-                  <p>{notice.summaryZh || "点击后可跳转到活动详情或公众号推文。"}</p>
-                  <p className="muted">地点：{notice.locationZh || "待公布"}</p>
-                  <p className="muted">
-                    时间：{notice.startAt ? notice.startAt.toLocaleString("zh-CN") : "待公布"}
-                  </p>
+                  <p>{notice.summaryZh || "点击后查看活动详情。"}</p>
+                  <p className="muted">地点：{notice.locationZh || "待定"}</p>
+                  <p className="muted">时间：{notice.startAt ? notice.startAt.toLocaleString("zh-CN") : "待定"}</p>
                   {notice.externalUrl ? (
                     <a className="button-secondary" href={notice.externalUrl} target="_blank" rel="noreferrer">
                       查看活动

@@ -1,3 +1,4 @@
+import { HomePhotoShowcase } from "@/components/site/home-photo-showcase";
 import { MediaFrame } from "@/components/site/media-frame";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
@@ -36,8 +37,8 @@ export default async function HomePage() {
       update: {}
     }),
     prisma.knowledgePost.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { publishedAt: "desc" },
+      where: { status: "PUBLISHED", isFeatured: true },
+      orderBy: { updatedAt: "desc" },
       take: 3
     }),
     prisma.activityNotice.findMany({
@@ -48,7 +49,7 @@ export default async function HomePage() {
     prisma.astroPhoto.findMany({
       where: { status: "PUBLISHED" },
       orderBy: { updatedAt: "desc" },
-      take: 3
+      take: 15
     })
   ]);
 
@@ -96,26 +97,13 @@ export default async function HomePage() {
                 <h2>摄影精选</h2>
               </div>
             </div>
-            <div className="cards-grid">
-              {featuredPhotos.length === 0 ? (
-                <article className={cardClassName}>
-                  <strong>暂时还没有摄影作品</strong>
-                  <p>上传并发布摄影作品后，这里会展示最近更新的精选内容。</p>
-                </article>
-              ) : (
-                featuredPhotos.map((photo) => (
-                  <article className={cardClassName} key={photo.id}>
-                    <MediaFrame src={photo.imagePath} alt={photo.titleZh} className="content-cover" label="摄影封面" />
-                    <strong>{photo.titleZh}</strong>
-                    <p>{photo.descriptionZh || "点击后可查看作品详情。"}</p>
-                    <p className="muted">作者：{photo.photographer}</p>
-                    <a className="button-secondary" href={`/astrophotography/${photo.id}`}>
-                      查看作品
-                    </a>
-                  </article>
-                ))
-              )}
-            </div>
+            <HomePhotoShowcase
+              photos={featuredPhotos.map((photo) => ({
+                id: photo.id,
+                title: photo.titleZh,
+                imagePath: photo.imagePath
+              }))}
+            />
           </div>
         </section>
 
@@ -129,21 +117,16 @@ export default async function HomePage() {
             <div className="cards-grid">
               {featuredNotices.length === 0 ? (
                 <article className={cardClassName}>
-                  <strong>暂时还没有活动预告</strong>
-                  <p>等后台发布新活动后，这里会自动显示最近的活动精选。</p>
+                  <strong>还没有已发布活动</strong>
+                  <p>你们可以先去后台新增活动预告，填写时间、地点、封面和公众号链接，再点击“发布”。</p>
                 </article>
               ) : (
                 featuredNotices.map((notice) => (
                   <article className={cardClassName} key={notice.id}>
-                    <MediaFrame
-                      src={notice.coverImagePath}
-                      alt={notice.titleZh}
-                      className="content-cover"
-                      label="活动封面"
-                    />
+                    <MediaFrame src={notice.coverImagePath} alt={notice.titleZh} className="content-cover" label="活动封面" />
                     <strong>{notice.titleZh}</strong>
-                    <p>{notice.summaryZh || "点击后可跳转到活动详情或公众号推文。"}</p>
-                    <p className="muted">地点：{notice.locationZh || "待公布"}</p>
+                    <p>{notice.summaryZh || "点击后查看活动详情或跳转到外部活动页面。"}</p>
+                    <p className="muted">地点：{notice.locationZh || "待补充"}</p>
                     {notice.externalUrl ? (
                       <a className="button-secondary" href={notice.externalUrl} target="_blank" rel="noreferrer">
                         查看活动
@@ -170,15 +153,15 @@ export default async function HomePage() {
             <div className="cards-grid">
               {featuredPosts.length === 0 ? (
                 <article className={cardClassName}>
-                  <strong>暂时还没有科普内容</strong>
-                  <p>后台发布新的科普文章后，这里就会自动显示近期精选。</p>
+                  <strong>还没有已发布科普文章</strong>
+                  <p>你们可以先去后台新增科普文章，并填写公众号原文链接。</p>
                 </article>
               ) : (
                 featuredPosts.map((post) => (
                   <article className={cardClassName} key={post.id}>
                     <MediaFrame src={post.coverImagePath} alt={post.titleZh} className="content-cover" label="科普封面" />
                     <strong>{post.titleZh}</strong>
-                    <p>{post.summaryZh || "点击后可跳转到公众号原文查看完整内容。"}</p>
+                    <p>{post.summaryZh || "点击后跳转到你们的公众号原文。"}</p>
                     <p className="muted">作者：{post.author}</p>
                     <a
                       className="button-secondary"
