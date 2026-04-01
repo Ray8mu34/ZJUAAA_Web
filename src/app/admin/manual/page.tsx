@@ -1,9 +1,12 @@
 import { ManualEditor } from "@/components/admin/manual-editor";
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { createManualChapter, deleteManualChapter, setManualChapterStatus, updateManualChapter } from "./actions";
 
 export default async function AdminManualPage() {
+  await requireAdminSession();
+
   const [chapters, assets] = await Promise.all([
     prisma.manualChapter.findMany({
       orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }]

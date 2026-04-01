@@ -1,9 +1,12 @@
 import { PostEditor } from "@/components/admin/post-editor";
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { createKnowledgePost, deleteKnowledgePost, setKnowledgePostStatus, updateKnowledgePost } from "./actions";
 
 export default async function AdminPostsPage() {
+  await requireAdminSession();
+
   const [posts, assets] = await Promise.all([
     prisma.knowledgePost.findMany({
       orderBy: { updatedAt: "desc" }

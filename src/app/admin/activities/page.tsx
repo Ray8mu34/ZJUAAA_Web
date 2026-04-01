@@ -1,4 +1,5 @@
 import { ActivityEditor } from "@/components/admin/activity-editor";
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import {
@@ -14,6 +15,8 @@ function formatTime(value: Date | null) {
 }
 
 export default async function AdminActivitiesPage() {
+  await requireAdminSession();
+
   const [notices, assets] = await Promise.all([
     prisma.activityNotice.findMany({
       orderBy: [{ startAt: "asc" }, { updatedAt: "desc" }]

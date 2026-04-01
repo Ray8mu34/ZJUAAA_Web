@@ -1,6 +1,9 @@
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 export default async function AdminDashboardPage() {
+  await requireAdminSession();
+
   const [admins, posts, manuals, notices] = await Promise.all([
     prisma.adminUser.findMany({
       orderBy: { createdAt: "desc" },

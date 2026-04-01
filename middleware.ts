@@ -5,22 +5,31 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
   const isLoginPage = pathname.startsWith("/admin/login");
-
-  if (isLoginPage) {
-    return NextResponse.next();
-  }
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-pathname", pathname);
+  requestHeaders.set("x-search", req.nextUrl.search);
 
   const token = await getToken({
     req,
-    secret: process.env.AUTH_SECRET
+    secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET
   });
   const isLoggedIn = Boolean(token);
 
-  if (!isLoggedIn) {
-    return NextResponse.redirect(new URL("/admin/login", req.url));
+  if (!isLoggedIn && !isLoginPage) {
+    const loginUrl = new URL("/admin/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", `${pathname}${req.nextUrl.search}`);
+    return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  if (isLoggedIn && isLoginPage) {
+    return NextResponse.redirect(new URL("/admin", req.url));
+  }
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders
+    }
+  });
 }
 
 export const config = {

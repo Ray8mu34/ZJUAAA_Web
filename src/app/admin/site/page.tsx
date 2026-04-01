@@ -1,9 +1,12 @@
 import { MediaPathField } from "@/components/admin/media-path-field";
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { updateSiteSettings } from "./actions";
 
 export default async function AdminSitePage() {
+  await requireAdminSession();
+
   const [setting, assets] = await Promise.all([
     prisma.siteSetting.upsert({
       where: { id: "site" },

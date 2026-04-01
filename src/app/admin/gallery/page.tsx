@@ -1,9 +1,12 @@
 import { AstroPhotoEditor } from "@/components/admin/astro-photo-editor";
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { createAstroPhoto, deleteAstroPhoto, setAstroPhotoStatus, updateAstroPhoto } from "./actions";
 
 export default async function AdminGalleryPage() {
+  await requireAdminSession();
+
   const [photos, assets] = await Promise.all([
     prisma.astroPhoto.findMany({
       orderBy: { updatedAt: "desc" }

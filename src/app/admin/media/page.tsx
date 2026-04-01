@@ -1,4 +1,5 @@
 import { AdminMediaGrid } from "@/components/admin/admin-media-grid";
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { uploadMediaAsset } from "./actions";
@@ -14,6 +15,8 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default async function AdminMediaPage() {
+  await requireAdminSession();
+
   const assets = await prisma.mediaAsset.findMany({
     orderBy: { createdAt: "desc" }
   });

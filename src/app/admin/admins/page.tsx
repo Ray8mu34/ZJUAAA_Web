@@ -1,8 +1,11 @@
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { createAdminUser, resetAdminPassword, setAdminStatus, updateAdminProfile } from "./actions";
 
 export default async function AdminAdminsPage() {
+  await requireAdminSession();
+
   const admins = await prisma.adminUser.findMany({
     orderBy: { createdAt: "asc" }
   });

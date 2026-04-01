@@ -3,7 +3,7 @@
 import { FormEvent, useState, useTransition } from "react";
 import { signIn } from "next-auth/react";
 
-export function AdminLoginForm() {
+export function AdminLoginForm({ callbackUrl }: { callbackUrl: string }) {
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -27,7 +27,7 @@ export function AdminLoginForm() {
         return;
       }
 
-      window.location.href = "/admin";
+      window.location.href = callbackUrl || "/admin";
     });
   }
 

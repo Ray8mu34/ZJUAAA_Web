@@ -1,10 +1,13 @@
 import { AboutGalleryEditor } from "@/components/admin/about-gallery-editor";
 import { AlumniGroupsEditor } from "@/components/admin/alumni-groups-editor";
+import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { updateSecondaryContent } from "./actions";
 
 export default async function AdminSettingsPage() {
+  await requireAdminSession();
+
   const [setting, assets] = await Promise.all([
     prisma.siteSetting.upsert({
       where: { id: "site" },
