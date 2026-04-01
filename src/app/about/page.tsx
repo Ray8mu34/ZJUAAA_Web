@@ -1,5 +1,6 @@
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { AboutGalleryLightbox } from "@/components/site/about-gallery-lightbox";
 import { AlumniBrowser } from "@/components/site/alumni-browser";
 import { prisma } from "@/lib/db";
 
@@ -36,14 +37,12 @@ function parseAlumniGroups(raw?: string | null): AlumniGroup[] {
         const members = Array.isArray(group?.members)
           ? group.members
               .map((member: unknown) => {
-                const item = member as { name?: unknown; role?: unknown };
+                const item = member as { name?: unknown; role?: unknown; photoPath?: unknown };
 
                 return {
                   name: typeof item?.name === "string" ? item.name.trim() : "",
                   role: typeof item?.role === "string" ? item.role.trim() : "",
-                  photoPath: typeof (item as { photoPath?: unknown })?.photoPath === "string"
-                    ? String((item as { photoPath?: string }).photoPath).trim()
-                    : ""
+                  photoPath: typeof item?.photoPath === "string" ? item.photoPath.trim() : ""
                 };
               })
               .filter((member: { name: string; role: string; photoPath?: string }) => member.name)
@@ -73,9 +72,7 @@ export default async function AboutPage() {
           <div className="section-head">
             <div>
               <h2>关于我们</h2>
-              <p className="muted">
-                {setting?.aboutIntroZh || "这里展示社团介绍、内部活动照片和历届成员信息。"}
-              </p>
+              <p className="muted">{setting?.aboutIntroZh || "这里展示社团介绍、内部活动照片和历届成员信息。"}</p>
             </div>
           </div>
 
@@ -83,24 +80,15 @@ export default async function AboutPage() {
             <div className="about-section-head">
               <div>
                 <strong>社团照片墙</strong>
-                <p className="muted">上传到媒体库后，把图片路径填到后台这里会自动排列展示。</p>
+                <p className="muted">点击缩略图可放大查看，弹窗内可继续查看带水印原图。</p>
               </div>
               <span className="muted">共 {galleryPaths.length} 张</span>
             </div>
 
             {galleryPaths.length === 0 ? (
-              <div className="empty-state">还没有配置照片墙图片，先去媒体库上传，再到后台站点设置里填写路径。</div>
+              <div className="empty-state">还没有配置照片墙图片。</div>
             ) : (
-              <div className="about-gallery-window">
-                <div className="about-gallery-masonry">
-                  {galleryPaths.map((path, index) => (
-                    <figure className="about-gallery-item" key={`${path}-${index}`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img alt={`社团照片 ${index + 1}`} loading="lazy" src={path} />
-                    </figure>
-                  ))}
-                </div>
-              </div>
+              <AboutGalleryLightbox images={galleryPaths.map((path, index) => ({ src: path, alt: `社团照片 ${index + 1}` }))} />
             )}
           </section>
 
@@ -108,15 +96,11 @@ export default async function AboutPage() {
             <div className="about-section-head">
               <div>
                 <strong>历届成员名单</strong>
-                <p className="muted">在后台按年份维护姓名和职务，前台会自动生成切换按钮。</p>
+                <p className="muted">按年份浏览社团成员。</p>
               </div>
             </div>
 
-            {alumniGroups.length === 0 ? (
-              <div className="empty-state">还没有录入历届成员数据。</div>
-            ) : (
-              <AlumniBrowser groups={alumniGroups} />
-            )}
+            {alumniGroups.length === 0 ? <div className="empty-state">还没有录入历届成员数据。</div> : <AlumniBrowser groups={alumniGroups} />}
           </section>
         </div>
       </main>

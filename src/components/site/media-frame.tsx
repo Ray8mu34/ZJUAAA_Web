@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { getImageVariantUrl } from "@/lib/image-variants";
+
 type MediaFrameProps = {
   src?: string | null;
   alt: string;
@@ -18,7 +20,7 @@ export function MediaFrame({ src, alt, className = "", label = "图片预览" }:
 
   return (
     <div className={`media-frame ${className}`}>
-      <Image src={src} alt={alt} fill sizes="(max-width: 980px) 100vw, 33vw" />
+      <Image src={getImageVariantUrl(src, "thumb")} alt={alt} fill sizes="(max-width: 980px) 100vw, 33vw" />
     </div>
   );
 }

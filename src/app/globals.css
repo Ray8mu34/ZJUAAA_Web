@@ -1678,6 +1678,11 @@ textarea {
   cursor: pointer;
 }
 
+.about-gallery-item {
+  border: none;
+  text-align: inherit;
+}
+
 .astro-gallery-item,
 .home-photo-showcase-item {
   border-radius: 24px;
@@ -2078,7 +2083,6 @@ textarea {
 .astro-detail-backdrop {
   position: absolute;
   inset: 0;
-  border: none;
   background: rgba(0, 0, 0, 0.58);
   cursor: pointer;
 }
@@ -2088,10 +2092,17 @@ textarea {
   z-index: 1;
   width: min(1100px, 100%);
   max-height: calc(100vh - 64px);
-  overflow-y: auto;
+  overflow-y: scroll;
+  scrollbar-gutter: stable both-edges;
   display: grid;
   gap: 22px;
   padding: 28px;
+}
+
+.astro-detail-panel.content-card:hover {
+  transform: none;
+  border-color: var(--line);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .astro-detail-panel::-webkit-scrollbar {
@@ -2108,6 +2119,14 @@ textarea {
   align-items: start;
   justify-content: space-between;
   gap: 16px;
+}
+
+.astro-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .astro-detail-head h1 {
@@ -2141,6 +2160,70 @@ textarea {
 
 .astro-detail-grid p {
   margin: 0 0 10px;
+}
+
+.about-lightbox-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.about-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.about-lightbox-panel {
+  position: relative;
+  z-index: 1;
+  width: min(960px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid var(--line);
+  background: #222;
+  box-shadow: var(--shadow);
+}
+
+.about-lightbox-close {
+  justify-self: end;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.about-lightbox-image {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  max-height: calc(100vh - 180px);
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.about-lightbox-image img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 180px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.about-lightbox-actions {
+  display: flex;
+  justify-content: center;
 }
 
 .admin-actions {
@@ -2323,5 +2406,9 @@ textarea {
   .home-photo-showcase-head {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .astro-detail-actions {
+    justify-content: flex-start;
   }
 }

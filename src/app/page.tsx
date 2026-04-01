@@ -101,6 +101,15 @@ export default async function HomePage() {
               photos={featuredPhotos.map((photo) => ({
                 id: photo.id,
                 title: photo.titleZh,
+                description: photo.descriptionZh || "点击后查看作品详情。",
+                photographer: photo.photographer,
+                skyRegion: photo.skyRegionZh,
+                location: photo.locationZh,
+                mainLens: photo.equipmentMainLens,
+                camera: photo.equipmentCamera,
+                mount: photo.equipmentMount,
+                filter: photo.equipmentFilter,
+                software: photo.equipmentSoftware,
                 imagePath: photo.imagePath
               }))}
             />

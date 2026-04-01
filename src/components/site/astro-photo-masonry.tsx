@@ -2,6 +2,9 @@
 
 import { useMemo, useState } from "react";
 
+import { ImageLightbox } from "@/components/site/image-lightbox";
+import { getImageVariantUrl } from "@/lib/image-variants";
+
 type AstroPhotoItem = {
   id: string;
   title: string;
@@ -54,7 +57,7 @@ export function AstroPhotoMasonry({
             >
               {photo.imagePath ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img alt={photo.title} loading="lazy" src={photo.imagePath} />
+                <img alt={photo.title} loading="lazy" src={getImageVariantUrl(photo.imagePath, "thumb")} />
               ) : (
                 <div className="astro-gallery-placeholder">
                   <span>{photo.title}</span>
@@ -73,56 +76,44 @@ export function AstroPhotoMasonry({
         ) : null}
       </div>
 
-      {activePhoto ? (
-        <div className="astro-detail-modal" role="dialog" aria-modal="true">
-          <button className="astro-detail-backdrop" type="button" aria-label="关闭详情" onClick={() => setActiveId(null)} />
-          <div className="astro-detail-panel content-card">
-            <div className="astro-detail-head">
-              <div>
-                <p className="muted">天文摄影 / {activePhoto.photographer}</p>
-                <h1>{activePhoto.title}</h1>
-              </div>
-              <button className="button-ghost" type="button" onClick={() => setActiveId(null)}>
-                关闭
-              </button>
-            </div>
+      <ImageLightbox
+        open={Boolean(activePhoto)}
+        subtitle={activePhoto ? `天文摄影 / ${activePhoto.photographer}` : undefined}
+        title={activePhoto?.title}
+        imageAlt={activePhoto?.title || "摄影作品"}
+        imageSrc={activePhoto ? getImageVariantUrl(activePhoto.imagePath, "thumb") : undefined}
+        originalHref={activePhoto ? getImageVariantUrl(activePhoto.imagePath, "original") : undefined}
+        onClose={() => setActiveId(null)}
+      >
+        {activePhoto ? (
+          <>
+            <article className="content-card">
+              <strong>作品简介</strong>
+              <p>{activePhoto.description || "暂无作品简介。"}</p>
+            </article>
 
-            {activePhoto.imagePath ? (
-              <div className="astro-detail-image">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt={activePhoto.title} src={activePhoto.imagePath} />
-              </div>
-            ) : null}
+            <article className="content-card">
+              <strong>拍摄信息</strong>
+              <p>拍摄者：{activePhoto.photographer}</p>
+              <p>天区 / 目标：{activePhoto.skyRegion || "暂未填写"}</p>
+              <p>拍摄地点：{activePhoto.location || "暂未填写"}</p>
+            </article>
 
-            <div className="astro-detail-grid">
-              <article className="content-card">
-                <strong>作品简介</strong>
-                <p>{activePhoto.description || "暂无作品简介。"}</p>
-              </article>
+            <article className="content-card">
+              <strong>器材信息</strong>
+              <p>主镜 / 镜头：{activePhoto.mainLens || "暂未填写"}</p>
+              <p>相机：{activePhoto.camera || "暂未填写"}</p>
+              <p>赤道仪 / 云台：{activePhoto.mount || "暂未填写"}</p>
+            </article>
 
-              <article className="content-card">
-                <strong>拍摄信息</strong>
-                <p>拍摄者：{activePhoto.photographer}</p>
-                <p>天区 / 目标：{activePhoto.skyRegion || "暂未填写"}</p>
-                <p>拍摄地点：{activePhoto.location || "暂未填写"}</p>
-              </article>
-
-              <article className="content-card">
-                <strong>器材信息</strong>
-                <p>主镜 / 镜头：{activePhoto.mainLens || "暂未填写"}</p>
-                <p>相机：{activePhoto.camera || "暂未填写"}</p>
-                <p>赤道仪 / 云台：{activePhoto.mount || "暂未填写"}</p>
-              </article>
-
-              <article className="content-card">
-                <strong>处理流程</strong>
-                <p>滤镜：{activePhoto.filter || "暂未填写"}</p>
-                <p>后期软件：{activePhoto.software || "暂未填写"}</p>
-              </article>
-            </div>
-          </div>
-        </div>
-      ) : null}
+            <article className="content-card">
+              <strong>处理流程</strong>
+              <p>滤镜：{activePhoto.filter || "暂未填写"}</p>
+              <p>后期软件：{activePhoto.software || "暂未填写"}</p>
+            </article>
+          </>
+        ) : null}
+      </ImageLightbox>
     </>
   );
 }
