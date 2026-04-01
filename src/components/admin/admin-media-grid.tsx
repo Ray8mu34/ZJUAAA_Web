@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 
 import { deleteMediaAsset } from "@/app/admin/media/actions";
+import { getImageVariantUrl } from "@/lib/image-variants";
 
 type MediaAssetItem = {
   id: string;
@@ -61,7 +62,7 @@ export function AdminMediaGrid({
         {visibleAssets.map((asset) => (
           <article className="media-card" key={asset.id}>
             <div className="media-preview">
-              <Image src={asset.filePath} alt={asset.title} fill sizes="240px" />
+              <Image src={getImageVariantUrl(asset.filePath, "thumb")} alt={asset.title} fill sizes="240px" />
             </div>
             <strong>{asset.title}</strong>
             <p className="tag">{categoryLabels[asset.category] || asset.category}</p>

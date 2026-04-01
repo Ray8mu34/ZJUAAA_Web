@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
+import { getImageVariantUrl } from "@/lib/image-variants";
+
 type MediaOption = {
   id: string;
   title: string;
@@ -105,7 +107,7 @@ export function MediaPathField({
         {selectedPath ? (
           <div className="media-inline-card">
             <div className="media-inline-image">
-              <Image src={selectedPath} alt={selectedOption?.title || label} fill sizes="120px" />
+              <Image src={getImageVariantUrl(selectedPath, "thumb")} alt={selectedOption?.title || label} fill sizes="120px" />
             </div>
             <div>
               <strong>{selectedOption?.title || "已选择图片"}</strong>
@@ -140,7 +142,7 @@ export function MediaPathField({
                     onClick={() => setSelectedPath(option.filePath)}
                   >
                     <div className="media-picker-thumb">
-                      <Image src={option.filePath} alt={option.title} fill sizes="96px" />
+                      <Image src={getImageVariantUrl(option.filePath, "thumb")} alt={option.title} fill sizes="96px" />
                     </div>
                     <strong>{option.title}</strong>
                     <span>{option.filePath}</span>

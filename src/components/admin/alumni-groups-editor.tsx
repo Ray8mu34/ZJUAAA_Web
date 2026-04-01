@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { getImageVariantUrl } from "@/lib/image-variants";
 
 type MediaOption = {
   id: string;
@@ -157,7 +158,7 @@ export function AlumniGroupsEditor({
                       <div className="admin-alumni-member-top">
                         <div className="admin-alumni-photo-preview">
                           {member.photoPath ? (
-                            <Image alt={member.name || "成员照片"} fill sizes="120px" src={member.photoPath} />
+                            <Image alt={member.name || "成员照片"} fill sizes="120px" src={getImageVariantUrl(member.photoPath, "thumb")} />
                           ) : (
                             <span className="muted">未选择照片</span>
                           )}

@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 
+import { getImageVariantUrl } from "@/lib/image-variants";
+
 type MediaOption = {
   id: string;
   title: string;
@@ -77,7 +79,7 @@ export function AboutGalleryEditor({
           {selectedOptions.map((option) => (
             <article className="admin-gallery-selected-item" key={option.id}>
               <div className="admin-gallery-selected-thumb">
-                <Image alt={option.title} fill sizes="160px" src={option.filePath} />
+                <Image alt={option.title} fill sizes="160px" src={getImageVariantUrl(option.filePath, "thumb")} />
               </div>
               <strong>{option.title}</strong>
               <p className="muted">{option.filePath}</p>
@@ -114,7 +116,7 @@ export function AboutGalleryEditor({
                     onClick={() => (active ? removeImage(option.filePath) : addImage(option.filePath))}
                   >
                     <div className="media-picker-thumb">
-                      <Image alt={option.title} fill sizes="96px" src={option.filePath} />
+                      <Image alt={option.title} fill sizes="96px" src={getImageVariantUrl(option.filePath, "thumb")} />
                     </div>
                     <strong>{option.title}</strong>
                     <span>{option.filePath}</span>
