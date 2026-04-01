@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 import { prisma } from "@/lib/db";
-import { getImageVariantUrl } from "@/lib/image-variants";
 
 export async function SiteFooter() {
   const setting = await prisma.siteSetting.findUnique({
@@ -16,7 +15,7 @@ export async function SiteFooter() {
             <div className="footer-cn-logo-row">
               <div className="footer-cn-logo">
                 {setting?.logoImagePath ? (
-                  <Image src={getImageVariantUrl(setting.logoImagePath, "thumb")} alt="ZJUAAA Logo" fill sizes="72px" />
+                  <Image src={setting.logoImagePath} alt="ZJUAAA Logo" fill sizes="72px" unoptimized />
                 ) : (
                   <span className="brand-square footer-brand-fallback" />
                 )}
