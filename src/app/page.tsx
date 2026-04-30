@@ -3,6 +3,9 @@ import { MediaFrame } from "@/components/site/media-frame";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
+import { shuffleItems } from "@/lib/random-order";
+
+export const dynamic = "force-dynamic";
 
 function splitHeroTitle(title: string) {
   const trimmed = title.trim();
@@ -38,7 +41,7 @@ export default async function HomePage() {
     }),
     prisma.knowledgePost.findMany({
       where: { status: "PUBLISHED", isFeatured: true },
-      orderBy: { updatedAt: "desc" },
+      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
       take: 3
     }),
     prisma.activityNotice.findMany({
@@ -48,8 +51,7 @@ export default async function HomePage() {
     }),
     prisma.astroPhoto.findMany({
       where: { status: "PUBLISHED" },
-      orderBy: { updatedAt: "desc" },
-      take: 15
+      orderBy: { updatedAt: "desc" }
     })
   ]);
 
@@ -57,6 +59,7 @@ export default async function HomePage() {
   const heroSubtitle = spreadText(setting.heroSubtitleZh);
   const manifesto = setting.manifestoZh?.trim() || "由此，上达群星";
   const cardClassName = setting.cardTheme === "light" ? "content-card card-theme-light" : "content-card";
+  const homePhotos = shuffleItems(featuredPhotos).slice(0, 15);
 
   return (
     <>
@@ -98,7 +101,7 @@ export default async function HomePage() {
               </div>
             </div>
             <HomePhotoShowcase
-              photos={featuredPhotos.map((photo) => ({
+              photos={homePhotos.map((photo) => ({
                 id: photo.id,
                 title: photo.titleZh,
                 description: photo.descriptionZh || "点击后查看作品详情。",

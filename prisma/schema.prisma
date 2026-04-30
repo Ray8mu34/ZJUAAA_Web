@@ -92,6 +92,7 @@ model KnowledgePost {
   markdownEn     String?
   status         ContentStatus @default(DRAFT)
   isFeatured     Boolean       @default(false)
+  sortOrder      Int           @default(0)
   publishedAt    DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt

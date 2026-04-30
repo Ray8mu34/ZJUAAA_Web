@@ -1207,6 +1207,100 @@ textarea {
   margin-top: 16px;
 }
 
+.post-sort-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.post-sort-head p {
+  margin: 0;
+}
+
+.post-sort-saving {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(105, 210, 218, 0.12);
+  color: #d8fcff;
+  font-size: 0.9rem;
+}
+
+.post-sort-saving svg {
+  animation: spin 0.9s linear infinite;
+}
+
+.post-sort-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.post-sort-row .post-item {
+  min-width: 0;
+}
+
+.post-sort-row.is-dragging .post-item {
+  border-color: rgba(105, 210, 218, 0.46);
+  background: rgba(105, 210, 218, 0.06);
+}
+
+.post-sort-controls {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 8px;
+  padding: 8px 6px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-button:hover:not(:disabled) {
+  border-color: rgba(105, 210, 218, 0.48);
+  background: rgba(105, 210, 218, 0.1);
+}
+
+.icon-button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.post-drag-handle {
+  cursor: grab;
+}
+
+.post-drag-handle:active {
+  cursor: grabbing;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .media-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2409,6 +2503,15 @@ textarea {
   }
 
   .astro-detail-actions {
+    justify-content: flex-start;
+  }
+
+  .post-sort-row {
+    grid-template-columns: 1fr;
+  }
+
+  .post-sort-controls {
+    display: flex;
     justify-content: flex-start;
   }
 }

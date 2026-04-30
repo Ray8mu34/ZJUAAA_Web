@@ -17,6 +17,33 @@ function getIsFeatured(formData: FormData) {
   return formData.get("isFeatured") === "on";
 }
 
+async function getNextLeadingSortOrder() {
+  const result = await prisma.knowledgePost.aggregate({
+    _min: {
+      sortOrder: true
+    }
+  });
+
+  return (result._min.sortOrder ?? 0) - 1000;
+}
+
+function parsePostOrderIds(value: FormDataEntryValue | null) {
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return [...new Set(parsed.filter((item): item is string => typeof item === "string" && item.trim().length > 0))];
+  } catch {
+    return [];
+  }
+}
+
 export async function createKnowledgePost(formData: FormData) {
   const titleZh = String(formData.get("titleZh") || "").trim();
   const author = String(formData.get("author") || "").trim();
@@ -47,7 +74,8 @@ export async function createKnowledgePost(formData: FormData) {
       externalUrl: String(formData.get("externalUrl") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
       markdownEn: String(formData.get("markdownEn") || "").trim() || null,
-      isFeatured: getIsFeatured(formData)
+      isFeatured: getIsFeatured(formData),
+      sortOrder: await getNextLeadingSortOrder()
     }
   });
 
@@ -92,6 +120,29 @@ export async function setKnowledgePostStatus(formData: FormData) {
       publishedAt: status === "PUBLISHED" ? new Date() : null
     }
   });
+
+  revalidatePath("/");
+  revalidatePath("/knowledge");
+  revalidatePath("/admin/posts");
+}
+
+export async function reorderKnowledgePosts(formData: FormData) {
+  const ids = parsePostOrderIds(formData.get("ids"));
+
+  if (ids.length < 2) {
+    return;
+  }
+
+  await prisma.$transaction(
+    ids.map((id, index) =>
+      prisma.knowledgePost.update({
+        where: { id },
+        data: {
+          sortOrder: index * 1000
+        }
+      })
+    )
+  );
 
   revalidatePath("/");
   revalidatePath("/knowledge");

@@ -3,6 +3,9 @@ import { SiteHeader } from "@/components/site/header";
 import { AboutGalleryLightbox } from "@/components/site/about-gallery-lightbox";
 import { AlumniBrowser } from "@/components/site/alumni-browser";
 import { prisma } from "@/lib/db";
+import { shuffleItems } from "@/lib/random-order";
+
+export const dynamic = "force-dynamic";
 
 type AlumniGroup = {
   year: string;
@@ -61,7 +64,7 @@ export default async function AboutPage() {
     where: { id: "site" }
   });
 
-  const galleryPaths = parseGalleryPaths(setting?.aboutGalleryImagePaths);
+  const galleryPaths = shuffleItems(parseGalleryPaths(setting?.aboutGalleryImagePaths));
   const alumniGroups = parseAlumniGroups(setting?.alumniGroupsJson);
 
   return (

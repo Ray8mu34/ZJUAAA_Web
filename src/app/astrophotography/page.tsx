@@ -2,6 +2,9 @@ import { AstroPhotoMasonry } from "@/components/site/astro-photo-masonry";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
+import { shuffleItems } from "@/lib/random-order";
+
+export const dynamic = "force-dynamic";
 
 export default async function AstroPhotographyPage({
   searchParams
@@ -34,6 +37,7 @@ export default async function AstroPhotographyPage({
       orderBy: { updatedAt: "desc" }
     })
   ]);
+  const randomizedPhotos = shuffleItems(photos);
 
   return (
     <>
@@ -58,7 +62,7 @@ export default async function AstroPhotographyPage({
           </form>
 
           <AstroPhotoMasonry
-            photos={photos.map((photo) => ({
+            photos={randomizedPhotos.map((photo) => ({
               id: photo.id,
               title: photo.titleZh,
               description: photo.descriptionZh || "点击后查看作品详情。",

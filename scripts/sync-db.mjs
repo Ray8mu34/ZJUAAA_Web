@@ -49,7 +49,8 @@ const mediaAssetAdditions = [["category", "TEXT NOT NULL DEFAULT 'shared'"]];
 const contentTableAdditions = {
   KnowledgePost: [
     ["coverImagePath", "TEXT"],
-    ["externalUrl", "TEXT"]
+    ["externalUrl", "TEXT"],
+    ["sortOrder", "INTEGER NOT NULL DEFAULT 0"]
   ],
   ManualChapter: [
     ["coverImagePath", "TEXT"],
