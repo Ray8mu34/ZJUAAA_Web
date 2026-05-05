@@ -98,21 +98,36 @@ model KnowledgePost {
   updatedAt      DateTime      @updatedAt
 }
 
+model ManualCategory {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  titleZh        String
+  summaryZh      String?  @default("")
+  coverImagePath String?
+  sortOrder      Int      @default(0)
+  isVisible      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  chapters       ManualChapter[]
+}
+
 model ManualChapter {
-  id             String        @id @default(cuid())
-  slug           String        @unique
+  id             String         @id @default(cuid())
+  slug           String         @unique
+  categoryId     String
+  category       ManualCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   chapterNo      String
   titleZh        String
   titleEn        String?
   author         String?
   summaryZh      String?
   coverImagePath String?
-  markdownZh     String        @default("")
+  markdownZh     String         @default("")
   markdownEn     String?
-  sortOrder      Int           @default(0)
-  status         ContentStatus @default(DRAFT)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  sortOrder      Int            @default(0)
+  status         ContentStatus  @default(DRAFT)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 }
 
 model ActivityNotice {

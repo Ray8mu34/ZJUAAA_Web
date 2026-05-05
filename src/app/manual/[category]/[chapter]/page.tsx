@@ -29,22 +29,41 @@ function extractManualToc(markdown: string): HeadingItem[] {
 export default async function ManualChapterPage({
   params
 }: {
-  params: Promise<{ chapter: string }>;
+  params: Promise<{ category: string; chapter: string }>;
 }) {
-  const { chapter } = await params;
+  const { category: categorySlug, chapter: chapterSlug } = await params;
 
-  const current = await prisma.manualChapter.findFirst({
+  // Find the category
+  const category = await prisma.manualCategory.findFirst({
     where: {
-      OR: [{ id: chapter }, { slug: chapter }]
+      OR: [{ id: categorySlug }, { slug: categorySlug }],
+      isVisible: true
     }
   });
 
-  if (!current || current.status !== "PUBLISHED") {
+  if (!category) {
     notFound();
   }
 
+  // Find the chapter
+  const current = await prisma.manualChapter.findFirst({
+    where: {
+      OR: [{ id: chapterSlug }, { slug: chapterSlug }],
+      categoryId: category.id,
+      status: "PUBLISHED"
+    }
+  });
+
+  if (!current) {
+    notFound();
+  }
+
+  // Get all chapters in this category for navigation
   const chapters = await prisma.manualChapter.findMany({
-    where: { status: "PUBLISHED" },
+    where: {
+      categoryId: category.id,
+      status: "PUBLISHED"
+    },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
   });
 
@@ -60,12 +79,15 @@ export default async function ManualChapterPage({
         <div className="shell manual-layout">
           <aside className="content-card manual-sidebar">
             <div className="manual-sidebar-scroll">
-              <strong>手册目录</strong>
+              <a className="manual-category-back" href={`/manual/${category.slug}`}>
+                {category.titleZh}
+              </a>
+              <strong>文章目录</strong>
               <div className="manual-nav">
                 {chapters.map((item) => (
                   <a
                     key={item.id}
-                    href={`/manual/${item.id}`}
+                    href={`/manual/${category.slug}/${item.slug}`}
                     className={item.id === current.id ? "manual-link active" : "manual-link"}
                   >
                     {item.chapterNo} {item.titleZh}
@@ -79,10 +101,12 @@ export default async function ManualChapterPage({
 
           <div className="admin-stack">
             <section className="content-card">
-              <p className="muted">天文手册 / {current.chapterNo}</p>
+              <p className="muted">
+                <a href={`/manual/${category.slug}`}>{category.titleZh}</a> / {current.chapterNo}
+              </p>
               <h1>{current.titleZh}</h1>
 
-              {(current.author || current.summaryZh) ? (
+              {current.author || current.summaryZh ? (
                 <div className="manual-chapter-meta">
                   {current.author ? <p className="manual-author">作者：{current.author}</p> : null}
                   {current.summaryZh ? <p className="manual-summary">{current.summaryZh}</p> : null}
@@ -98,19 +122,19 @@ export default async function ManualChapterPage({
 
             <section className="content-card manual-pagination">
               {previousChapter ? (
-                <a className="button-secondary" href={`/manual/${previousChapter.id}`}>
-                  上一章：{previousChapter.chapterNo}
+                <a className="button-secondary" href={`/manual/${category.slug}/${previousChapter.slug}`}>
+                  上一篇：{previousChapter.titleZh}
                 </a>
               ) : (
-                <span className="muted">已经是第一章了</span>
+                <span className="muted">已经是第一篇了</span>
               )}
 
               {nextChapter ? (
-                <a className="button-primary" href={`/manual/${nextChapter.id}`}>
-                  下一章：{nextChapter.chapterNo}
+                <a className="button-primary" href={`/manual/${category.slug}/${nextChapter.slug}`}>
+                  下一篇：{nextChapter.titleZh}
                 </a>
               ) : (
-                <span className="muted">已经是最后一章了</span>
+                <span className="muted">已经是最后一篇了</span>
               )}
             </section>
           </div>

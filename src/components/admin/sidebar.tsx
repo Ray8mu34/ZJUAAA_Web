@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarRange, Home, Image, LayoutDashboard, Newspaper, NotebookTabs, Settings, Sparkles, Users } from "lucide-react";
+import { CalendarRange, Home, Image, LayoutDashboard, Newspaper, NotebookTabs, Settings, Sparkles, Upload, Users } from "lucide-react";
 
 const menu = [
   { href: "/admin", label: "仪表盘", icon: LayoutDashboard, exact: true },
   { href: "/admin/site", label: "首页管理", icon: Home },
   { href: "/admin/posts", label: "科普文章", icon: Newspaper },
   { href: "/admin/manual", label: "天文手册", icon: NotebookTabs },
+  { href: "/admin/manual/categories", label: "栏目管理", icon: NotebookTabs },
+  { href: "/admin/manual/import", label: "批量导入", icon: Upload },
   { href: "/admin/activities", label: "社团活动", icon: CalendarRange },
   { href: "/admin/gallery", label: "摄影作品", icon: Sparkles },
   { href: "/admin/media", label: "媒体库", icon: Image },

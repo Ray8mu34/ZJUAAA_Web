@@ -10,11 +10,13 @@
     "db:generate": "prisma generate",
     "db:init": "node scripts/init-db.mjs",
     "db:sync": "node scripts/sync-db.mjs",
-    "db:seed-admin": "node scripts/seed-admin.mjs"
+    "db:seed-admin": "node scripts/seed-admin.mjs",
+    "db:seed-categories": "node scripts/seed-categories.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/client": "^6.19.2",
+    "adm-zip": "^0.5.17",
     "bcryptjs": "^3.0.3",
     "gray-matter": "^4.0.3",
     "katex": "^0.16.43",
@@ -31,6 +33,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",
+    "@types/adm-zip": "^0.5.8",
     "@types/node": "^22.19.15",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

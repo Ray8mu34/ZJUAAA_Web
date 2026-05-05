@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { MediaPathField } from "@/components/admin/media-path-field";
 
@@ -11,13 +11,21 @@ type MediaOption = {
   category?: string;
 };
 
+type CategoryOption = {
+  id: string;
+  slug: string;
+  titleZh: string;
+};
+
 type ManualEditorProps = {
   action: (formData: FormData) => Promise<void>;
   submitLabel: string;
   mediaOptions?: MediaOption[];
+  categories?: CategoryOption[];
   initialValues?: {
     id?: string;
     slug?: string;
+    categoryId?: string;
     chapterNo?: string;
     titleZh?: string;
     author?: string | null;
@@ -32,8 +40,9 @@ function buildMarkdownImage(title: string, filePath: string) {
   return `![${title}](${filePath})`;
 }
 
-export function ManualEditor({ action, submitLabel, mediaOptions = [], initialValues }: ManualEditorProps) {
+export function ManualEditor({ action, submitLabel, mediaOptions = [], categories = [], initialValues }: ManualEditorProps) {
   const markdownRef = useRef<HTMLTextAreaElement | null>(null);
+  const [uploading, setUploading] = useState(false);
   const insertableOptions = useMemo(
     () => mediaOptions.filter((option) => ["manual", "shared"].includes(option.category || "shared")),
     [mediaOptions]
@@ -59,6 +68,57 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], initialVa
     textarea.setSelectionRange(caret, caret);
   }
 
+  const handleUpload = useCallback(async (file: File) => {
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("category", "manual");
+
+      const res = await fetch("/admin/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "上传失败");
+        return;
+      }
+
+      const title = file.name.replace(/\.[^.]+$/, "");
+      insertImageSyntax(title, data.filePath);
+    } catch {
+      alert("上传出错，请重试。");
+    } finally {
+      setUploading(false);
+    }
+  }, []);
+
+  const handleDrop = useCallback(
+    (event: React.DragEvent<HTMLTextAreaElement>) => {
+      event.preventDefault();
+      const files = Array.from(event.dataTransfer.files);
+      const imageFile = files.find((f) => f.type.startsWith("image/"));
+      if (imageFile) {
+        handleUpload(imageFile);
+      }
+    },
+    [handleUpload]
+  );
+
+  const handlePaste = useCallback(
+    (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const items = Array.from(event.clipboardData.items);
+      const imageItem = items.find((item) => item.type.startsWith("image/"));
+      if (imageItem) {
+        event.preventDefault();
+        const file = imageItem.getAsFile();
+        if (file) {
+          handleUpload(file);
+        }
+      }
+    },
+    [handleUpload]
+  );
+
   return (
     <form action={action} className="admin-form">
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
@@ -74,12 +134,32 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], initialVa
 
       <div className="admin-form-grid">
         <label>
+          <span>所属栏目</span>
+          <select name="categoryId" defaultValue={initialValues?.categoryId || ""} required>
+            <option value="" disabled>
+              请选择栏目
+            </option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.titleZh}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
           <span>章节编号</span>
           <input name="chapterNo" type="text" defaultValue={initialValues?.chapterNo || ""} placeholder="1.1" required />
         </label>
+      </div>
+
+      <div className="admin-form-grid">
         <label>
           <span>排序值</span>
           <input name="sortOrder" type="number" defaultValue={initialValues?.sortOrder ?? 0} />
+        </label>
+        <label>
+          <span>作者</span>
+          <input name="author" type="text" defaultValue={initialValues?.author || ""} placeholder="例如：社团讲义组" />
         </label>
       </div>
 
@@ -88,21 +168,15 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], initialVa
         <input name="titleZh" type="text" defaultValue={initialValues?.titleZh || ""} required />
       </label>
 
-      <div className="admin-form-grid">
-        <label>
-          <span>作者</span>
-          <input name="author" type="text" defaultValue={initialValues?.author || ""} placeholder="例如：社团讲义组" />
-        </label>
-        <label>
-          <span>简介</span>
-          <input
-            name="summaryZh"
-            type="text"
-            defaultValue={initialValues?.summaryZh || ""}
-            placeholder="用于目录页和详情页开头的简要说明"
-          />
-        </label>
-      </div>
+      <label>
+        <span>简介</span>
+        <input
+          name="summaryZh"
+          type="text"
+          defaultValue={initialValues?.summaryZh || ""}
+          placeholder="用于目录页和详情页开头的简要说明"
+        />
+      </label>
 
       <MediaPathField
         name="coverImagePath"
@@ -114,14 +188,24 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], initialVa
 
       <label>
         <span>Markdown 正文</span>
-        <textarea ref={markdownRef} name="markdownZh" rows={14} defaultValue={initialValues?.markdownZh || ""} />
+        <small className="muted">支持拖拽图片或粘贴截图自动上传。也可从下方插图助手选择已有图片。</small>
+        <textarea
+          ref={markdownRef}
+          name="markdownZh"
+          rows={14}
+          defaultValue={initialValues?.markdownZh || ""}
+          onDrop={handleDrop}
+          onPaste={handlePaste}
+          placeholder="在此输入 Markdown 正文..."
+        />
+        {uploading ? <small className="muted">正在上传图片...</small> : null}
       </label>
 
       <div className="manual-media-helper">
         <div>
           <strong>手册插图助手</strong>
           <p className="muted">
-            先在媒体库上传图片，再从这里点“插入到正文”，系统会自动把 Markdown 图片语法插入到当前光标位置。
+            先在媒体库上传图片，再从这里点"插入到正文"，系统会自动把 Markdown 图片语法插入到当前光标位置。也可以直接在上方编辑器中拖拽或粘贴图片。
           </p>
         </div>
 

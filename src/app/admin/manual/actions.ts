@@ -16,9 +16,10 @@ function slugify(value: string) {
 export async function createManualChapter(formData: FormData) {
   const titleZh = String(formData.get("titleZh") || "").trim();
   const chapterNo = String(formData.get("chapterNo") || "").trim();
+  const categoryId = String(formData.get("categoryId") || "").trim();
 
-  if (!titleZh || !chapterNo) {
-    throw new Error("章节编号和中文标题不能为空。");
+  if (!titleZh || !chapterNo || !categoryId) {
+    throw new Error("栏目、章节编号和中文标题不能为空。");
   }
 
   const rawSlug = String(formData.get("slug") || "").trim();
@@ -34,6 +35,7 @@ export async function createManualChapter(formData: FormData) {
   await prisma.manualChapter.create({
     data: {
       slug,
+      categoryId,
       chapterNo,
       titleZh,
       titleEn: String(formData.get("titleEn") || "").trim() || null,
@@ -52,10 +54,16 @@ export async function createManualChapter(formData: FormData) {
 
 export async function updateManualChapter(formData: FormData) {
   const id = String(formData.get("id") || "");
+  const categoryId = String(formData.get("categoryId") || "").trim();
+
+  if (!categoryId) {
+    throw new Error("请选择所属栏目。");
+  }
 
   await prisma.manualChapter.update({
     where: { id },
     data: {
+      categoryId,
       chapterNo: String(formData.get("chapterNo") || "").trim(),
       titleZh: String(formData.get("titleZh") || "").trim(),
       titleEn: String(formData.get("titleEn") || "").trim() || null,
@@ -69,7 +77,8 @@ export async function updateManualChapter(formData: FormData) {
   });
 
   revalidatePath("/manual");
-  revalidatePath("/manual/[chapter]", "page");
+  revalidatePath("/manual/[category]", "page");
+  revalidatePath("/manual/[category]/[chapter]", "page");
   revalidatePath("/admin/manual");
 }
 

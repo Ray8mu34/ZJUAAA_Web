@@ -55,7 +55,8 @@ const contentTableAdditions = {
   ManualChapter: [
     ["coverImagePath", "TEXT"],
     ["author", "TEXT"],
-    ["summaryZh", "TEXT"]
+    ["summaryZh", "TEXT"],
+    ["categoryId", "TEXT"]
   ],
   ActivityNotice: [["coverImagePath", "TEXT"]],
   AstroPhoto: [["imagePath", "TEXT"]]
@@ -96,6 +97,25 @@ for (const [table, tableColumns] of Object.entries(contentTableAdditions)) {
       console.log(`Added column ${name} to ${table}`);
     }
   }
+}
+
+// Create ManualCategory table if not exists
+const manualCategoryExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='ManualCategory'").get();
+if (!manualCategoryExists) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS ManualCategory (
+      id TEXT PRIMARY KEY,
+      slug TEXT NOT NULL UNIQUE,
+      titleZh TEXT NOT NULL,
+      summaryZh TEXT NOT NULL DEFAULT '',
+      coverImagePath TEXT,
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      isVisible INTEGER NOT NULL DEFAULT 1,
+      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  console.log("Created ManualCategory table");
 }
 
 db.close();

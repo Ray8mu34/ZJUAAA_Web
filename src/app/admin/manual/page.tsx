@@ -4,12 +4,21 @@ import { prisma } from "@/lib/db";
 
 import { createManualChapter, deleteManualChapter, setManualChapterStatus, updateManualChapter } from "./actions";
 
-export default async function AdminManualPage() {
+type SearchParams = Promise<{ category?: string }>;
+
+export default async function AdminManualPage({ searchParams }: { searchParams: SearchParams }) {
   await requireAdminSession();
 
-  const [chapters, assets] = await Promise.all([
+  const { category: filterCategoryId } = await searchParams;
+
+  const [categories, chapters, assets] = await Promise.all([
+    prisma.manualCategory.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
+    }),
     prisma.manualChapter.findMany({
-      orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }]
+      where: filterCategoryId ? { categoryId: filterCategoryId } : undefined,
+      orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
+      include: { category: { select: { titleZh: true } } }
     }),
     prisma.mediaAsset.findMany({
       orderBy: { createdAt: "desc" },
@@ -24,19 +33,53 @@ export default async function AdminManualPage() {
     category: asset.category
   }));
 
+  const categoryOptions = categories.map((cat) => ({
+    id: cat.id,
+    slug: cat.slug,
+    titleZh: cat.titleZh
+  }));
+
+  const filterCategory = filterCategoryId ? categories.find((c) => c.id === filterCategoryId) : null;
+
   return (
     <div className="admin-stack">
       <section className="admin-card">
-        <h2>新增手册章节</h2>
-        <p className="muted">手册用于站内阅读和长期保存。支持 Markdown 正文、封面图、作者、简介和插图助手。</p>
-        <ManualEditor action={createManualChapter} submitLabel="新增手册章节" mediaOptions={mediaOptions} />
+        <div className="admin-card-head">
+          <div>
+            <h2>新增手册文章</h2>
+            <p className="muted">支持 Markdown 正文、封面图、作者、简介。可在编辑器中直接拖拽或粘贴图片。</p>
+          </div>
+          <div className="admin-card-head-actions">
+            <a className="button-ghost" href="/admin/manual/categories">
+              管理栏目
+            </a>
+            <a className="button-ghost" href="/admin/manual/import">
+              批量导入
+            </a>
+          </div>
+        </div>
+        <ManualEditor action={createManualChapter} submitLabel="新增手册文章" mediaOptions={mediaOptions} categories={categoryOptions} />
       </section>
 
       <section className="admin-card">
-        <h2>已保存内容</h2>
+        <div className="admin-card-head">
+          <h2>{filterCategory ? `栏目：${filterCategory.titleZh}` : "全部文章"}</h2>
+          <div className="admin-filter-bar">
+            <a className={`button-ghost ${!filterCategoryId ? "active" : ""}`} href="/admin/manual">
+              全部
+            </a>
+            {categories.map((cat) => (
+              <a key={cat.id} className={`button-ghost ${filterCategoryId === cat.id ? "active" : ""}`} href={`/admin/manual?category=${cat.id}`}>
+                {cat.titleZh}
+              </a>
+            ))}
+          </div>
+        </div>
         <div className="admin-stack">
           {chapters.length === 0 ? (
-            <div className="empty-state">还没有手册章节。先新增一篇，保存后这里就会出现可编辑的条目。</div>
+            <div className="empty-state">
+              {filterCategory ? `栏目「${filterCategory.titleZh}」下还没有文章。` : "还没有文章。先新增一篇，保存后这里就会出现可编辑的条目。"}
+            </div>
           ) : (
             chapters.map((chapter) => (
               <details className="post-item post-item-collapsible" key={chapter.id}>
@@ -46,6 +89,7 @@ export default async function AdminManualPage() {
                       {chapter.chapterNo} {chapter.titleZh}
                     </strong>
                     <div className="post-meta">
+                      <span>栏目：{chapter.category.titleZh}</span>
                       <span>slug: {chapter.slug}</span>
                       <span>排序：{chapter.sortOrder}</span>
                       <span>状态：{chapter.status}</span>
@@ -58,9 +102,11 @@ export default async function AdminManualPage() {
                     action={updateManualChapter}
                     submitLabel="保存修改"
                     mediaOptions={mediaOptions}
+                    categories={categoryOptions}
                     initialValues={{
                       id: chapter.id,
                       slug: chapter.slug,
+                      categoryId: chapter.categoryId,
                       chapterNo: chapter.chapterNo,
                       titleZh: chapter.titleZh,
                       author: chapter.author,
@@ -86,7 +132,7 @@ export default async function AdminManualPage() {
                         设为草稿
                       </button>
                     </form>
-                    <a className="button-ghost" href={`/manual/${chapter.id}`} target="_blank" rel="noreferrer">
+                    <a className="button-ghost" href={`/manual/${chapter.slug}`} target="_blank" rel="noreferrer">
                       前台查看
                     </a>
                     <form action={deleteManualChapter}>
