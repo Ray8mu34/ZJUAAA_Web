@@ -1684,9 +1684,18 @@ textarea {
 
 /* Manual Start Entry */
 .manual-start-entry {
+  display: block;
   padding: 32px;
   margin-bottom: 32px;
   background: linear-gradient(135deg, rgba(78, 169, 255, 0.08), rgba(123, 227, 190, 0.08));
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.manual-start-entry:hover {
+  transform: translateY(-2px);
+  border-color: rgba(78, 169, 255, 0.3);
 }
 
 .manual-start-content {

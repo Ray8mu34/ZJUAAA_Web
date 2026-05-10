@@ -2,7 +2,6 @@ import Image from "next/image";
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
-import { MarkdownRenderer } from "@/components/site/markdown-renderer";
 import { prisma } from "@/lib/db";
 import { getImageVariantUrl } from "@/lib/image-variants";
 
@@ -38,22 +37,13 @@ export default async function ManualIndexPage() {
             </div>
           </div>
 
-          {/* Start entry / Catalog */}
-          {setting.manualStartMd ? (
-            <section className="manual-start-entry content-card">
-              <MarkdownRenderer content={setting.manualStartMd} />
-            </section>
-          ) : (
-            <section className="manual-start-entry content-card">
-              <div className="manual-start-content">
-                <h3>第一次来到这里？</h3>
-                <p className="muted">如果你是天文新手，建议从观测手册开始，逐步了解星空。</p>
-                <a className="button-primary" href="/manual/observation">
-                  从观测手册开始
-                </a>
-              </div>
-            </section>
-          )}
+          {/* Start entry */}
+          <a className="manual-start-entry content-card" href="/manual/start">
+            <div className="manual-start-content">
+              <h3>第一次来到这里？</h3>
+              <p className="muted">查看知识手册内容清单，了解全部文章目录。</p>
+            </div>
+          </a>
 
           {/* Category cards */}
           <section className="manual-category-grid">
