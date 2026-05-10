@@ -118,12 +118,16 @@ export function AlumniGroupsEditor({
     const newGroups = new Map<string, AlumniMember[]>();
 
     for (const line of lines) {
-      const parts = line.split(/[,\t，、]+/).map((s) => s.trim());
-      if (parts.length < 2) continue;
+      // 只按前两个逗号/制表符拆分，第三个之后的内容保留为职务（支持顿号等分隔符）
+      const firstSep = line.search(/[,\t，]/);
+      if (firstSep === -1) continue;
 
-      const year = parts[0];
-      const name = parts[1];
-      const role = parts[2] || "";
+      const secondSep = line.slice(firstSep + 1).search(/[,\t，]/);
+      if (secondSep === -1) continue;
+
+      const year = line.slice(0, firstSep).trim();
+      const name = line.slice(firstSep + 1, firstSep + 1 + secondSep).trim();
+      const role = line.slice(firstSep + 1 + secondSep + 1).trim();
 
       if (!year || !name) continue;
 
@@ -178,12 +182,12 @@ export function AlumniGroupsEditor({
         <div className="admin-alumni-bulk">
           <label>
             <span>批量粘贴成员</span>
-            <small className="muted">每行一个成员，格式：年份,姓名,职务（支持逗号、制表符、顿号分隔）</small>
+            <small className="muted">每行一个成员，格式：年份,姓名,职务（年份和姓名之间用逗号分隔，职务里的顿号会保留）</small>
             <textarea
               rows={6}
               value={bulkText}
               onChange={(e) => setBulkText(e.target.value)}
-              placeholder={"2024,张三,会长\n2024,李四,宣传部部长\n2023,王五,学术部部长"}
+              placeholder={"2024,张三,会长\n2024,李四,学术部部长、宣传部部长\n2023,王五,学术部部长"}
             />
           </label>
           <button className="button-ghost" type="button" onClick={handleBulkImport}>
