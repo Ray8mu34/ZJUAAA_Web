@@ -15,12 +15,13 @@ function slugify(value: string) {
 
 export async function createManualChapter(formData: FormData) {
   const titleZh = String(formData.get("titleZh") || "").trim();
-  const chapterNo = String(formData.get("chapterNo") || "").trim();
   const categoryId = String(formData.get("categoryId") || "").trim();
 
-  if (!titleZh || !chapterNo || !categoryId) {
-    throw new Error("栏目、章节编号和中文标题不能为空。");
+  if (!titleZh || !categoryId) {
+    throw new Error("栏目和中文标题不能为空。");
   }
+
+  const sortOrder = Number(formData.get("sortOrder") || 0);
 
   const rawSlug = String(formData.get("slug") || "").trim();
   const baseSlug = slugify(rawSlug || titleZh) || `manual-${Date.now()}`;
@@ -32,19 +33,30 @@ export async function createManualChapter(formData: FormData) {
     slug = `${baseSlug}-${suffix}`;
   }
 
+  // 自动生成 chapterNo：如果 sortOrder > 0 则用 sortOrder，否则查询当前栏目最大序号 + 1
+  let chapterNo: number;
+  if (sortOrder > 0) {
+    chapterNo = sortOrder;
+  } else {
+    const maxChapter = await prisma.manualChapter.aggregate({
+      where: { categoryId },
+      _max: { chapterNo: true }
+    });
+    chapterNo = (maxChapter._max.chapterNo ? Number(maxChapter._max.chapterNo) : 0) + 1;
+  }
+
   await prisma.manualChapter.create({
     data: {
       slug,
       categoryId,
-      chapterNo,
+      chapterNo: String(chapterNo),
       titleZh,
       titleEn: String(formData.get("titleEn") || "").trim() || null,
       author: String(formData.get("author") || "").trim() || null,
       summaryZh: String(formData.get("summaryZh") || "").trim() || null,
-      coverImagePath: String(formData.get("coverImagePath") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
       markdownEn: String(formData.get("markdownEn") || "").trim() || null,
-      sortOrder: Number(formData.get("sortOrder") || 0)
+      sortOrder: sortOrder || chapterNo
     }
   });
 
@@ -60,19 +72,20 @@ export async function updateManualChapter(formData: FormData) {
     throw new Error("请选择所属栏目。");
   }
 
+  const sortOrder = Number(formData.get("sortOrder") || 0);
+
   await prisma.manualChapter.update({
     where: { id },
     data: {
       categoryId,
-      chapterNo: String(formData.get("chapterNo") || "").trim(),
+      chapterNo: String(sortOrder || 1),
       titleZh: String(formData.get("titleZh") || "").trim(),
       titleEn: String(formData.get("titleEn") || "").trim() || null,
       author: String(formData.get("author") || "").trim() || null,
       summaryZh: String(formData.get("summaryZh") || "").trim() || null,
-      coverImagePath: String(formData.get("coverImagePath") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
       markdownEn: String(formData.get("markdownEn") || "").trim() || null,
-      sortOrder: Number(formData.get("sortOrder") || 0)
+      sortOrder
     }
   });
 

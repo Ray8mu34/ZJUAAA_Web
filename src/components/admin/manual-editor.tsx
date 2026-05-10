@@ -24,12 +24,10 @@ type ManualEditorProps = {
     id?: string;
     slug?: string;
     categoryId?: string;
-    chapterNo?: string;
     titleZh?: string;
     author?: string | null;
     summaryZh?: string | null;
     sortOrder?: number;
-    coverImagePath?: string | null;
     markdownZh?: string;
   };
 };
@@ -130,30 +128,25 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
       <input type="hidden" name="titleEn" value="" />
       <input type="hidden" name="markdownEn" value="" />
 
-      <div className="admin-form-grid">
-        <label>
-          <span>所属栏目</span>
-          <select name="categoryId" defaultValue={initialValues?.categoryId || ""} required>
-            <option value="" disabled>
-              请选择栏目
+      <label>
+        <span>所属栏目</span>
+        <select name="categoryId" defaultValue={initialValues?.categoryId || ""} required>
+          <option value="" disabled>
+            请选择栏目
+          </option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.titleZh}
             </option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.titleZh}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <span>章节编号</span>
-          <input name="chapterNo" type="text" defaultValue={initialValues?.chapterNo || ""} placeholder="1.1" required />
-        </label>
-      </div>
+          ))}
+        </select>
+      </label>
 
       <div className="admin-form-grid">
         <label>
           <span>排序值</span>
           <input name="sortOrder" type="number" defaultValue={initialValues?.sortOrder ?? 0} />
+          <small className="muted">数字越小越靠前，不填则按创建时间排序。</small>
         </label>
         <label>
           <span>作者</span>

@@ -107,12 +107,10 @@ export default async function AdminManualPage({ searchParams }: { searchParams: 
                       id: chapter.id,
                       slug: chapter.slug,
                       categoryId: chapter.categoryId,
-                      chapterNo: chapter.chapterNo,
                       titleZh: chapter.titleZh,
                       author: chapter.author,
                       summaryZh: chapter.summaryZh,
                       sortOrder: chapter.sortOrder,
-                      coverImagePath: chapter.coverImagePath,
                       markdownZh: chapter.markdownZh
                     }}
                   />
