@@ -48,13 +48,25 @@ export default async function ManualCategoryPage({
                   sizes="100vw"
                   priority
                 />
+                <div className="manual-category-overlay">
+                  <div className="manual-category-hero-info">
+                    <h1>{category.titleZh}</h1>
+                    {category.summaryZh ? <p>{category.summaryZh}</p> : null}
+                    <span className="manual-category-count">{chapters.length} 篇文章</span>
+                  </div>
+                </div>
               </div>
-            ) : null}
-            <div className="manual-category-hero-info">
-              <h1>{category.titleZh}</h1>
-              {category.summaryZh ? <p className="muted">{category.summaryZh}</p> : null}
-              <span className="manual-category-count">{chapters.length} 篇文章</span>
-            </div>
+            ) : (
+              <div className="manual-category-hero-cover manual-category-placeholder">
+                <div className="manual-category-overlay">
+                  <div className="manual-category-hero-info">
+                    <h1>{category.titleZh}</h1>
+                    {category.summaryZh ? <p>{category.summaryZh}</p> : null}
+                    <span className="manual-category-count">{chapters.length} 篇文章</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </section>
 
           {/* Chapter list */}
