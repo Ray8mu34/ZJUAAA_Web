@@ -182,16 +182,22 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Parse authors: handle both array and string formats
+      let author: string | null = null;
+      if (Array.isArray(frontmatter.authors)) {
+        author = frontmatter.authors.length > 0 ? frontmatter.authors.join("、") : null;
+      } else if (typeof frontmatter.author === "string") {
+        author = frontmatter.author || null;
+      }
+
       // Create chapter
       const chapter = await prisma.manualChapter.create({
         data: {
           slug,
           categoryId,
-          chapterNo: frontmatter.chapterNo || String(sortOrder + 1),
+          chapterNo: String(chapterSortOrder),
           titleZh: title,
-          author: frontmatter.author || null,
-          summaryZh: frontmatter.summary || frontmatter.summaryZh || null,
-          coverImagePath: frontmatter.coverImage || null,
+          author,
           markdownZh: processedMarkdown,
           sortOrder: chapterSortOrder,
           status: "DRAFT"
