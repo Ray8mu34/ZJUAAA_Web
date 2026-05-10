@@ -118,12 +118,7 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
   return (
     <form action={action} className="admin-form">
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
-      {!initialValues?.id ? (
-        <label>
-          <span>Slug</span>
-          <input name="slug" type="text" defaultValue={initialValues?.slug || ""} placeholder="chapter-1" />
-        </label>
-      ) : null}
+      {!initialValues?.id ? <input type="hidden" name="slug" value="" /> : null}
 
       <input type="hidden" name="titleEn" value="" />
       <input type="hidden" name="markdownEn" value="" />
