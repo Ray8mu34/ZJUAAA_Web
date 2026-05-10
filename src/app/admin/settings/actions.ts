@@ -32,5 +32,6 @@ export async function updateSecondaryContent(formData: FormData) {
   revalidatePath("/activities");
   revalidatePath("/astrophotography");
   revalidatePath("/manual");
+  revalidatePath("/manual/start");
   revalidatePath("/admin/settings");
 }
