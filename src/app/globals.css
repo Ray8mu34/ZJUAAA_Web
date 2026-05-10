@@ -1790,7 +1790,7 @@ textarea {
 .manual-category-hero {
   position: relative;
   overflow: hidden;
-  padding: 0;
+  padding: 0 !important;
   margin-bottom: 32px;
 }
 
@@ -1798,7 +1798,7 @@ textarea {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 400px;
+  min-height: 360px;
 }
 
 .manual-category-hero-cover img {
