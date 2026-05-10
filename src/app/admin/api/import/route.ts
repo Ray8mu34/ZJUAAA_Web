@@ -153,8 +153,8 @@ export async function POST(request: NextRequest) {
       const orderMatch = basename.match(/^(\d+)/);
       const chapterSortOrder = frontmatter.sortOrder ?? (orderMatch ? parseInt(orderMatch[1], 10) : sortOrder);
 
-      // Generate slug
-      const baseSlug = slugify(title) || `chapter-${Date.now()}-${sortOrder}`;
+      // Generate slug: use frontmatter slug if available, otherwise generate from title
+      const baseSlug = slugify(frontmatter.slug || title) || `chapter-${Date.now()}-${sortOrder}`;
       let slug = baseSlug;
       let suffix = 1;
 
