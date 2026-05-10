@@ -66,11 +66,13 @@ export default async function ManualIndexPage() {
                     ) : (
                       <div className="manual-category-placeholder" />
                     )}
-                  </div>
-                  <div className="manual-category-info">
-                    <strong>{category.titleZh}</strong>
-                    <p className="muted">{category.summaryZh || "点击进入查看文章列表。"}</p>
-                    <span className="manual-category-count">{category._count.chapters} 篇文章</span>
+                    <div className="manual-category-overlay">
+                      <div className="manual-category-info">
+                        <strong>{category.titleZh}</strong>
+                        <p>{category.summaryZh || "点击进入查看文章列表。"}</p>
+                        <span className="manual-category-count">{category._count.chapters} 篇文章</span>
+                      </div>
+                    </div>
                   </div>
                 </a>
               ))
