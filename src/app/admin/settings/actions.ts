@@ -18,6 +18,7 @@ export async function updateSecondaryContent(formData: FormData) {
       activitiesIntroZh: String(formData.get("activitiesIntroZh") || ""),
       galleryIntroZh: String(formData.get("galleryIntroZh") || ""),
       manualIntroZh: String(formData.get("manualIntroZh") || ""),
+      manualStartMd: String(formData.get("manualStartMd") || ""),
       contactIntroZh: String(formData.get("contactIntroZh") || ""),
       aboutGalleryImagePaths: String(formData.get("aboutGalleryImagePaths") || ""),
       alumniGroupsJson: String(formData.get("alumniGroupsJson") || "")

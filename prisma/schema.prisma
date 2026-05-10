@@ -51,6 +51,7 @@ model SiteSetting {
   activitiesIntroZh     String   @default("这里展示社团活动卡片信息。点击按钮后，会跳转到公众号文章或外部活动页面。")
   galleryIntroZh        String   @default("这里展示已发布的摄影作品，后续可继续接入作品图片和更多高级参数。")
   manualIntroZh         String   @default("这里收录社团内部整理的学习资料与长期积累内容，适合内部学习、查阅和后续备份。")
+  manualStartMd         String   @default("")
   contactIntroZh        String   @default("欢迎通过微信、QQ、邮箱或报名表单与我们取得联系。")
   academicDeptZh        String   @default("学术部负责观测器材、天文课程、内部知识分享与专业活动支持，是社团最硬核的内容力量。")
   publicDeptZh          String   @default("公关部负责大型活动策划、对外联络与项目推进，承担社团组织与协调的核心工作。")
