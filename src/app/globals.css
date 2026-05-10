@@ -2243,6 +2243,25 @@ textarea {
   flex-wrap: wrap;
 }
 
+.admin-alumni-bulk {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-alumni-bulk label {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-alumni-bulk textarea {
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.9rem;
+}
+
 .admin-alumni-members {
   display: grid;
   gap: 12px;

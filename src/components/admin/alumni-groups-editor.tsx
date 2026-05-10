@@ -104,6 +104,57 @@ export function AlumniGroupsEditor({
     );
   };
 
+  const [bulkText, setBulkText] = useState("");
+  const [showBulk, setShowBulk] = useState(false);
+
+  const handleBulkImport = () => {
+    const lines = bulkText
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
+    if (lines.length === 0) return;
+
+    const newGroups = new Map<string, AlumniMember[]>();
+
+    for (const line of lines) {
+      const parts = line.split(/[,\t，、]+/).map((s) => s.trim());
+      if (parts.length < 2) continue;
+
+      const year = parts[0];
+      const name = parts[1];
+      const role = parts[2] || "";
+
+      if (!year || !name) continue;
+
+      if (!newGroups.has(year)) {
+        newGroups.set(year, []);
+      }
+      newGroups.get(year)!.push({ name, role, photoPath: "" });
+    }
+
+    if (newGroups.size === 0) {
+      alert("未解析到有效数据。请检查格式：年份,姓名,职务");
+      return;
+    }
+
+    setGroups((current) => {
+      const merged = new Map(current.map((g) => [g.year, [...g.members]]));
+
+      for (const [year, members] of newGroups) {
+        const existing = merged.get(year) || [];
+        merged.set(year, [...existing, ...members]);
+      }
+
+      return Array.from(merged.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([year, members]) => ({ year, members }));
+    });
+
+    setBulkText("");
+    setShowBulk(false);
+  };
+
   return (
     <div className="admin-alumni-editor">
       <input name="alumniGroupsJson" type="hidden" value={serialized} />
@@ -113,10 +164,33 @@ export function AlumniGroupsEditor({
           <span>历届成员名单</span>
           <p className="muted">按年份维护成员信息。每位成员可填写姓名、职务，并从媒体库选择单独照片。</p>
         </div>
-        <button className="button-ghost" type="button" onClick={addGroup}>
-          新增年份
-        </button>
+        <div className="admin-alumni-inline-actions">
+          <button className="button-ghost" type="button" onClick={() => setShowBulk(!showBulk)}>
+            {showBulk ? "收起批量导入" : "批量导入"}
+          </button>
+          <button className="button-ghost" type="button" onClick={addGroup}>
+            新增年份
+          </button>
+        </div>
       </div>
+
+      {showBulk ? (
+        <div className="admin-alumni-bulk">
+          <label>
+            <span>批量粘贴成员</span>
+            <small className="muted">每行一个成员，格式：年份,姓名,职务（支持逗号、制表符、顿号分隔）</small>
+            <textarea
+              rows={6}
+              value={bulkText}
+              onChange={(e) => setBulkText(e.target.value)}
+              placeholder={"2024,张三,会长\n2024,李四,宣传部部长\n2023,王五,学术部部长"}
+            />
+          </label>
+          <button className="button-ghost" type="button" onClick={handleBulkImport}>
+            导入
+          </button>
+        </div>
+      ) : null}
 
       {groups.length === 0 ? (
         <div className="empty-state">还没有录入年份，点击“新增年份”开始填写。</div>
