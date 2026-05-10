@@ -2,8 +2,6 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 
-import { MediaPathField } from "@/components/admin/media-path-field";
-
 type MediaOption = {
   id: string;
   title: string;
@@ -177,14 +175,6 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
           placeholder="用于目录页和详情页开头的简要说明"
         />
       </label>
-
-      <MediaPathField
-        name="coverImagePath"
-        label="封面图片"
-        value={initialValues?.coverImagePath}
-        options={mediaOptions}
-        categories={["manual", "shared"]}
-      />
 
       <label>
         <span>Markdown 正文</span>
