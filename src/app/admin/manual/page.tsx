@@ -18,7 +18,7 @@ export default async function AdminManualPage({ searchParams }: { searchParams: 
     prisma.manualChapter.findMany({
       where: filterCategoryId ? { categoryId: filterCategoryId } : undefined,
       orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
-      include: { category: { select: { titleZh: true } } }
+      include: { category: { select: { titleZh: true, slug: true } } }
     }),
     prisma.mediaAsset.findMany({
       orderBy: { createdAt: "desc" },
@@ -110,6 +110,7 @@ export default async function AdminManualPage({ searchParams }: { searchParams: 
                       titleZh: chapter.titleZh,
                       author: chapter.author,
                       summaryZh: chapter.summaryZh,
+                      coverImagePath: chapter.coverImagePath,
                       sortOrder: chapter.sortOrder,
                       markdownZh: chapter.markdownZh
                     }}
@@ -130,7 +131,7 @@ export default async function AdminManualPage({ searchParams }: { searchParams: 
                         设为草稿
                       </button>
                     </form>
-                    <a className="button-ghost" href={`/manual/${chapter.slug}`} target="_blank" rel="noreferrer">
+                    <a className="button-ghost" href={`/manual/${chapter.category.slug}/${chapter.slug}`} target="_blank" rel="noreferrer">
                       前台查看
                     </a>
                     <form action={deleteManualChapter}>

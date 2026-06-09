@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { MediaFrame } from "@/components/site/media-frame";
-import { createHeadingId, MarkdownRenderer } from "@/components/site/markdown-renderer";
+import { createHeadingId, MarkdownRenderer, stripMarkdownFrontmatter } from "@/components/site/markdown-renderer";
 import { ManualToc } from "@/components/site/manual-toc";
 import { prisma } from "@/lib/db";
 
@@ -84,7 +84,8 @@ export default async function ManualChapterPage({
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
   });
 
-  const toc = extractManualToc(current.markdownZh);
+  const markdownContent = stripMarkdownFrontmatter(current.markdownZh);
+  const toc = extractManualToc(markdownContent);
   const currentIndex = chapters.findIndex((item) => item.id === current.id);
   const previousChapter = currentIndex > 0 ? chapters[currentIndex - 1] : null;
   const nextChapter = currentIndex >= 0 && currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null;
@@ -131,11 +132,13 @@ export default async function ManualChapterPage({
                 </div>
               ) : null}
 
-              <MediaFrame src={current.coverImagePath} alt={current.titleZh} className="detail-cover" label="手册封面图片" />
+              {current.coverImagePath ? (
+                <MediaFrame src={current.coverImagePath} alt={current.titleZh} className="detail-cover" label="手册封面图片" />
+              ) : null}
             </section>
 
             <section className="manual-article-card">
-              <MarkdownRenderer content={current.markdownZh} />
+              <MarkdownRenderer content={markdownContent} />
             </section>
 
             <section className="manual-pagination manual-article-pagination">

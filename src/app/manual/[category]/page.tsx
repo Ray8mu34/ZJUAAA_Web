@@ -1,10 +1,8 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
-import { getImageVariantUrl } from "@/lib/image-variants";
 
 function formatManualDate(value: Date) {
   return value.toLocaleDateString("zh-CN", {
@@ -45,36 +43,13 @@ export default async function ManualCategoryPage({
       <SiteHeader />
       <main className="section">
         <div className="shell">
-          {/* Category hero */}
-          <section className="manual-category-hero content-card">
-            {category.coverImagePath ? (
-              <div className="manual-category-hero-cover">
-                <Image
-                  src={getImageVariantUrl(category.coverImagePath, "original")}
-                  alt={category.titleZh}
-                  fill
-                  sizes="100vw"
-                  priority
-                />
-                <div className="manual-category-overlay">
-                  <div className="manual-category-hero-info">
-                    <h1>{category.titleZh}</h1>
-                    {category.summaryZh ? <p>{category.summaryZh}</p> : null}
-                    <span className="manual-category-count">{chapters.length} 篇文章</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="manual-category-hero-cover manual-category-placeholder">
-                <div className="manual-category-overlay">
-                  <div className="manual-category-hero-info">
-                    <h1>{category.titleZh}</h1>
-                    {category.summaryZh ? <p>{category.summaryZh}</p> : null}
-                    <span className="manual-category-count">{chapters.length} 篇文章</span>
-                  </div>
-                </div>
-              </div>
-            )}
+          <section className="manual-category-head">
+            <a className="manual-category-parent" href="/manual">
+              天文手册
+            </a>
+            <h1>{category.titleZh}</h1>
+            {category.summaryZh ? <p>{category.summaryZh}</p> : null}
+            <span>{chapters.length} 篇文章</span>
           </section>
 
           {/* Chapter list */}

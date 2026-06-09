@@ -54,6 +54,7 @@ export async function createManualChapter(formData: FormData) {
       titleEn: String(formData.get("titleEn") || "").trim() || null,
       author: String(formData.get("author") || "").trim() || null,
       summaryZh: String(formData.get("summaryZh") || "").trim() || null,
+      coverImagePath: String(formData.get("coverImagePath") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
       markdownEn: String(formData.get("markdownEn") || "").trim() || null,
       sortOrder: sortOrder || chapterNo
@@ -83,6 +84,7 @@ export async function updateManualChapter(formData: FormData) {
       titleEn: String(formData.get("titleEn") || "").trim() || null,
       author: String(formData.get("author") || "").trim() || null,
       summaryZh: String(formData.get("summaryZh") || "").trim() || null,
+      coverImagePath: String(formData.get("coverImagePath") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
       markdownEn: String(formData.get("markdownEn") || "").trim() || null,
       sortOrder

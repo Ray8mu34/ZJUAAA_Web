@@ -2,6 +2,8 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 
+import { MediaPathField } from "@/components/admin/media-path-field";
+
 type MediaOption = {
   id: string;
   title: string;
@@ -27,6 +29,7 @@ type ManualEditorProps = {
     titleZh?: string;
     author?: string | null;
     summaryZh?: string | null;
+    coverImagePath?: string | null;
     sortOrder?: number;
     markdownZh?: string;
   };
@@ -163,6 +166,15 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
           placeholder="用于目录页和详情页开头的简要说明"
         />
       </label>
+
+      <MediaPathField
+        name="coverImagePath"
+        label="文章封图（可选）"
+        value={initialValues?.coverImagePath || ""}
+        options={mediaOptions}
+        categories={["manual", "shared"]}
+        emptyMessage="媒体库里还没有可用于手册封图的图片。"
+      />
 
       <label>
         <span>Markdown 正文</span>

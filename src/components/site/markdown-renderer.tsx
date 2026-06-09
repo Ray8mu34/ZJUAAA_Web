@@ -19,6 +19,10 @@ export function createHeadingId(value: string) {
     .replace(/-+/g, "-");
 }
 
+export function stripMarkdownFrontmatter(content: string) {
+  return content.replace(/^\uFEFF?---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n|$)/, "");
+}
+
 function extractText(children: React.ReactNode): string {
   if (typeof children === "string" || typeof children === "number") {
     return String(children);
@@ -36,6 +40,8 @@ function extractText(children: React.ReactNode): string {
 }
 
 export function MarkdownRenderer({ content }: { content: string }) {
+  const markdownContent = stripMarkdownFrontmatter(content);
+
   return (
     <div className="markdown-body">
       <ReactMarkdown
@@ -57,7 +63,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
           }
         }}
       >
-        {content}
+        {markdownContent}
       </ReactMarkdown>
     </div>
   );
