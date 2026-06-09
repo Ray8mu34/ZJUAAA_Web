@@ -26,12 +26,29 @@ function extractManualToc(markdown: string): HeadingItem[] {
     .filter((item) => item.id && item.text);
 }
 
+function formatManualDate(value: Date) {
+  return value.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+}
+
+function decodeRouteSegment(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
 export default async function ManualChapterPage({
   params
 }: {
   params: Promise<{ category: string; chapter: string }>;
 }) {
   const { category: categorySlug, chapter: chapterSlug } = await params;
+  const decodedChapterSlug = decodeRouteSegment(chapterSlug);
 
   // Find the category
   const category = await prisma.manualCategory.findFirst({
@@ -48,7 +65,7 @@ export default async function ManualChapterPage({
   // Find the chapter
   const current = await prisma.manualChapter.findFirst({
     where: {
-      OR: [{ id: chapterSlug }, { slug: chapterSlug }],
+      OR: [{ id: chapterSlug }, { slug: chapterSlug }, { slug: decodedChapterSlug }],
       categoryId: category.id,
       status: "PUBLISHED"
     }
@@ -76,8 +93,8 @@ export default async function ManualChapterPage({
     <>
       <SiteHeader />
       <main className="section">
-        <div className="shell manual-layout">
-          <aside className="content-card manual-sidebar">
+        <div className="shell manual-layout manual-article-layout">
+          <aside className="manual-sidebar manual-blog-sidebar">
             <div className="manual-sidebar-scroll">
               <a className="manual-category-back" href={`/manual/${category.slug}`}>
                 {category.titleZh}
@@ -99,12 +116,13 @@ export default async function ManualChapterPage({
             </div>
           </aside>
 
-          <div className="admin-stack">
-            <section className="content-card">
-              <p className="muted">
+          <div className="admin-stack manual-article-stack">
+            <section className="manual-article-hero">
+              <p className="manual-article-kicker">
                 <a href={`/manual/${category.slug}`}>{category.titleZh}</a> / {current.chapterNo}
               </p>
               <h1>{current.titleZh}</h1>
+              <div className="manual-article-date">{formatManualDate(current.updatedAt)}</div>
 
               {current.author || current.summaryZh ? (
                 <div className="manual-chapter-meta">
@@ -116,11 +134,11 @@ export default async function ManualChapterPage({
               <MediaFrame src={current.coverImagePath} alt={current.titleZh} className="detail-cover" label="手册封面图片" />
             </section>
 
-            <section className="content-card">
+            <section className="manual-article-card">
               <MarkdownRenderer content={current.markdownZh} />
             </section>
 
-            <section className="content-card manual-pagination">
+            <section className="manual-pagination manual-article-pagination">
               {previousChapter ? (
                 <a className="button-secondary" href={`/manual/${category.slug}/${previousChapter.slug}`}>
                   上一篇：{previousChapter.titleZh}

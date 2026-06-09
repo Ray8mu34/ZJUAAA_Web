@@ -34,7 +34,8 @@ export default async function KnowledgePage({
     })
   ]);
 
-  const cardClassName = setting.cardTheme === "light" ? "content-card card-theme-light" : "content-card";
+  const cardClassName =
+    setting.cardTheme === "light" ? "content-card card-theme-light content-list-card knowledge-card" : "content-card content-list-card knowledge-card";
 
   return (
     <>
@@ -58,7 +59,7 @@ export default async function KnowledgePage({
             </button>
           </form>
 
-          <div className="cards-grid">
+          <div className="cards-grid content-list-grid">
             {posts.length === 0 ? (
               <div className={cardClassName}>
                 <strong>还没有已发布的科普文章</strong>
@@ -68,11 +69,17 @@ export default async function KnowledgePage({
               posts.map((post) => (
                 <article className={cardClassName} key={post.id}>
                   <MediaFrame src={post.coverImagePath} alt={post.titleZh} className="content-cover" label="科普封面" />
-                  <strong>{post.titleZh}</strong>
+                  <a
+                    className="content-list-link"
+                    href={post.externalUrl || `/knowledge/${post.slug}`}
+                    target={post.externalUrl ? "_blank" : undefined}
+                    rel={post.externalUrl ? "noreferrer" : undefined}
+                  >
+                    <strong>{post.titleZh}</strong>
                   <p>{post.summaryZh || "点击后查看文章详情。"}</p>
                   <p className="muted">作者：{post.author}</p>
-                  <a
-                    className="button-secondary"
+                  </a><a
+                    className="button-secondary content-list-button-fallback"
                     href={post.externalUrl || `/knowledge/${post.slug}`}
                     target={post.externalUrl ? "_blank" : undefined}
                     rel={post.externalUrl ? "noreferrer" : undefined}

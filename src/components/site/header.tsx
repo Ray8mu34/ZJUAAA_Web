@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { ThemeToggle } from "@/components/site/theme-toggle";
+
 const navItems = [
   { href: "/", zh: "主页", exact: true },
   { href: "/knowledge", zh: "知识科普" },
@@ -30,9 +32,13 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <Link className="nav-contact-button" href="/contact">
+        <div className="nav-actions">
+          <ThemeToggle />
+
+          <Link className="nav-contact-button" href="/contact">
           联系我们
-        </Link>
+          </Link>
+        </div>
       </div>
     </header>
   );

@@ -34,7 +34,8 @@ export default async function ActivitiesPage({
     })
   ]);
 
-  const cardClassName = setting.cardTheme === "light" ? "content-card card-theme-light" : "content-card";
+  const cardClassName =
+    setting.cardTheme === "light" ? "content-card card-theme-light content-list-card activity-card" : "content-card content-list-card activity-card";
 
   return (
     <>
@@ -58,7 +59,7 @@ export default async function ActivitiesPage({
             </button>
           </form>
 
-          <div className="cards-grid">
+          <div className="cards-grid content-list-grid">
             {notices.length === 0 ? (
               <article className={cardClassName}>
                 <strong>还没有已发布活动</strong>
@@ -68,12 +69,19 @@ export default async function ActivitiesPage({
               notices.map((notice) => (
                 <article className={cardClassName} key={notice.id}>
                   <MediaFrame src={notice.coverImagePath} alt={notice.titleZh} className="content-cover" label="活动封面" />
-                  <strong>{notice.titleZh}</strong>
+                  <a
+                    className="content-list-link"
+                    href={notice.externalUrl || "/activities"}
+                    target={notice.externalUrl ? "_blank" : undefined}
+                    rel={notice.externalUrl ? "noreferrer" : undefined}
+                  >
+                    <strong>{notice.titleZh}</strong>
                   <p>{notice.summaryZh || "点击后查看活动详情。"}</p>
                   <p className="muted">地点：{notice.locationZh || "待定"}</p>
                   <p className="muted">时间：{notice.startAt ? notice.startAt.toLocaleString("zh-CN") : "待定"}</p>
+                  </a>
                   {notice.externalUrl ? (
-                    <a className="button-secondary" href={notice.externalUrl} target="_blank" rel="noreferrer">
+                    <a className="button-secondary content-list-button-fallback" href={notice.externalUrl} target="_blank" rel="noreferrer">
                       查看活动
                     </a>
                   ) : null}

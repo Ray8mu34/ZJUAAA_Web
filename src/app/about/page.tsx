@@ -59,13 +59,21 @@ function parseAlumniGroups(raw?: string | null): AlumniGroup[] {
   }
 }
 
+function getYearSortValue(year: string) {
+  const match = year.match(/\d{4}/);
+  return match ? Number(match[0]) : Number.NEGATIVE_INFINITY;
+}
+
 export default async function AboutPage() {
   const setting = await prisma.siteSetting.findUnique({
     where: { id: "site" }
   });
 
   const galleryPaths = shuffleItems(parseGalleryPaths(setting?.aboutGalleryImagePaths));
-  const alumniGroups = parseAlumniGroups(setting?.alumniGroupsJson);
+  const alumniGroups = parseAlumniGroups(setting?.alumniGroupsJson).sort((a, b) => {
+    const yearDiff = getYearSortValue(b.year) - getYearSortValue(a.year);
+    return yearDiff || b.year.localeCompare(a.year, "zh-CN", { numeric: true });
+  });
 
   return (
     <>

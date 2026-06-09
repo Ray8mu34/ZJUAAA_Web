@@ -6,6 +6,14 @@ import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
 import { getImageVariantUrl } from "@/lib/image-variants";
 
+function formatManualDate(value: Date) {
+  return value.toLocaleDateString("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+}
+
 export default async function ManualCategoryPage({
   params
 }: {
@@ -74,9 +82,13 @@ export default async function ManualCategoryPage({
             {chapters.length === 0 ? (
               <div className="empty-state">该栏目下还没有发布的文章。</div>
             ) : (
-              chapters.map((chapter) => (
-                <a key={chapter.id} className="manual-chapter-card content-card" href={`/manual/${category.slug}/${chapter.slug}`}>
-                  <div className="manual-chapter-info">
+              chapters.map((chapter, index) => (
+                <a key={chapter.id} className="manual-chapter-card manual-post-card" href={`/manual/${category.slug}/${chapter.slug}`}>
+                  <div className="manual-post-index" aria-hidden="true">
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <time>{formatManualDate(chapter.updatedAt)}</time>
+                  </div>
+                  <div className="manual-chapter-info manual-post-body">
                     <span className="manual-chapter-no">{chapter.chapterNo}</span>
                     <strong>{chapter.titleZh}</strong>
                     {chapter.author ? <p className="manual-card-author">作者：{chapter.author}</p> : null}

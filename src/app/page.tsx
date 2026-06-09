@@ -59,6 +59,10 @@ export default async function HomePage() {
   const heroSubtitle = spreadText(setting.heroSubtitleZh);
   const manifesto = setting.manifestoZh?.trim() || "由此，上达群星";
   const cardClassName = setting.cardTheme === "light" ? "content-card card-theme-light" : "content-card";
+  const knowledgeCardClassName =
+    setting.cardTheme === "light" ? "content-card card-theme-light content-list-card knowledge-card" : "content-card content-list-card knowledge-card";
+  const activityCardClassName =
+    setting.cardTheme === "light" ? "content-card card-theme-light content-list-card activity-card" : "content-card content-list-card activity-card";
   const homePhotos = shuffleItems(featuredPhotos).slice(0, 15);
 
   return (
@@ -126,7 +130,7 @@ export default async function HomePage() {
                 <h2>近期活动</h2>
               </div>
             </div>
-            <div className="cards-grid">
+            <div className="cards-grid content-list-grid">
               {featuredNotices.length === 0 ? (
                 <article className={cardClassName}>
                   <strong>还没有已发布活动</strong>
@@ -134,17 +138,24 @@ export default async function HomePage() {
                 </article>
               ) : (
                 featuredNotices.map((notice) => (
-                  <article className={cardClassName} key={notice.id}>
+                  <article className={activityCardClassName} key={notice.id}>
                     <MediaFrame src={notice.coverImagePath} alt={notice.titleZh} className="content-cover" label="活动封面" />
-                    <strong>{notice.titleZh}</strong>
+                    <a
+                      className="content-list-link"
+                      href={notice.externalUrl || "/activities"}
+                      target={notice.externalUrl ? "_blank" : undefined}
+                      rel={notice.externalUrl ? "noreferrer" : undefined}
+                    >
+                      <strong>{notice.titleZh}</strong>
                     <p>{notice.summaryZh || "点击后查看活动详情或跳转到外部活动页面。"}</p>
                     <p className="muted">地点：{notice.locationZh || "待补充"}</p>
+                    </a>
                     {notice.externalUrl ? (
-                      <a className="button-secondary" href={notice.externalUrl} target="_blank" rel="noreferrer">
+                      <a className="button-secondary content-list-button-fallback" href={notice.externalUrl} target="_blank" rel="noreferrer">
                         查看活动
                       </a>
                     ) : (
-                      <a className="button-secondary" href="/activities">
+                      <a className="button-secondary content-list-button-fallback" href="/activities">
                         查看活动
                       </a>
                     )}
@@ -162,7 +173,7 @@ export default async function HomePage() {
                 <h2>科普推荐</h2>
               </div>
             </div>
-            <div className="cards-grid">
+            <div className="cards-grid content-list-grid">
               {featuredPosts.length === 0 ? (
                 <article className={cardClassName}>
                   <strong>还没有已发布科普文章</strong>
@@ -170,13 +181,20 @@ export default async function HomePage() {
                 </article>
               ) : (
                 featuredPosts.map((post) => (
-                  <article className={cardClassName} key={post.id}>
+                  <article className={knowledgeCardClassName} key={post.id}>
                     <MediaFrame src={post.coverImagePath} alt={post.titleZh} className="content-cover" label="科普封面" />
-                    <strong>{post.titleZh}</strong>
+                    <a
+                      className="content-list-link"
+                      href={post.externalUrl || `/knowledge/${post.slug}`}
+                      target={post.externalUrl ? "_blank" : undefined}
+                      rel={post.externalUrl ? "noreferrer" : undefined}
+                    >
+                      <strong>{post.titleZh}</strong>
                     <p>{post.summaryZh || "点击后跳转到你们的公众号原文。"}</p>
                     <p className="muted">作者：{post.author}</p>
+                    </a>
                     <a
-                      className="button-secondary"
+                      className="button-secondary content-list-button-fallback"
                       href={post.externalUrl || `/knowledge/${post.slug}`}
                       target={post.externalUrl ? "_blank" : undefined}
                       rel={post.externalUrl ? "noreferrer" : undefined}
