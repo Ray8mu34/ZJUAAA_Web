@@ -171,6 +171,33 @@ model AstroPhoto {
   updatedAt         DateTime      @updatedAt
 }
 
+model InternalFile {
+  id           String        @id @default(cuid())
+  title        String
+  description  String?
+  category     String?
+  originalName String
+  storagePath  String
+  mimeType     String
+  fileSize     Int
+  sortOrder    Int           @default(0)
+  status       ContentStatus @default(PUBLISHED)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model PublicityWork {
+  id            String        @id @default(cuid())
+  title         String
+  imagePath     String
+  descriptionZh String?
+  workDate      DateTime?
+  sortOrder     Int           @default(0)
+  status        ContentStatus @default(PUBLISHED)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
 enum AdminStatus {
   ACTIVE
   DISABLED

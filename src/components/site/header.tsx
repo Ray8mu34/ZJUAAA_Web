@@ -11,6 +11,7 @@ const navItems = [
   { href: "/activities", zh: "社团活动" },
   { href: "/astrophotography", zh: "天文摄影" },
   { href: "/manual", zh: "天文手册" },
+  { href: "/internal", zh: "内部资料" },
   { href: "/about", zh: "关于我们" }
 ];
 

@@ -119,10 +119,12 @@ export async function uploadMediaAsset(formData: FormData) {
   revalidatePath("/admin/manual");
   revalidatePath("/admin/activities");
   revalidatePath("/admin/gallery");
+  revalidatePath("/admin/internal/publicity");
   revalidatePath("/admin/settings");
   revalidatePath("/about");
   revalidatePath("/");
   revalidatePath("/astrophotography");
+  revalidatePath("/internal/publicity");
 }
 
 export async function deleteMediaAsset(formData: FormData) {

@@ -11,7 +11,8 @@ const categoryLabels: Record<string, string> = {
   manual: "天文手册",
   activity: "社团活动",
   gallery: "天文摄影",
-  internal: "内建"
+  internal: "内部资料",
+  publicity: "宣传部作品"
 };
 
 export default async function AdminMediaPage() {
@@ -52,7 +53,8 @@ export default async function AdminMediaPage() {
                 <option value="manual">天文手册</option>
                 <option value="activity">社团活动</option>
                 <option value="gallery">天文摄影</option>
-                <option value="internal">内建</option>
+                <option value="internal">内部资料</option>
+                <option value="publicity">宣传部作品</option>
               </select>
             </label>
             <label>
