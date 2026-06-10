@@ -36,6 +36,11 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
   }, [works]);
   const selected = useMemo(() => orderedWorks.find((work) => work.id === selectedId) || null, [orderedWorks, selectedId]);
   const center = (orderedWorks.length - 1) / 2;
+  const count = orderedWorks.length;
+  const cardWidth = count <= 2 ? 196 : count <= 4 ? 158 : 118;
+  const xStep = count <= 2 ? 210 : count <= 4 ? 136 : 54;
+  const yStep = count <= 2 ? 110 : count <= 4 ? 72 : 24;
+  const zStep = count <= 2 ? 320 : count <= 4 ? 190 : 72;
 
   if (works.length === 0) {
     return <div className="internal-empty">还没有已发布的宣传部作品。</div>;
@@ -50,36 +55,41 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
           <p>社团视觉作品墙。点击任意作品，展开日期和说明。</p>
         </div>
 
-        <div className="publicity-space-deck" aria-label="宣传部作品立体列表">
-          {orderedWorks.map((work, index) => {
-            const offset = index - center;
-            const wave = Math.sin(index * 1.1);
+        <div
+          className="publicity-space-deck"
+          aria-label="宣传部作品立体列表"
+          style={{ "--card-w": `${cardWidth}px` } as CSSProperties}
+        >
+          <div className="publicity-space-scene">
+            {orderedWorks.map((work, index) => {
+              const offset = index - center;
+              const wave = count <= 2 ? 0 : Math.sin(index * 1.1);
 
-            return (
-              <button
-                key={work.id}
-                className={work.id === selected?.id ? "publicity-space-card active" : "publicity-space-card"}
-                type="button"
-                onClick={() => setSelectedId(work.id)}
-                style={
-                  {
-                    "--i": index,
-                    "--x": `${offset * 120}px`,
-                    "--y": `${wave * 6}px`,
-                    "--z": `${offset * 150}px`,
-                    "--ry": `${-18 + wave * 1.2}deg`,
-                    "--rz": `${wave * 0.8}deg`,
-                    "--stack": index
-                  } as CSSProperties
-                }
-                aria-label={`查看 ${work.title}`}
-              >
-                <span className="publicity-space-card-inner">
-                  <Image src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} fill sizes="180px" />
-                </span>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={work.id}
+                  className={work.id === selected?.id ? "publicity-space-card active" : "publicity-space-card"}
+                  type="button"
+                  style={
+                    {
+                      "--i": index,
+                      "--x": `${offset * xStep}px`,
+                      "--y": `${offset * yStep + wave * 4}px`,
+                      "--z": `${offset * zStep}px`,
+                      "--ry": `${16 + wave * 0.3}deg`,
+                      "--rz": `${-2 + wave * 0.18}deg`,
+                      "--stack": index
+                    } as CSSProperties
+                  }
+                  aria-label={`查看 ${work.title}`}
+                >
+                  <span className="publicity-space-card-inner" onClick={() => setSelectedId(work.id)}>
+                    <Image src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} fill sizes="220px" />
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {selected ? (
