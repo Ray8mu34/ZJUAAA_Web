@@ -54,6 +54,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
           {orderedWorks.map((work, index) => {
             const offset = index - center;
             const layer = Math.abs(offset);
+            const wave = Math.sin(index * 1.1);
 
             return (
               <button
@@ -64,16 +65,18 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
                 style={
                   {
                     "--i": index,
-                    "--x": `${offset * 92}px`,
-                    "--y": `${Math.sin(index * 0.9) * 22}px`,
-                    "--z": `${150 - layer * 28}px`,
+                    "--x": `${offset * 118}px`,
+                    "--y": `${wave * 42}px`,
+                    "--z": `${180 - layer * 32}px`,
                     "--ry": `${offset * -8}deg`,
-                    "--rz": `${offset * 1.4}deg`
+                    "--rz": `${offset * 1.3 + wave * 2}deg`
                   } as CSSProperties
                 }
                 aria-label={`查看 ${work.title}`}
               >
-                <Image src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} fill sizes="180px" />
+                <span className="publicity-space-card-inner">
+                  <Image src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} fill sizes="180px" />
+                </span>
               </button>
             );
           })}
@@ -106,7 +109,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
         <div className="publicity-portfolio-grid">
           {orderedWorks.map((work, index) => (
             <article
-              className={index % 4 === 1 ? "publicity-portfolio-item is-offset" : "publicity-portfolio-item"}
+              className={index % 2 === 0 ? "publicity-portfolio-row" : "publicity-portfolio-row is-reverse"}
               key={work.id}
             >
               <button type="button" onClick={() => setSelectedId(work.id)}>
