@@ -1108,6 +1108,13 @@ textarea {
   margin-bottom: 20px;
 }
 
+.admin-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
 .admin-topbar h1,
 .admin-card h2 {
   margin-top: 0;
@@ -3581,6 +3588,12 @@ html[data-theme="light"] .content-list-link:hover strong {
   border-color: rgba(78, 169, 255, 0.35);
 }
 
+.admin-theme-toggle {
+  width: 54px;
+  height: 54px;
+  box-shadow: var(--shadow);
+}
+
 .theme-toggle svg {
   grid-area: 1 / 1;
   transition:
@@ -3746,6 +3759,18 @@ html[data-theme="light"] .theme-toggle-moon {
 
 html[data-theme="light"] .manual-article-hero .detail-cover {
   background: #eef3f7;
+}
+
+html[data-theme="light"] .admin-sidebar {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+html[data-theme="light"] .admin-sidebar-nav a:hover {
+  background: rgba(20, 26, 34, 0.055);
+}
+
+html[data-theme="light"] .post-item {
+  background: rgba(255, 255, 255, 0.58);
 }
 
 @media (max-width: 980px) {

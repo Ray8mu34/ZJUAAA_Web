@@ -11,7 +11,9 @@ export const metadata: Metadata = {
 const themeScript = `
 (() => {
   try {
-    const stored = localStorage.getItem("zjuaaa-theme");
+    const isAdmin = window.location.pathname.startsWith("/admin");
+    const storageKey = isAdmin ? "zjuaaa-admin-theme" : "zjuaaa-theme";
+    const stored = localStorage.getItem(storageKey);
     const theme = stored === "light" || stored === "dark"
       ? stored
       : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
