@@ -53,7 +53,6 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
         <div className="publicity-space-deck" aria-label="宣传部作品立体列表">
           {orderedWorks.map((work, index) => {
             const offset = index - center;
-            const layer = Math.abs(offset);
             const wave = Math.sin(index * 1.1);
 
             return (
@@ -65,11 +64,12 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
                 style={
                   {
                     "--i": index,
-                    "--x": `${offset * 72}px`,
-                    "--y": `${wave * 18}px`,
-                    "--z": `${-offset * 54}px`,
-                    "--ry": `${-54 + offset * 1.6}deg`,
-                    "--rz": `${wave * 2}deg`
+                    "--x": `${offset * 120}px`,
+                    "--y": `${wave * 6}px`,
+                    "--z": `${offset * 150}px`,
+                    "--ry": `${-18 + wave * 1.2}deg`,
+                    "--rz": `${wave * 0.8}deg`,
+                    "--stack": index
                   } as CSSProperties
                 }
                 aria-label={`查看 ${work.title}`}
