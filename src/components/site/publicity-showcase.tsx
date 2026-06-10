@@ -27,8 +27,15 @@ function formatDate(value: string | null) {
 
 export function PublicityShowcase({ works }: PublicityShowcaseProps) {
   const [selectedId, setSelectedId] = useState("");
-  const selected = useMemo(() => works.find((work) => work.id === selectedId) || null, [selectedId, works]);
-  const center = (works.length - 1) / 2;
+  const orderedWorks = useMemo(() => {
+    return [...works].sort((a, b) => {
+      const left = a.workDate ? new Date(a.workDate).getTime() : 0;
+      const right = b.workDate ? new Date(b.workDate).getTime() : 0;
+      return left - right;
+    });
+  }, [works]);
+  const selected = useMemo(() => orderedWorks.find((work) => work.id === selectedId) || null, [orderedWorks, selectedId]);
+  const center = (orderedWorks.length - 1) / 2;
 
   if (works.length === 0) {
     return <div className="internal-empty">还没有已发布的宣传部作品。</div>;
@@ -44,7 +51,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
         </div>
 
         <div className="publicity-space-deck" aria-label="宣传部作品立体列表">
-          {works.map((work, index) => {
+          {orderedWorks.map((work, index) => {
             const offset = index - center;
             const layer = Math.abs(offset);
 
@@ -57,11 +64,11 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
                 style={
                   {
                     "--i": index,
-                    "--x": `${offset * 78}px`,
-                    "--y": `${Math.sin(index * 0.85) * 34}px`,
-                    "--z": `${220 - layer * 34}px`,
-                    "--ry": `${offset * -9}deg`,
-                    "--rz": `${offset * 1.6}deg`
+                    "--x": `${offset * 92}px`,
+                    "--y": `${Math.sin(index * 0.9) * 22}px`,
+                    "--z": `${150 - layer * 28}px`,
+                    "--ry": `${offset * -8}deg`,
+                    "--rz": `${offset * 1.4}deg`
                   } as CSSProperties
                 }
                 aria-label={`查看 ${work.title}`}
@@ -97,9 +104,9 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
         </div>
 
         <div className="publicity-portfolio-grid">
-          {works.map((work, index) => (
+          {orderedWorks.map((work, index) => (
             <article
-              className={index % 5 === 0 ? "publicity-portfolio-item is-wide" : "publicity-portfolio-item"}
+              className={index % 4 === 1 ? "publicity-portfolio-item is-offset" : "publicity-portfolio-item"}
               key={work.id}
             >
               <button type="button" onClick={() => setSelectedId(work.id)}>
