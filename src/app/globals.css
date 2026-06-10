@@ -4030,125 +4030,292 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
   overflow: hidden;
 }
 
-.publicity-stage {
-  display: grid;
-  grid-template-columns: minmax(300px, 0.88fr) minmax(420px, 1fr);
-  gap: 36px;
+.publicity-toolbar {
+  position: relative;
+  z-index: 25;
+  display: flex;
+  width: min(100%, 1180px);
+  margin: 0 auto;
   align-items: center;
-  min-height: 620px;
-  perspective: 1400px;
+  justify-content: space-between;
+  gap: 16px;
 }
 
-.publicity-focus-panel {
+.publicity-gallery-hero {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(220px, 360px) minmax(220px, 1fr);
-  gap: 0;
-  align-items: end;
-}
-
-.publicity-focus-image {
-  position: relative;
-  z-index: 2;
-  aspect-ratio: 0.707 / 1;
-  min-height: 420px;
+  width: min(100%, 1180px);
+  min-height: calc(100vh - 88px);
+  margin: -34px auto 0;
   overflow: hidden;
-  border-radius: 18px;
-  background: #e9eef2;
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.32);
+  perspective: 1700px;
+  transform-style: preserve-3d;
 }
 
-.publicity-focus-image img,
-.publicity-card img {
+.publicity-hero-copy {
+  position: relative;
+  z-index: 8;
+  max-width: 680px;
+  padding-top: clamp(28px, 8vh, 80px);
+}
+
+.publicity-hero-copy h1 {
+  margin: 12px 0 14px;
+  color: var(--heading-color);
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
+  font-size: clamp(3.2rem, 9vw, 7.6rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.publicity-hero-copy p {
+  max-width: 520px;
+  margin: 0;
+  color: var(--muted-text);
+  font-size: 1.06rem;
+  line-height: 1.8;
+}
+
+.publicity-space-deck {
+  position: absolute;
+  inset: 18vh 0 0;
+  transform-style: preserve-3d;
+  transform: rotateX(58deg) rotateZ(-13deg) translate3d(10vw, -7vh, 0);
+}
+
+.publicity-space-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(118px, 11vw, 190px);
+  aspect-ratio: 0.707 / 1;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 10px;
+  background: #e8edf0;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+  cursor: pointer;
+  transform:
+    translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), var(--z))
+    rotateY(var(--ry))
+    rotateZ(var(--rz))
+    rotateX(-58deg);
+  transform-style: preserve-3d;
+  opacity: 0;
+  animation: publicity-wave-in 820ms cubic-bezier(.16, 1, .3, 1) forwards;
+  animation-delay: calc(var(--i) * 70ms);
+  transition: transform 240ms ease, box-shadow 240ms ease, filter 240ms ease;
+}
+
+.publicity-space-card img,
+.publicity-expanded-image img,
+.publicity-portfolio-item img {
   object-fit: cover;
 }
 
-.publicity-focus-copy {
-  margin-left: -16px;
-  margin-bottom: 34px;
-  padding: 26px 26px 26px 42px;
-  border: 1px solid rgba(255, 255, 255, 0.32);
-  border-radius: 0 20px 20px 0;
-  background: color-mix(in srgb, var(--surface-bg) 68%, transparent);
-  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(18px);
+.publicity-space-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0.24), transparent 34%, rgba(0,0,0,0.1));
+  pointer-events: none;
 }
 
-.publicity-focus-copy span {
-  color: #2095b1;
+.publicity-space-card:hover,
+.publicity-space-card.active {
+  transform:
+    translate3d(calc(-50% + var(--x)), calc(-50% + var(--y) - 90px), 520px)
+    rotateY(var(--ry))
+    rotateZ(var(--rz))
+    rotateX(-58deg);
+  filter: saturate(1.08);
+  box-shadow: 0 44px 100px rgba(0, 0, 0, 0.4);
+  z-index: 9;
+}
+
+.publicity-expanded {
+  position: absolute;
+  left: 0;
+  bottom: 7vh;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) minmax(220px, 360px);
+  align-items: end;
+  animation: publicity-detail-in 260ms ease both;
+}
+
+.publicity-expanded-image {
+  position: relative;
+  z-index: 2;
+  aspect-ratio: 0.707 / 1;
+  min-height: min(58vh, 560px);
+  overflow: hidden;
+  border-radius: 18px;
+  background: #e9eef2;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.36);
+}
+
+.publicity-expanded-copy {
+  margin-left: -14px;
+  margin-bottom: 28px;
+  padding: 26px 28px 26px 42px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 0 22px 22px 0;
+  background: color-mix(in srgb, var(--surface-bg) 64%, transparent);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(20px);
+}
+
+.publicity-expanded-copy span,
+.publicity-portfolio-item time {
+  color: #25aecd;
   font-weight: 800;
 }
 
-.publicity-focus-copy h2 {
+.publicity-expanded-copy h2 {
   margin: 10px 0 12px;
   color: var(--heading-color);
-  font-size: clamp(1.6rem, 3vw, 2.35rem);
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
 }
 
-.publicity-focus-copy p {
+.publicity-expanded-copy strong,
+.publicity-author {
+  display: inline-flex;
+  margin-bottom: 12px;
+  color: var(--muted-text);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.publicity-expanded-copy p {
   margin: 0;
   color: var(--body-color);
   line-height: 1.85;
 }
 
-.publicity-deck {
-  position: relative;
-  height: 430px;
-  transform-style: preserve-3d;
-}
-
-.publicity-card {
+.publicity-close {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 156px;
-  aspect-ratio: 0.707 / 1;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 12px;
-  background: #dfe7ec;
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.24);
+  right: -18px;
+  top: -18px;
+  z-index: 4;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: rgba(20, 22, 24, 0.72);
+  color: #fff;
   cursor: pointer;
-  transform:
-    translate3d(calc(-50% + var(--x)), -50%, var(--z))
-    rotateY(var(--r))
-    rotateX(5deg);
-  transform-style: preserve-3d;
-  opacity: 0;
-  animation: publicity-wave-in 820ms cubic-bezier(.16, 1, .3, 1) forwards;
-  animation-delay: calc(var(--i) * 70ms);
-  transition: transform 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
+  backdrop-filter: blur(12px);
 }
 
-.publicity-card:hover,
-.publicity-card.active {
-  transform:
-    translate3d(calc(-50% + var(--x)), calc(-50% - 42px), 72px)
-    rotateY(var(--r))
-    rotateX(2deg);
-  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.34);
-  z-index: 5;
+.publicity-portfolio {
+  width: min(100%, 1180px);
+  margin: 32px auto 0;
+  padding: 48px 0 28px;
+}
+
+.publicity-portfolio-head {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.publicity-portfolio-head h2 {
+  margin: 0;
+  color: var(--heading-color);
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
+  font-size: clamp(2.2rem, 5vw, 4.4rem);
+}
+
+.publicity-portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+.publicity-portfolio-item {
+  grid-column: span 3;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.publicity-portfolio-item.is-wide {
+  grid-column: span 6;
+}
+
+.publicity-portfolio-item:nth-child(3n + 2) {
+  margin-top: 70px;
+}
+
+.publicity-portfolio-item:nth-child(4n) {
+  grid-column: span 4;
+  margin-top: 28px;
+}
+
+.publicity-portfolio-item button {
+  position: relative;
+  aspect-ratio: 0.707 / 1;
+  width: 100%;
+  overflow: hidden;
+  border: 0;
+  border-radius: 16px;
+  background: #e9eef2;
+  box-shadow: 0 20px 58px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+
+.publicity-portfolio-item div {
+  padding: 0 4px;
+}
+
+.publicity-portfolio-item h3 {
+  margin: 6px 0 8px;
+  color: var(--heading-color);
+  font-size: 1.18rem;
+}
+
+.publicity-portfolio-item p {
+  margin: 0;
+  color: var(--body-color);
+  line-height: 1.75;
 }
 
 @keyframes publicity-wave-in {
   0% {
     opacity: 0;
     transform:
-      translate3d(calc(-50% + var(--x)), calc(-50% + 160px), -280px)
-      rotateY(calc(var(--r) * 1.8))
-      rotateX(26deg);
+      translate3d(calc(-50% + var(--x)), calc(-50% + var(--y) + 220px), -360px)
+      rotateY(calc(var(--ry) * 1.6))
+      rotateZ(var(--rz))
+      rotateX(-28deg);
   }
 
   55% {
     opacity: 1;
     transform:
-      translate3d(calc(-50% + var(--x)), calc(-50% - 26px), 58px)
-      rotateY(var(--r))
-      rotateX(0deg);
+      translate3d(calc(-50% + var(--x)), calc(-50% + var(--y) - 46px), calc(var(--z) + 90px))
+      rotateY(var(--ry))
+      rotateZ(var(--rz))
+      rotateX(-58deg);
   }
 
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes publicity-detail-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-34px, 20px, 0) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -4168,12 +4335,25 @@ html[data-theme="light"] .internal-empty {
 }
 
 @media (max-width: 1100px) {
-  .publicity-stage {
-    grid-template-columns: 1fr;
+  .publicity-gallery-hero {
+    min-height: 820px;
   }
 
-  .publicity-deck {
-    height: 360px;
+  .publicity-space-deck {
+    transform: rotateX(58deg) rotateZ(-12deg) translate3d(4vw, 2vh, 0);
+  }
+
+  .publicity-expanded {
+    grid-template-columns: minmax(180px, 300px) minmax(220px, 340px);
+  }
+
+  .publicity-portfolio-item,
+  .publicity-portfolio-item:nth-child(4n) {
+    grid-column: span 4;
+  }
+
+  .publicity-portfolio-item.is-wide {
+    grid-column: span 8;
   }
 }
 
@@ -4197,22 +4377,44 @@ html[data-theme="light"] .internal-empty {
     width: 100%;
   }
 
-  .publicity-focus-panel {
+  .publicity-gallery-hero {
+    min-height: 760px;
+    margin-top: 0;
+  }
+
+  .publicity-space-deck {
+    inset: 26vh -20vw 0;
+    transform: rotateX(60deg) rotateZ(-13deg) translate3d(0, 0, 0);
+  }
+
+  .publicity-space-card {
+    width: 112px;
+  }
+
+  .publicity-expanded {
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    grid-template-columns: minmax(160px, 42vw) minmax(180px, 1fr);
+  }
+
+  .publicity-expanded-image {
+    min-height: 310px;
+  }
+
+  .publicity-expanded-copy {
+    padding: 22px 18px 22px 30px;
+  }
+
+  .publicity-portfolio-grid {
     grid-template-columns: 1fr;
   }
 
-  .publicity-focus-copy {
-    margin: -18px 14px 0;
-    padding: 30px 22px 22px;
-    border-radius: 0 0 18px 18px;
-  }
-
-  .publicity-focus-image {
-    min-height: 360px;
-  }
-
-  .publicity-card {
-    width: 118px;
+  .publicity-portfolio-item,
+  .publicity-portfolio-item.is-wide,
+  .publicity-portfolio-item:nth-child(4n) {
+    grid-column: span 1;
+    margin-top: 0;
   }
 }
 

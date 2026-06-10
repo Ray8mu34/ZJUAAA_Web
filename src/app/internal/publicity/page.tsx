@@ -30,23 +30,16 @@ export default async function InternalPublicityPage() {
       <SiteHeader />
       <main className="internal-page internal-publicity-page">
         <div className="shell">
-          <section className="internal-section-head">
+          <section className="publicity-toolbar">
             <Link className="internal-back-link" href="/internal">
               内部资料
             </Link>
-            <div className="internal-section-title-row">
-              <div>
-                <span className="internal-kicker">Publicity Works</span>
-                <h1>宣传部作品</h1>
-                <p>社团视觉作品墙。点击任意作品，可以查看日期和说明。</p>
-              </div>
-              <form action={internalSignOut}>
-                <button className="button-ghost internal-logout" type="submit">
-                  <LogOut size={18} />
-                  退出
-                </button>
-              </form>
-            </div>
+            <form action={internalSignOut}>
+              <button className="button-ghost internal-logout" type="submit">
+                <LogOut size={18} />
+                退出
+              </button>
+            </form>
           </section>
 
           <PublicityShowcase
@@ -54,6 +47,7 @@ export default async function InternalPublicityPage() {
               id: work.id,
               title: work.title,
               imagePath: work.imagePath,
+              author: work.author || "天小协",
               descriptionZh: work.descriptionZh,
               workDate: formatWorkDate(work.workDate)
             }))}

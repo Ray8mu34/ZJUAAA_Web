@@ -74,6 +74,7 @@ export async function createPublicityWork(formData: FormData) {
     data: {
       title,
       imagePath,
+      author: String(formData.get("author") || "").trim() || "天小协",
       descriptionZh: String(formData.get("descriptionZh") || "").trim() || null,
       workDate: parseDate(formData.get("workDate")),
       sortOrder: parseSortOrder(formData.get("sortOrder")),
@@ -96,6 +97,7 @@ export async function updatePublicityWork(formData: FormData) {
     where: { id },
     data: {
       title,
+      author: String(formData.get("author") || "").trim() || "天小协",
       ...(uploadedPath || selectedPath ? { imagePath: uploadedPath || selectedPath } : {}),
       descriptionZh: String(formData.get("descriptionZh") || "").trim() || null,
       workDate: parseDate(formData.get("workDate")),

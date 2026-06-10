@@ -14,6 +14,7 @@ type PublicityWorkEditorProps = {
   initialValues?: {
     id?: string;
     title?: string;
+    author?: string | null;
     imagePath?: string | null;
     descriptionZh?: string | null;
     workDate?: Date | null;
@@ -37,21 +38,26 @@ export function PublicityWorkEditor({ action, submitLabel, mediaOptions = [], in
           <input name="title" type="text" defaultValue={initialValues?.title || ""} placeholder="例如：社团纳新海报" />
         </label>
         <label>
-          <span>作品日期</span>
-          <input name="workDate" type="date" defaultValue={formatDateInput(initialValues?.workDate)} />
+          <span>作者</span>
+          <input name="author" type="text" defaultValue={initialValues?.author || "天小协"} placeholder="不填则默认天小协" />
         </label>
       </div>
 
       <div className="admin-form-grid">
         <label>
+          <span>作品日期</span>
+          <input name="workDate" type="date" defaultValue={formatDateInput(initialValues?.workDate)} />
+        </label>
+        <label>
           <span>{initialValues?.id ? "上传新图片（可选）" : "直接上传图片"}</span>
           <input className="file-input" name="imageFile" type="file" accept="image/*" />
         </label>
-        <label>
-          <span>排序值</span>
-          <input name="sortOrder" type="number" defaultValue={initialValues?.sortOrder ?? 0} />
-        </label>
       </div>
+
+      <label>
+        <span>排序值</span>
+        <input name="sortOrder" type="number" defaultValue={initialValues?.sortOrder ?? 0} />
+      </label>
 
       <MediaPathField
         name="imagePath"

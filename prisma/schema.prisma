@@ -190,6 +190,7 @@ model PublicityWork {
   id            String        @id @default(cuid())
   title         String
   imagePath     String
+  author        String        @default("天小协")
   descriptionZh String?
   workDate      DateTime?
   sortOrder     Int           @default(0)

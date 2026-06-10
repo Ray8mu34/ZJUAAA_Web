@@ -50,6 +50,7 @@ export default async function AdminPublicityPage() {
                     <strong>{work.title}</strong>
                     <div className="post-meta">
                       <span>{formatDate(work.workDate)}</span>
+                      <span>作者：{work.author || "天小协"}</span>
                       <span>排序：{work.sortOrder}</span>
                       <span>状态：{work.status}</span>
                     </div>
@@ -64,6 +65,7 @@ export default async function AdminPublicityPage() {
                     initialValues={{
                       id: work.id,
                       title: work.title,
+                      author: work.author,
                       imagePath: work.imagePath,
                       descriptionZh: work.descriptionZh,
                       workDate: work.workDate,
