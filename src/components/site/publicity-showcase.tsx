@@ -65,11 +65,11 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
                 style={
                   {
                     "--i": index,
-                    "--x": `${offset * 118}px`,
-                    "--y": `${wave * 42}px`,
-                    "--z": `${180 - layer * 32}px`,
-                    "--ry": `${offset * -8}deg`,
-                    "--rz": `${offset * 1.3 + wave * 2}deg`
+                    "--x": `${offset * 72}px`,
+                    "--y": `${wave * 18}px`,
+                    "--z": `${-offset * 54}px`,
+                    "--ry": `${-54 + offset * 1.6}deg`,
+                    "--rz": `${wave * 2}deg`
                   } as CSSProperties
                 }
                 aria-label={`查看 ${work.title}`}
@@ -109,7 +109,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
         <div className="publicity-portfolio-grid">
           {orderedWorks.map((work, index) => (
             <article
-              className={index % 2 === 0 ? "publicity-portfolio-row" : "publicity-portfolio-row is-reverse"}
+              className={index % 2 === 0 ? "publicity-timeline-card" : "publicity-timeline-card is-reverse"}
               key={work.id}
             >
               <button type="button" onClick={() => setSelectedId(work.id)}>

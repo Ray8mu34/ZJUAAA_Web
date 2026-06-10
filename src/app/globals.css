@@ -4078,18 +4078,18 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
 .publicity-space-deck {
   position: absolute;
   left: 50%;
-  top: 58%;
-  width: min(78vw, 900px);
-  height: min(36vh, 340px);
+  top: 60%;
+  width: min(80vw, 960px);
+  height: min(38vh, 360px);
   transform-style: preserve-3d;
-  transform: translate(-50%, -50%) rotateX(56deg) rotateZ(-12deg);
+  transform: translate(-50%, -50%) rotateX(4deg) rotateY(-28deg) rotateZ(-5deg);
 }
 
 .publicity-space-card {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(118px, 8.8vw, 156px);
+  width: clamp(112px, 8vw, 148px);
   aspect-ratio: 0.707 / 1;
   border: 0;
   background: transparent;
@@ -4113,14 +4113,14 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
   border-radius: 10px;
   background: #e8edf0;
   box-shadow: 0 20px 46px rgba(0, 0, 0, 0.24);
-  transform: rotateX(-56deg);
+  transform: translate3d(0, 0, 0);
   transform-origin: center;
   transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
 }
 
 .publicity-space-card-inner img,
 .publicity-expanded-image img,
-.publicity-portfolio-row img {
+.publicity-timeline-card img {
   object-fit: cover;
 }
 
@@ -4134,9 +4134,9 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
 
 .publicity-space-card:hover .publicity-space-card-inner,
 .publicity-space-card.active .publicity-space-card-inner {
-  transform: translate3d(0, -14px, 34px) rotateX(-56deg);
+  transform: translate3d(0, -8px, 28px);
   filter: saturate(1.08);
-  box-shadow: 0 26px 58px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 22px 46px rgba(0, 0, 0, 0.24);
 }
 
 .publicity-space-card.active {
@@ -4177,7 +4177,7 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
 }
 
 .publicity-expanded-copy span,
-.publicity-portfolio-item time {
+.publicity-timeline-card time {
   color: #25aecd;
   font-weight: 800;
 }
@@ -4241,53 +4241,70 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
 
 .publicity-portfolio-grid {
   display: grid;
-  gap: 54px;
+  gap: 76px;
 }
 
-.publicity-portfolio-row {
+.publicity-timeline-card {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(220px, 360px) minmax(280px, 1fr);
-  gap: clamp(24px, 7vw, 88px);
+  grid-template-columns: minmax(220px, 360px) minmax(260px, 340px);
+  gap: 0;
   align-items: center;
-  width: min(100%, 980px);
-  min-height: 430px;
+  width: min(100%, 820px);
   margin-right: auto;
 }
 
-.publicity-portfolio-row.is-reverse {
-  grid-template-columns: minmax(280px, 1fr) minmax(220px, 360px);
+.publicity-timeline-card.is-reverse {
+  grid-template-columns: minmax(260px, 340px) minmax(220px, 360px);
   margin-left: auto;
   margin-right: 0;
 }
 
-.publicity-portfolio-row button {
+.publicity-timeline-card button {
   position: relative;
+  z-index: 2;
   aspect-ratio: 0.707 / 1;
   width: 100%;
   overflow: hidden;
   border: 0;
   border-radius: 16px;
   background: #e9eef2;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 
-.publicity-portfolio-row.is-reverse button {
+.publicity-timeline-card.is-reverse button {
   order: 2;
 }
 
-.publicity-portfolio-row div {
-  padding: 0 4px;
+.publicity-timeline-card div {
+  position: relative;
+  z-index: 1;
+  margin-left: -20px;
+  padding: 30px 28px 30px 44px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0 22px 22px 0;
+  background: color-mix(in srgb, var(--surface-bg) 72%, transparent);
+  box-shadow: 0 22px 62px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(18px);
 }
 
-.publicity-portfolio-row h3 {
-  margin: 6px 0 8px;
+.publicity-timeline-card.is-reverse div {
+  order: 1;
+  margin-right: -20px;
+  margin-left: 0;
+  padding: 30px 44px 30px 28px;
+  border-radius: 22px 0 0 22px;
+}
+
+.publicity-timeline-card h3 {
+  margin: 8px 0 10px;
   color: var(--heading-color);
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  line-height: 1.18;
+  font-size: clamp(1.8rem, 4vw, 2.75rem);
+  line-height: 1.16;
 }
 
-.publicity-portfolio-row p {
+.publicity-timeline-card p {
   margin: 0;
   color: var(--body-color);
   line-height: 1.75;
@@ -4297,7 +4314,7 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
   0% {
     opacity: 0;
     transform:
-      translate3d(calc(-50% + var(--x)), calc(-50% + var(--y) + 220px), -360px)
+      translate3d(calc(-50% + var(--x)), calc(-50% + var(--y) + 110px), calc(var(--z) - 160px))
       rotateY(calc(var(--ry) * 1.6))
       rotateZ(var(--rz));
   }
@@ -4305,7 +4322,7 @@ html[data-theme="light"] .manual-article-hero .detail-cover {
   55% {
     opacity: 1;
     transform:
-      translate3d(calc(-50% + var(--x)), calc(-50% + var(--y) - 46px), calc(var(--z) + 90px))
+      translate3d(calc(-50% + var(--x)), calc(-50% + var(--y) - 24px), calc(var(--z) + 42px))
       rotateY(var(--ry))
       rotateZ(var(--rz));
   }
@@ -4349,17 +4366,17 @@ html[data-theme="light"] .internal-empty {
 
   .publicity-space-deck {
     width: min(86vw, 780px);
-    transform: translate(-50%, -50%) rotateX(56deg) rotateZ(-12deg);
+    transform: translate(-50%, -50%) rotateX(4deg) rotateY(-28deg) rotateZ(-5deg);
   }
 
   .publicity-expanded {
     grid-template-columns: minmax(180px, 300px) minmax(220px, 340px);
   }
 
-  .publicity-portfolio-row,
-  .publicity-portfolio-row.is-reverse {
-    width: min(100%, 880px);
-    grid-template-columns: minmax(210px, 330px) minmax(260px, 1fr);
+  .publicity-timeline-card,
+  .publicity-timeline-card.is-reverse {
+    width: min(100%, 760px);
+    grid-template-columns: minmax(200px, 320px) minmax(240px, 1fr);
   }
 }
 
@@ -4391,7 +4408,7 @@ html[data-theme="light"] .internal-empty {
   .publicity-space-deck {
     top: 60%;
     width: 94vw;
-    transform: translate(-50%, -50%) rotateX(58deg) rotateZ(-12deg);
+    transform: translate(-50%, -50%) rotateX(4deg) rotateY(-26deg) rotateZ(-5deg);
   }
 
   .publicity-space-card {
@@ -4413,15 +4430,22 @@ html[data-theme="light"] .internal-empty {
     padding: 22px 18px 22px 30px;
   }
 
-  .publicity-portfolio-row,
-  .publicity-portfolio-row.is-reverse {
+  .publicity-timeline-card,
+  .publicity-timeline-card.is-reverse {
     grid-template-columns: 1fr;
     min-height: 0;
     gap: 18px;
   }
 
-  .publicity-portfolio-row.is-reverse button {
+  .publicity-timeline-card.is-reverse button {
     order: 0;
+  }
+
+  .publicity-timeline-card div,
+  .publicity-timeline-card.is-reverse div {
+    margin: -18px 14px 0;
+    padding: 32px 22px 22px;
+    border-radius: 0 0 18px 18px;
   }
 }
 
