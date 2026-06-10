@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { CSSProperties } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 import { getImageVariantUrl } from "@/lib/image-variants";
@@ -20,9 +20,65 @@ type PublicityShowcaseProps = {
   works: PublicityShowcaseItem[];
 };
 
+type TimelineCardProps = {
+  work: PublicityShowcaseItem;
+  index: number;
+  onSelect: (id: string) => void;
+};
+
 function formatDate(value: string | null) {
   if (!value) return "未填写日期";
   return value;
+}
+
+function PublicityTimelineCard({ work, index, onSelect }: TimelineCardProps) {
+  const imageButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [imageHeight, setImageHeight] = useState(420);
+
+  useEffect(() => {
+    const element = imageButtonRef.current;
+    if (!element) return;
+
+    const updateHeight = () => {
+      const nextHeight = element.getBoundingClientRect().height;
+      if (nextHeight > 0) {
+        setImageHeight(nextHeight);
+      }
+    };
+
+    updateHeight();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", updateHeight);
+      return () => window.removeEventListener("resize", updateHeight);
+    }
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [work.imagePath]);
+
+  return (
+    <article
+      className={index % 2 === 0 ? "publicity-timeline-card" : "publicity-timeline-card is-reverse"}
+      style={
+        {
+          "--timeline-image-height": `${imageHeight}px`,
+          "--timeline-card-max-height": `${Math.round(imageHeight * 1.5)}px`
+        } as CSSProperties
+      }
+    >
+      <button ref={imageButtonRef} type="button" onClick={() => onSelect(work.id)}>
+        <img src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} />
+      </button>
+      <div>
+        <time>{formatDate(work.workDate)}</time>
+        <h3>{work.title}</h3>
+        <span className="publicity-author">作者：{work.author || "天小协"}</span>
+        {work.descriptionZh ? <p>{work.descriptionZh}</p> : null}
+      </div>
+    </article>
+  );
 }
 
 export function PublicityShowcase({ works }: PublicityShowcaseProps) {
@@ -98,7 +154,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
               <X size={18} />
             </button>
             <div className="publicity-expanded-image">
-              <Image src={getImageVariantUrl(selected.imagePath, "original")} alt={selected.title} fill sizes="42vw" />
+              <img src={getImageVariantUrl(selected.imagePath, "original")} alt={selected.title} />
             </div>
             <div className="publicity-expanded-copy">
               <span>{formatDate(selected.workDate)}</span>
@@ -118,20 +174,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
 
         <div className="publicity-portfolio-grid">
           {orderedWorks.map((work, index) => (
-            <article
-              className={index % 2 === 0 ? "publicity-timeline-card" : "publicity-timeline-card is-reverse"}
-              key={work.id}
-            >
-              <button type="button" onClick={() => setSelectedId(work.id)}>
-                <Image src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} fill sizes="(max-width: 720px) 90vw, 360px" />
-              </button>
-              <div>
-                <time>{formatDate(work.workDate)}</time>
-                <h3>{work.title}</h3>
-                <span className="publicity-author">作者：{work.author || "天小协"}</span>
-                {work.descriptionZh ? <p>{work.descriptionZh}</p> : null}
-              </div>
-            </article>
+            <PublicityTimelineCard key={work.id} work={work} index={index} onSelect={setSelectedId} />
           ))}
         </div>
       </section>
