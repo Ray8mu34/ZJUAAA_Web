@@ -4093,9 +4093,14 @@ html[data-theme="light"] .post-item {
 
 .story-cloud-canvas {
   position: relative;
-  height: min(68vh, 660px);
-  min-height: 520px;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: minmax(92px, auto);
+  align-items: stretch;
+  gap: 18px;
+  min-height: min(58vh, 560px);
   overflow: hidden;
+  padding: clamp(18px, 3vw, 34px);
   border: 1px solid color-mix(in srgb, var(--border-color) 68%, transparent);
   border-radius: 30px;
   background:
@@ -4104,6 +4109,11 @@ html[data-theme="light"] .post-item {
     radial-gradient(circle at 50% 82%, rgba(118, 68, 255, 0.1), transparent 30%),
     color-mix(in srgb, var(--surface-bg) 84%, transparent);
   box-shadow: 0 28px 86px rgba(0, 0, 0, 0.18);
+}
+
+.story-cloud-canvas[data-count="1"] {
+  align-items: center;
+  justify-items: center;
 }
 
 .story-cloud-canvas::before {
@@ -4125,16 +4135,15 @@ html[data-theme="light"] .post-item {
 }
 
 .story-cloud-item {
-  position: absolute;
-  left: var(--story-x);
-  top: var(--story-y);
+  position: relative;
   z-index: 1;
   display: grid;
+  align-content: start;
   gap: 8px;
-  max-width: min(34vw, 360px);
-  padding: 18px 20px;
+  min-height: 0;
+  padding: clamp(18px, 2.6vw, 30px);
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 20px;
+  border-radius: 22px;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.04)),
     rgba(255, 255, 255, 0.055);
@@ -4142,10 +4151,16 @@ html[data-theme="light"] .post-item {
   box-shadow:
     0 18px 50px rgba(0, 0, 0, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  transform: translate(-50%, -50%) rotate(var(--story-rotate));
+  transform: rotate(var(--story-rotate));
   animation: story-cloud-in 260ms ease both;
   animation-delay: var(--story-delay);
   backdrop-filter: blur(18px) saturate(1.3);
+}
+
+.story-cloud-canvas[data-count="1"] .story-cloud-item {
+  width: min(100%, 680px);
+  grid-column: auto;
+  transform: none;
 }
 
 .story-cloud-item strong {
@@ -4155,6 +4170,8 @@ html[data-theme="light"] .post-item {
 
 .story-cloud-item p {
   margin: 0;
+  max-height: 15em;
+  overflow: hidden;
   line-height: 1.72;
   white-space: pre-line;
 }
@@ -4164,23 +4181,28 @@ html[data-theme="light"] .post-item {
   font-size: 0.86rem;
 }
 
-.story-cloud-item-sm {
-  max-width: min(28vw, 280px);
-  font-size: 0.92rem;
-}
-
-.story-cloud-item-md {
-  font-size: 1rem;
-}
-
-.story-cloud-item-lg {
-  max-width: min(38vw, 410px);
+.story-cloud-item-hero {
+  grid-column: span 6;
+  grid-row: span 3;
   font-size: 1.08rem;
 }
 
-.story-cloud-item-xl {
-  max-width: min(42vw, 480px);
-  font-size: 1.16rem;
+.story-cloud-item-tall {
+  grid-column: span 3;
+  grid-row: span 3;
+  font-size: 0.96rem;
+}
+
+.story-cloud-item-wide {
+  grid-column: span 5;
+  grid-row: span 2;
+  font-size: 1rem;
+}
+
+.story-cloud-item-soft {
+  grid-column: span 4;
+  grid-row: span 2;
+  font-size: 0.94rem;
 }
 
 html[data-theme="light"] .story-cloud-canvas {
@@ -4205,12 +4227,12 @@ html[data-theme="light"] .story-cloud-item {
 @keyframes story-cloud-in {
   from {
     opacity: 0;
-    transform: translate(-50%, calc(-50% + 12px)) rotate(var(--story-rotate)) scale(0.96);
+    transform: translateY(12px) rotate(var(--story-rotate)) scale(0.98);
   }
 
   to {
     opacity: 1;
-    transform: translate(-50%, -50%) rotate(var(--story-rotate)) scale(1);
+    transform: translateY(0) rotate(var(--story-rotate)) scale(1);
   }
 }
 
@@ -4659,6 +4681,20 @@ html[data-theme="light"] .internal-empty {
 }
 
 @media (max-width: 1100px) {
+  .story-cloud-canvas {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .story-cloud-item-hero,
+  .story-cloud-item-wide {
+    grid-column: span 4;
+  }
+
+  .story-cloud-item-tall,
+  .story-cloud-item-soft {
+    grid-column: span 3;
+  }
+
   .publicity-gallery-hero {
     min-height: 720px;
   }
@@ -4708,21 +4744,20 @@ html[data-theme="light"] .internal-empty {
 
   .story-cloud-canvas {
     display: grid;
-    height: auto;
+    grid-template-columns: 1fr;
     min-height: 0;
     gap: 14px;
     padding: 18px;
   }
 
   .story-cloud-item,
-  .story-cloud-item-sm,
-  .story-cloud-item-md,
-  .story-cloud-item-lg,
-  .story-cloud-item-xl {
+  .story-cloud-item-hero,
+  .story-cloud-item-tall,
+  .story-cloud-item-wide,
+  .story-cloud-item-soft {
     position: relative;
-    left: auto;
-    top: auto;
-    max-width: none;
+    grid-column: auto;
+    grid-row: auto;
     transform: none;
     animation: none;
   }

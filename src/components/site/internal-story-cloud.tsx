@@ -15,16 +15,13 @@ type InternalStoryCloudProps = {
   stories: Story[];
 };
 
-const slots = [
-  { x: 7, y: 10, size: "lg", rotate: -4 },
-  { x: 42, y: 7, size: "md", rotate: 2 },
-  { x: 68, y: 14, size: "sm", rotate: -2 },
-  { x: 18, y: 39, size: "sm", rotate: 3 },
-  { x: 50, y: 35, size: "xl", rotate: -1 },
-  { x: 74, y: 46, size: "md", rotate: 4 },
-  { x: 9, y: 68, size: "md", rotate: 2 },
-  { x: 36, y: 70, size: "sm", rotate: -3 },
-  { x: 63, y: 72, size: "lg", rotate: 1 }
+const cardPattern = [
+  { size: "hero", rotate: -1.4 },
+  { size: "tall", rotate: 1.2 },
+  { size: "wide", rotate: -0.8 },
+  { size: "soft", rotate: 1.6 },
+  { size: "soft", rotate: -1.1 },
+  { size: "wide", rotate: 0.7 }
 ];
 
 function shuffleStories(stories: Story[], seed: number) {
@@ -42,7 +39,8 @@ function shuffleStories(stories: Story[], seed: number) {
 
 export function InternalStoryCloud({ stories }: InternalStoryCloudProps) {
   const [batchIndex, setBatchIndex] = useState(0);
-  const visibleStories = useMemo(() => shuffleStories(stories, batchIndex).slice(0, Math.min(stories.length, slots.length)), [stories, batchIndex]);
+  const visibleCount = stories.length === 1 ? 1 : Math.min(stories.length, cardPattern.length);
+  const visibleStories = useMemo(() => shuffleStories(stories, batchIndex).slice(0, visibleCount), [stories, batchIndex, visibleCount]);
 
   if (stories.length === 0) {
     return <div className="internal-empty">还没有发布的天协往事。</div>;
@@ -62,9 +60,9 @@ export function InternalStoryCloud({ stories }: InternalStoryCloudProps) {
         </button>
       </div>
 
-      <div className="story-cloud-canvas">
+      <div className="story-cloud-canvas" data-count={visibleStories.length}>
         {visibleStories.map((story, index) => {
-          const slot = slots[index];
+          const slot = cardPattern[index];
 
           return (
             <article
@@ -72,8 +70,6 @@ export function InternalStoryCloud({ stories }: InternalStoryCloudProps) {
               key={`${story.id}-${batchIndex}`}
               style={
                 {
-                  "--story-x": `${slot.x}%`,
-                  "--story-y": `${slot.y}%`,
                   "--story-rotate": `${slot.rotate}deg`,
                   "--story-delay": `${index * 34}ms`
                 } as CSSProperties
