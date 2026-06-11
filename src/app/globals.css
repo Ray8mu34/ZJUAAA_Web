@@ -4295,7 +4295,7 @@ html[data-theme="light"] .story-cloud-item {
   display: grid;
   justify-items: center;
   gap: 8px;
-  width: 118px;
+  width: 112px;
   border: 0;
   background: transparent;
   color: var(--heading-color);
@@ -4323,8 +4323,8 @@ html[data-theme="light"] .story-cloud-item {
 
 .story-doodle-icon {
   display: grid;
-  width: 62px;
-  height: 62px;
+  width: 58px;
+  height: 58px;
   place-items: center;
   border: 2px solid currentColor;
   border-radius: 20px 18px 22px 16px;
@@ -4883,7 +4883,7 @@ html[data-theme="light"] .internal-empty {
 
   .story-board-surface,
   .story-detail-panel {
-    min-height: 460px;
+    min-height: 440px;
   }
 
   .story-cloud-canvas {
@@ -4948,7 +4948,7 @@ html[data-theme="light"] .internal-empty {
   }
 
   .story-board-surface {
-    min-height: 560px;
+    min-height: 500px;
   }
 
   .story-doodle {

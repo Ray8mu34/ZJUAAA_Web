@@ -1,20 +1,32 @@
 "use client";
 
 import {
+  Archive,
   BookOpen,
   Camera,
+  Clock,
+  CloudMoon,
   Coffee,
   Compass,
+  Flag,
+  Image,
+  Lightbulb,
   Map,
+  MapPin,
+  Megaphone,
   MessageCircle,
+  Milestone,
   Moon,
+  Notebook,
   Orbit,
+  PenTool,
   RefreshCw,
   Rocket,
   ScrollText,
   Sparkles,
   Star,
-  Telescope
+  Telescope,
+  Users
 } from "lucide-react";
 import type { ComponentType, CSSProperties } from "react";
 import { useMemo, useState } from "react";
@@ -34,26 +46,52 @@ type BoardSlot = {
   x: number;
   y: number;
   rotate: number;
-  Icon: ComponentType<{ size?: number; strokeWidth?: number }>;
 };
 
-const boardSlots: BoardSlot[] = [
-  { x: 9, y: 18, rotate: -5, Icon: Telescope },
-  { x: 24, y: 34, rotate: 4, Icon: Star },
-  { x: 39, y: 19, rotate: -2, Icon: Moon },
-  { x: 54, y: 38, rotate: 5, Icon: Rocket },
-  { x: 70, y: 20, rotate: -4, Icon: Sparkles },
-  { x: 86, y: 37, rotate: 3, Icon: Camera },
-  { x: 14, y: 68, rotate: 4, Icon: Coffee },
-  { x: 31, y: 57, rotate: -3, Icon: Compass },
-  { x: 47, y: 75, rotate: 2, Icon: BookOpen },
-  { x: 64, y: 63, rotate: -5, Icon: MessageCircle },
-  { x: 79, y: 72, rotate: 4, Icon: Map },
-  { x: 91, y: 60, rotate: -2, Icon: Orbit }
+const doodleIcons: ComponentType<{ size?: number; strokeWidth?: number }>[] = [
+  Telescope,
+  Star,
+  Moon,
+  Rocket,
+  Sparkles,
+  Camera,
+  Coffee,
+  Compass,
+  BookOpen,
+  MessageCircle,
+  Map,
+  Orbit,
+  Clock,
+  Notebook,
+  Megaphone,
+  Users,
+  MapPin,
+  Image,
+  Lightbulb,
+  PenTool,
+  Archive,
+  Flag,
+  CloudMoon,
+  Milestone
 ];
 
-function shuffleStories(stories: Story[], seed: number) {
-  const next = [...stories];
+const boardSlots: BoardSlot[] = [
+  { x: 12, y: 20, rotate: -5 },
+  { x: 27, y: 42, rotate: 4 },
+  { x: 42, y: 23, rotate: -2 },
+  { x: 58, y: 46, rotate: 5 },
+  { x: 73, y: 24, rotate: -4 },
+  { x: 87, y: 43, rotate: 3 },
+  { x: 17, y: 72, rotate: 4 },
+  { x: 37, y: 65, rotate: -3 },
+  { x: 55, y: 76, rotate: 2 },
+  { x: 73, y: 69, rotate: -5 },
+  { x: 88, y: 74, rotate: 4 },
+  { x: 49, y: 58, rotate: -1 }
+];
+
+function shuffleItems<T>(items: T[], seed: number) {
+  const next = [...items];
   let state = seed + 1;
 
   for (let i = next.length - 1; i > 0; i -= 1) {
@@ -71,8 +109,11 @@ function getStoryTitle(story: Story) {
 
 export function InternalStoryCloud({ stories }: InternalStoryCloudProps) {
   const [batchIndex, setBatchIndex] = useState(0);
-  const visibleCount = Math.min(stories.length, boardSlots.length);
-  const visibleStories = useMemo(() => shuffleStories(stories, batchIndex).slice(0, visibleCount), [stories, batchIndex, visibleCount]);
+  const batchSize = stories.length <= 8 ? stories.length : 6 + (batchIndex % 3);
+  const visibleCount = Math.min(stories.length, batchSize);
+  const visibleStories = useMemo(() => shuffleItems(stories, batchIndex).slice(0, visibleCount), [stories, batchIndex, visibleCount]);
+  const visibleSlots = useMemo(() => shuffleItems(boardSlots, batchIndex + 11).slice(0, visibleCount), [batchIndex, visibleCount]);
+  const visibleIcons = useMemo(() => shuffleItems(doodleIcons, batchIndex + 23).slice(0, visibleCount), [batchIndex, visibleCount]);
   const [activeStoryId, setActiveStoryId] = useState<string | null>(null);
   const activeStory = visibleStories.find((story) => story.id === activeStoryId) || visibleStories[0] || null;
 
@@ -104,8 +145,8 @@ export function InternalStoryCloud({ stories }: InternalStoryCloudProps) {
       <div className="story-board">
         <div className="story-board-surface" data-count={visibleStories.length}>
           {visibleStories.map((story, index) => {
-            const slot = boardSlots[index];
-            const Icon = slot.Icon;
+            const slot = visibleSlots[index];
+            const Icon = visibleIcons[index];
             const isActive = activeStory?.id === story.id;
 
             return (
