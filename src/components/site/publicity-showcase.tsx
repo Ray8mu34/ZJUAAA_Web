@@ -69,7 +69,7 @@ function PublicityTimelineCard({ work, index, onSelect }: TimelineCardProps) {
       }
     >
       <button ref={imageButtonRef} type="button" onClick={() => onSelect(work.id)}>
-        <img src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} />
+        <img src={getImageVariantUrl(work.imagePath, "original")} alt={work.title} />
       </button>
       <div>
         <time>{formatDate(work.workDate)}</time>
@@ -141,7 +141,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
                   aria-label={`查看 ${work.title}`}
                 >
                   <span className="publicity-space-card-inner" onClick={() => setSelectedId(work.id)}>
-                    <Image src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} fill sizes="220px" />
+                    <Image src={getImageVariantUrl(work.imagePath, "original")} alt={work.title} fill sizes="220px" />
                   </span>
                 </button>
               );
