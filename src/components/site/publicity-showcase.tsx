@@ -94,9 +94,10 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
   const center = (orderedWorks.length - 1) / 2;
   const count = orderedWorks.length;
   const cardWidth = count <= 2 ? 196 : count <= 4 ? 158 : 118;
-  const xStep = count <= 2 ? 210 : count <= 4 ? 136 : 54;
-  const yStep = count <= 2 ? 110 : count <= 4 ? 72 : 24;
-  const zStep = count <= 2 ? 320 : count <= 4 ? 190 : 72;
+  const xStep = count <= 2 ? 200 : count <= 4 ? 128 : 48;
+  const yStep = count <= 2 ? 104 : count <= 4 ? 68 : 20;
+  const zStep = count <= 2 ? 300 : count <= 4 ? 160 : 44;
+  const deckShift = count <= 2 ? "-2vw" : count <= 4 ? "-4vw" : "-7vw";
 
   if (works.length === 0) {
     return <div className="internal-empty">还没有已发布的宣传部作品。</div>;
@@ -114,7 +115,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
         <div
           className="publicity-space-deck"
           aria-label="宣传部作品立体列表"
-          style={{ "--card-w": `${cardWidth}px` } as CSSProperties}
+          style={{ "--card-w": `${cardWidth}px`, "--deck-shift": deckShift } as CSSProperties}
         >
           <div className="publicity-space-scene">
             {orderedWorks.map((work, index) => {
