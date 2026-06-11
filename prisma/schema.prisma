@@ -199,6 +199,17 @@ model PublicityWork {
   updatedAt     DateTime      @updatedAt
 }
 
+model InternalStory {
+  id        String        @id @default(cuid())
+  title     String?
+  content   String
+  source    String?
+  sortOrder Int           @default(0)
+  status    ContentStatus @default(PUBLISHED)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
 enum AdminStatus {
   ACTIVE
   DISABLED

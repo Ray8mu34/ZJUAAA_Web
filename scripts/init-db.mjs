@@ -168,6 +168,17 @@ db.exec(`
     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS InternalStory (
+    id TEXT PRIMARY KEY,
+    title TEXT,
+    content TEXT NOT NULL,
+    source TEXT,
+    sortOrder INTEGER NOT NULL DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'PUBLISHED',
+    createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 console.log(`Initialized SQLite database at ${dbPath}`);

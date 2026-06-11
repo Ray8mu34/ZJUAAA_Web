@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Images } from "lucide-react";
+import { Download, Images, ScrollText } from "lucide-react";
 
 import { requireAdminSession } from "@/lib/admin-session";
 
@@ -21,6 +21,11 @@ export default async function AdminInternalPage() {
             <Images size={22} />
             <strong>宣传部作品</strong>
             <span>维护海报、传单、纳新视觉和对应说明。</span>
+          </Link>
+          <Link className="admin-quick-card" href="/admin/internal/stories">
+            <ScrollText size={22} />
+            <strong>天协往事</strong>
+            <span>维护内部可见的纯文本往事，前台会随机抽取并以云图形式展示。</span>
           </Link>
         </div>
       </section>

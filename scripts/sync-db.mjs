@@ -118,5 +118,22 @@ if (!manualCategoryExists) {
   console.log("Created ManualCategory table");
 }
 
+const internalStoryExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='InternalStory'").get();
+if (!internalStoryExists) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS InternalStory (
+      id TEXT PRIMARY KEY,
+      title TEXT,
+      content TEXT NOT NULL,
+      source TEXT,
+      sortOrder INTEGER NOT NULL DEFAULT 0,
+      status TEXT NOT NULL DEFAULT 'PUBLISHED',
+      createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+  console.log("Created InternalStory table");
+}
+
 db.close();
 console.log("Database schema sync completed.");

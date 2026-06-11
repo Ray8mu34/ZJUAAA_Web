@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Images, LockKeyhole, LogOut } from "lucide-react";
+import { Download, Images, LockKeyhole, LogOut, ScrollText } from "lucide-react";
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
@@ -87,6 +87,11 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
                   <Images size={24} />
                   <strong>宣传部作品</strong>
                   <span>海报、传单、纳新视觉和社团传播物料作品墙。</span>
+                </Link>
+                <Link className="internal-module-card" href="/internal/stories">
+                  <ScrollText size={24} />
+                  <strong>天协往事</strong>
+                  <span>随机翻看社团里的短句、片段和回忆，像在星图里拾起几颗旧光点。</span>
                 </Link>
               </div>
             </section>
