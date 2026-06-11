@@ -4163,8 +4163,10 @@ html[data-theme="light"] .post-item {
 .publicity-expanded-image img,
 .publicity-timeline-card img {
   display: block;
-  width: 100%;
+  width: calc(100% + 2px);
   height: auto;
+  margin: -1px;
+  vertical-align: top;
 }
 
 .publicity-space-card-inner::after {
@@ -4201,10 +4203,12 @@ html[data-theme="light"] .post-item {
 .publicity-expanded-image {
   position: relative;
   z-index: 2;
+  display: block;
   overflow: hidden;
   border-radius: 18px;
   background: transparent;
   box-shadow: 0 24px 58px rgba(0, 0, 0, 0.22);
+  line-height: 0;
 }
 
 .publicity-expanded-copy {
@@ -4338,13 +4342,17 @@ html[data-theme="light"] .post-item {
 .publicity-timeline-card button {
   position: relative;
   z-index: 2;
+  display: block;
   width: 100%;
   overflow: hidden;
+  padding: 0;
   border: 0;
   border-radius: 18px;
+  appearance: none;
   background: transparent;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
   cursor: pointer;
+  line-height: 0;
   transform: translateY(22px);
 }
 
