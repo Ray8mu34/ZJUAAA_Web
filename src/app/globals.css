@@ -4236,6 +4236,202 @@ html[data-theme="light"] .story-cloud-item {
   }
 }
 
+.story-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: 22px;
+  align-items: stretch;
+}
+
+.story-board-surface {
+  position: relative;
+  min-height: min(58vh, 560px);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+  border-radius: 30px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    radial-gradient(circle at 18% 20%, rgba(62, 209, 226, 0.13), transparent 26%),
+    radial-gradient(circle at 74% 72%, rgba(255, 215, 132, 0.12), transparent 26%),
+    color-mix(in srgb, var(--surface-bg) 84%, transparent);
+  background-size:
+    44px 44px,
+    44px 44px,
+    auto,
+    auto,
+    auto;
+  box-shadow:
+    0 28px 86px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.story-board-surface::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 2px dashed rgba(62, 209, 226, 0.22);
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.story-board-surface::after {
+  content: "ZJUAAA memories";
+  position: absolute;
+  right: 28px;
+  bottom: 20px;
+  color: color-mix(in srgb, var(--muted-text) 38%, transparent);
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  transform: rotate(-2deg);
+}
+
+.story-doodle {
+  position: absolute;
+  left: var(--story-x);
+  top: var(--story-y);
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: 118px;
+  border: 0;
+  background: transparent;
+  color: var(--heading-color);
+  cursor: pointer;
+  transform: translate(-50%, -50%) rotate(var(--story-rotate));
+  animation: story-doodle-in 240ms ease both;
+  animation-delay: var(--story-delay);
+}
+
+.story-doodle-title {
+  max-width: 132px;
+  padding: 5px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-bg) 84%, rgba(255, 255, 255, 0.18));
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
+  color: var(--body-color);
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.story-doodle-icon {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  border: 2px solid currentColor;
+  border-radius: 20px 18px 22px 16px;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.34), transparent 28%),
+    rgba(62, 209, 226, 0.13);
+  color: #1aa5c0;
+  box-shadow:
+    0 14px 32px rgba(0, 0, 0, 0.14),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.14);
+  transition:
+    transform 160ms ease,
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.story-doodle:nth-child(3n + 2) .story-doodle-icon {
+  color: #7a63df;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.36), transparent 28%),
+    rgba(118, 68, 255, 0.12);
+}
+
+.story-doodle:nth-child(3n) .story-doodle-icon {
+  color: #d29535;
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.38), transparent 28%),
+    rgba(255, 194, 88, 0.16);
+}
+
+.story-doodle:hover .story-doodle-icon,
+.story-doodle.is-active .story-doodle-icon {
+  transform: translateY(-4px) scale(1.08);
+  background:
+    radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.44), transparent 28%),
+    rgba(62, 209, 226, 0.24);
+}
+
+.story-doodle.is-active .story-doodle-title {
+  color: #071116;
+  background: linear-gradient(135deg, #67decf, #4ac7e6);
+}
+
+.story-detail-panel {
+  display: flex;
+  min-height: min(58vh, 560px);
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 3vw, 38px);
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.2), transparent 34%),
+    color-mix(in srgb, var(--surface-bg) 88%, transparent);
+  box-shadow: 0 28px 86px rgba(0, 0, 0, 0.18);
+}
+
+.story-detail-panel h2 {
+  margin: 12px 0 10px;
+  color: var(--heading-color);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  line-height: 1.16;
+}
+
+.story-detail-panel strong {
+  color: var(--muted-text);
+  font-size: 0.95rem;
+}
+
+.story-detail-panel p {
+  max-height: 24em;
+  margin: 18px 0 0;
+  overflow-y: auto;
+  color: var(--body-color);
+  line-height: 1.86;
+  white-space: pre-line;
+}
+
+html[data-theme="light"] .story-board-surface,
+html[data-theme="light"] .story-detail-panel {
+  background:
+    linear-gradient(90deg, rgba(36, 56, 70, 0.045) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(36, 56, 70, 0.045) 1px, transparent 1px),
+    radial-gradient(circle at 18% 20%, rgba(62, 209, 226, 0.15), transparent 26%),
+    radial-gradient(circle at 74% 72%, rgba(247, 188, 96, 0.18), transparent 26%),
+    rgba(255, 255, 255, 0.76);
+  box-shadow: 0 28px 86px rgba(91, 120, 145, 0.18);
+}
+
+html[data-theme="light"] .story-doodle-title {
+  border-color: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 10px 26px rgba(91, 120, 145, 0.14);
+}
+
+@keyframes story-doodle-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 10px)) rotate(var(--story-rotate)) scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--story-rotate)) scale(1);
+  }
+}
+
 .internal-publicity-page {
   overflow: hidden;
 }
@@ -4681,6 +4877,15 @@ html[data-theme="light"] .internal-empty {
 }
 
 @media (max-width: 1100px) {
+  .story-board {
+    grid-template-columns: 1fr;
+  }
+
+  .story-board-surface,
+  .story-detail-panel {
+    min-height: 460px;
+  }
+
   .story-cloud-canvas {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -4740,6 +4945,29 @@ html[data-theme="light"] .internal-empty {
   .story-refresh-button {
     width: 100%;
     justify-content: center;
+  }
+
+  .story-board-surface {
+    min-height: 560px;
+  }
+
+  .story-doodle {
+    width: 104px;
+  }
+
+  .story-doodle-title {
+    max-width: 112px;
+    font-size: 0.78rem;
+  }
+
+  .story-doodle-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 18px 16px 20px 15px;
+  }
+
+  .story-detail-panel {
+    min-height: 0;
   }
 
   .story-cloud-canvas {
