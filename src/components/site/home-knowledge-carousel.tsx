@@ -18,7 +18,7 @@ export function HomeKnowledgeCarousel({ posts }: { posts: HomeKnowledgePost[] })
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(false);
-  const showControls = posts.length > 3;
+  const showControls = posts.length >= 4;
 
   const updateScrollState = useCallback(() => {
     const track = trackRef.current;

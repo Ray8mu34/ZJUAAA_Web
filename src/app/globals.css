@@ -3604,7 +3604,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 }
 
 .home-knowledge-card .home-knowledge-cover {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1 / 1;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
 }
@@ -3632,7 +3632,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 
 .home-knowledge-arrow {
   position: absolute;
-  top: min(88px, 35%);
+  top: clamp(110px, 15vw, 190px);
   z-index: 1;
   display: inline-flex;
   align-items: center;
@@ -5909,7 +5909,7 @@ html[data-theme="light"] .internal-empty {
   .home-knowledge-arrow {
     width: 42px;
     height: 42px;
-    top: min(34vw, 112px);
+    top: min(42vw, 170px);
   }
 
   .nav-row-site {
