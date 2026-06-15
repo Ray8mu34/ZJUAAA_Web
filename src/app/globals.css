@@ -3591,6 +3591,7 @@ html[data-theme="light"] .content-list-link:hover strong {
   display: grid;
   align-content: start;
   gap: 7px;
+  justify-items: start;
   min-width: 0;
   scroll-snap-align: start;
   transition:
@@ -3604,6 +3605,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 }
 
 .home-knowledge-card .home-knowledge-cover {
+  width: min(100%, 240px);
   aspect-ratio: 1 / 1;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
@@ -3611,6 +3613,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 
 .home-knowledge-card strong {
   display: -webkit-box;
+  width: min(100%, 240px);
   overflow: hidden;
   color: var(--text);
   font-size: 1.08rem;
@@ -3621,6 +3624,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 
 .home-knowledge-card p {
   display: -webkit-box;
+  width: min(100%, 240px);
   margin: 0;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.86);
@@ -3632,7 +3636,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 
 .home-knowledge-arrow {
   position: absolute;
-  top: clamp(110px, 15vw, 190px);
+  top: 124px;
   z-index: 1;
   display: inline-flex;
   align-items: center;
