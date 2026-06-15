@@ -1,12 +1,65 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import fs from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dbPath = path.resolve(__dirname, "..", "prisma", "dev.db");
+const projectRoot = path.resolve(__dirname, "..");
+
+function readDotEnv() {
+  const envPath = path.join(projectRoot, ".env");
+  if (!fs.existsSync(envPath)) return {};
+
+  return Object.fromEntries(
+    fs
+      .readFileSync(envPath, "utf8")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("#") && line.includes("="))
+      .map((line) => {
+        const index = line.indexOf("=");
+        const key = line.slice(0, index).trim();
+        const value = line
+          .slice(index + 1)
+          .trim()
+          .replace(/^['"]|['"]$/g, "");
+        return [key, value];
+      })
+  );
+}
+
+function resolveDatabasePath() {
+  const env = readDotEnv();
+  const databaseUrl = process.env.DATABASE_URL || env.DATABASE_URL;
+
+  if (!databaseUrl) {
+    return path.join(projectRoot, "prisma", "dev.db");
+  }
+
+  if (!databaseUrl.startsWith("file:")) {
+    throw new Error(`Unsupported DATABASE_URL for sqlite sync: ${databaseUrl}`);
+  }
+
+  const rawPath = databaseUrl.slice("file:".length);
+  if (rawPath.startsWith("//")) {
+    return fileURLToPath(databaseUrl);
+  }
+
+  return path.isAbsolute(rawPath) ? rawPath : path.resolve(projectRoot, "prisma", rawPath);
+}
+
+const dbPath = resolveDatabasePath();
 
 const db = new DatabaseSync(dbPath);
+
+function tableExists(name) {
+  return Boolean(db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?").get(name));
+}
+
+if (!tableExists("SiteSetting")) {
+  throw new Error(`SiteSetting table not found in ${dbPath}. Check DATABASE_URL or run npm run db:init for a new database.`);
+}
 
 const columns = new Set(
   db
@@ -64,10 +117,12 @@ const contentTableAdditions = {
 };
 
 const mediaExisting = new Set(
-  db
-    .prepare("PRAGMA table_info('MediaAsset')")
-    .all()
-    .map((row) => row.name)
+  tableExists("MediaAsset")
+    ? db
+        .prepare("PRAGMA table_info('MediaAsset')")
+        .all()
+        .map((row) => row.name)
+    : []
 );
 
 for (const [name, sql] of mediaAssetAdditions) {
