@@ -37,7 +37,6 @@ export default async function InternalFilesPage() {
             </Link>
             <div className="internal-section-title-row">
               <div>
-                <span className="internal-kicker">Files</span>
                 <h1>文件下载</h1>
                 <p>社团内部资料下载处。请勿向社团外公开传播这里的内容。</p>
               </div>

@@ -125,7 +125,6 @@ export function InternalStoryCloud({ stories }: InternalStoryCloudProps) {
     <section className="story-cloud-panel" aria-label="天协往事展板">
       <div className="story-cloud-head">
         <div>
-          <span className="internal-kicker">Memory Board</span>
           <h1>天协往事</h1>
           <p>把零散的回忆贴在一块展板上。点开一个小图标，就能翻到它背后的故事。</p>
         </div>
@@ -175,7 +174,6 @@ export function InternalStoryCloud({ stories }: InternalStoryCloudProps) {
 
         {activeStory ? (
           <article className="story-detail-panel">
-            <span className="internal-kicker">Selected Memory</span>
             <h2>{getStoryTitle(activeStory)}</h2>
             {activeStory.source ? <strong>{activeStory.source}</strong> : null}
             <p>{activeStory.content}</p>

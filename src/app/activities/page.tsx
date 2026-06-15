@@ -131,16 +131,13 @@ export default async function ActivitiesPage({
           <section className="activity-feature-section">
             <div className="activity-subhead">
               <div>
-                <span>Upcoming</span>
                 <h3>活动预告</h3>
               </div>
-              <p>近期可以参加的观星、讲座和社团活动。</p>
             </div>
 
             {upcomingNotices.length === 0 ? (
               <article className={emptyCardClassName}>
                 <strong>暂无活动预告</strong>
-                <p>新的观星、讲座或社团活动发布后，会优先出现在这里。</p>
               </article>
             ) : (
               <div className="activity-feature-grid">
@@ -191,17 +188,14 @@ export default async function ActivitiesPage({
           <section className="activity-record-section">
             <div className="activity-subhead">
               <div>
-                <span>Archive</span>
                 <h3>活动记录</h3>
               </div>
-              <p>已经结束的活动会沉淀为社团档案。</p>
             </div>
 
             <div className="activity-record-list">
               {recordNotices.length === 0 ? (
                 <article className={emptyCardClassName}>
                   <strong>还没有活动记录</strong>
-                  <p>活动结束后，可以继续保留在这里作为回顾入口。</p>
                 </article>
               ) : (
                 recordNotices.map((notice, index) => {

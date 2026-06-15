@@ -32,7 +32,7 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
   return (
     <>
       <SiteHeader />
-      <main className="internal-page">
+      <main className={hasAccess ? "internal-page internal-portal-page" : "internal-page"}>
         <div className="shell">
           {!hasAccess ? (
             <section className="internal-login-panel">
@@ -65,7 +65,6 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
             <section className="internal-portal">
               <div className="internal-portal-head">
                 <div>
-                  <span className="internal-kicker">ZJUAAA Internal</span>
                   <h1>内部资料</h1>
                   <p>这里收纳社团内部文件、宣传部作品和后续可以继续扩展的成员资料。</p>
                 </div>

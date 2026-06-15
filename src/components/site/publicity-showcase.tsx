@@ -107,7 +107,6 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
     <>
       <section className={selected ? "publicity-gallery-hero is-open" : "publicity-gallery-hero"}>
         <div className="publicity-hero-copy">
-          <span className="internal-kicker">Publicity Works</span>
           <h1>宣传部作品</h1>
           <p>社团视觉作品墙。点击任意作品，展开日期和说明。</p>
         </div>
@@ -169,7 +168,6 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
 
       <section className="publicity-portfolio">
         <div className="publicity-portfolio-head">
-          <span className="internal-kicker">Archive</span>
           <h2>作品时间线</h2>
         </div>
 
