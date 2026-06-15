@@ -18,6 +18,7 @@ export async function updateSecondaryContent(formData: FormData) {
       activitiesIntroZh: String(formData.get("activitiesIntroZh") || ""),
       galleryIntroZh: String(formData.get("galleryIntroZh") || ""),
       manualIntroZh: String(formData.get("manualIntroZh") || ""),
+      internalIntroZh: String(formData.get("internalIntroZh") || ""),
       manualStartMd: String(formData.get("manualStartMd") || ""),
       contactIntroZh: String(formData.get("contactIntroZh") || ""),
       aboutGalleryImagePaths: String(formData.get("aboutGalleryImagePaths") || ""),
@@ -33,5 +34,6 @@ export async function updateSecondaryContent(formData: FormData) {
   revalidatePath("/astrophotography");
   revalidatePath("/manual");
   revalidatePath("/manual/start");
+  revalidatePath("/internal");
   revalidatePath("/admin/settings");
 }

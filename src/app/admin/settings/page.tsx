@@ -71,6 +71,11 @@ export default async function AdminSettingsPage() {
         </div>
 
         <label>
+          <span>内部资料页面说明</span>
+          <textarea name="internalIntroZh" rows={3} defaultValue={setting.internalIntroZh} />
+        </label>
+
+        <label>
           <span>天文手册顶部内容（Markdown）</span>
           <small className="muted">在栏目卡片上方显示的内容，支持 Markdown 格式。留空则显示默认的"第一次来到这里？"引导区。</small>
           <textarea name="manualStartMd" rows={12} defaultValue={setting.manualStartMd} placeholder="# 天协知识手册 · 内容清单&#10;&#10;在这里粘贴 Markdown 内容..." />

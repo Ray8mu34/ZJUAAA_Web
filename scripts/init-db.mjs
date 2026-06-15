@@ -54,6 +54,7 @@ db.exec(`
     addressEn TEXT NOT NULL DEFAULT 'Room 502-1, Teaching Building East 4, Zijingang Campus, Zhejiang University',
     aboutIntroZh TEXT NOT NULL DEFAULT '浙江大学学生天文爱好者协会成立于2002年，是浙江大学学术科技类社团。我们围绕天文、科普和公益三大主题，持续组织观星、课程、讲座与科普传播。',
     aboutIntroEn TEXT NOT NULL DEFAULT 'ZJUAAA was founded in 2002 as an academic student association focused on astronomy, science communication, and public engagement.',
+    internalIntroZh TEXT NOT NULL DEFAULT '这里收纳社团内部文件、宣传部作品和后续可以继续扩展的成员资料。',
     academicDeptZh TEXT NOT NULL DEFAULT '学术部负责观测器材、天文课程、内部知识分享与专业活动支持，是社团最硬核的内容力量。',
     publicDeptZh TEXT NOT NULL DEFAULT '公关部负责大型活动策划、对外联络与项目推进，承担社团组织与协调的核心工作。',
     mediaDeptZh TEXT NOT NULL DEFAULT '宣传部负责平面、视频、图文与多平台传播，把星空带到更多人眼前。',

@@ -4667,6 +4667,10 @@ html[data-theme="light"] .post-item {
   line-height: 1.85;
 }
 
+.internal-portal-head p {
+  margin-top: 14px;
+}
+
 .internal-login-copy h1 {
   margin: 12px 0;
 }

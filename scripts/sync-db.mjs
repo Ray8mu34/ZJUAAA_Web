@@ -32,6 +32,7 @@ const additions = [
   ["activitiesIntroZh", "TEXT NOT NULL DEFAULT '这里展示社团活动卡片信息。点击按钮后，会跳转到公众号文章或外部活动页面。'"],
   ["galleryIntroZh", "TEXT NOT NULL DEFAULT '这里展示已发布的摄影作品，后续可继续接入作品图片和更多高级参数。'"],
   ["manualIntroZh", "TEXT NOT NULL DEFAULT '这里收录社团内部整理的学习资料与长期积累内容，适合内部学习、查阅和后续备份。'"],
+  ["internalIntroZh", "TEXT NOT NULL DEFAULT '这里收纳社团内部文件、宣传部作品和后续可以继续扩展的成员资料。'"],
   ["contactIntroZh", "TEXT NOT NULL DEFAULT '欢迎通过微信、QQ、邮箱或报名表单与我们取得联系。'"],
   ["academicDeptZh", "TEXT NOT NULL DEFAULT '学术部负责观测器材、天文课程、内部知识分享与专业活动支持，是社团最硬核的内容力量。'"],
   ["publicDeptZh", "TEXT NOT NULL DEFAULT '公关部负责大型活动策划、对外联络与项目推进，承担社团组织与协调的核心工作。'"],

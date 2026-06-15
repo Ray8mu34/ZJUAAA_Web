@@ -3,6 +3,7 @@ import { Download, Images, LockKeyhole, LogOut, ScrollText } from "lucide-react"
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { prisma } from "@/lib/db";
 import { hasInternalAccess } from "@/lib/internal-auth";
 
 import { internalSignIn, internalSignOut } from "./actions";
@@ -25,7 +26,14 @@ function getErrorMessage(error?: string) {
 
 export default async function InternalPage({ searchParams }: InternalPageProps) {
   const params = await searchParams;
-  const hasAccess = await hasInternalAccess();
+  const [hasAccess, setting] = await Promise.all([
+    hasInternalAccess(),
+    prisma.siteSetting.upsert({
+      where: { id: "site" },
+      create: { id: "site" },
+      update: {}
+    })
+  ]);
   const callbackUrl = params.next?.startsWith("/internal") ? params.next : "/internal";
   const errorMessage = getErrorMessage(params.error);
 
@@ -66,7 +74,7 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
               <div className="internal-portal-head">
                 <div>
                   <h1>内部资料</h1>
-                  <p>这里收纳社团内部文件、宣传部作品和后续可以继续扩展的成员资料。</p>
+                  <p>{setting.internalIntroZh || "这里收纳社团内部文件、宣传部作品和后续可以继续扩展的成员资料。"}</p>
                 </div>
                 <form action={internalSignOut}>
                   <button className="button-ghost internal-logout" type="submit">
