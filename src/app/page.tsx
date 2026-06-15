@@ -1,4 +1,5 @@
 import { HomePhotoShowcase } from "@/components/site/home-photo-showcase";
+import { HomeKnowledgeCarousel } from "@/components/site/home-knowledge-carousel";
 import { MediaFrame } from "@/components/site/media-frame";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
@@ -41,8 +42,7 @@ export default async function HomePage() {
     }),
     prisma.knowledgePost.findMany({
       where: { status: "PUBLISHED", isFeatured: true },
-      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
-      take: 3
+      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }]
     }),
     prisma.activityNotice.findMany({
       where: { status: "PUBLISHED" },
@@ -59,8 +59,6 @@ export default async function HomePage() {
   const heroSubtitle = spreadText(setting.heroSubtitleZh);
   const manifesto = setting.manifestoZh?.trim() || "由此，上达群星";
   const cardClassName = setting.cardTheme === "light" ? "content-card card-theme-light" : "content-card";
-  const knowledgeCardClassName =
-    setting.cardTheme === "light" ? "content-card card-theme-light content-list-card knowledge-card" : "content-card content-list-card knowledge-card";
   const activityCardClassName =
     setting.cardTheme === "light" ? "content-card card-theme-light content-list-card activity-card" : "content-card content-list-card activity-card";
   const homePhotos = shuffleItems(featuredPhotos).slice(0, 15);
@@ -173,38 +171,16 @@ export default async function HomePage() {
                 <h2>科普推荐</h2>
               </div>
             </div>
-            <div className="cards-grid content-list-grid">
-              {featuredPosts.length === 0 ? (
-                <article className={cardClassName}>
-                  <strong>还没有已发布科普文章</strong>
-                  <p>你们可以先去后台新增科普文章，并填写公众号原文链接。</p>
-                </article>
-              ) : (
-                featuredPosts.map((post) => (
-                  <article className={knowledgeCardClassName} key={post.id}>
-                    <MediaFrame src={post.coverImagePath} alt={post.titleZh} className="content-cover" label="科普封面" />
-                    <a
-                      className="content-list-link"
-                      href={post.externalUrl || `/knowledge/${post.slug}`}
-                      target={post.externalUrl ? "_blank" : undefined}
-                      rel={post.externalUrl ? "noreferrer" : undefined}
-                    >
-                      <strong>{post.titleZh}</strong>
-                    <p>{post.summaryZh || "点击后跳转到你们的公众号原文。"}</p>
-                    <p className="muted">作者：{post.author}</p>
-                    </a>
-                    <a
-                      className="button-secondary content-list-button-fallback"
-                      href={post.externalUrl || `/knowledge/${post.slug}`}
-                      target={post.externalUrl ? "_blank" : undefined}
-                      rel={post.externalUrl ? "noreferrer" : undefined}
-                    >
-                      {post.externalUrl ? "跳转公众号" : "阅读更多"}
-                    </a>
-                  </article>
-                ))
-              )}
-            </div>
+            <HomeKnowledgeCarousel
+              posts={featuredPosts.map((post) => ({
+                id: post.id,
+                title: post.titleZh,
+                author: post.author,
+                coverImagePath: post.coverImagePath,
+                href: post.externalUrl || `/knowledge/${post.slug}`,
+                external: Boolean(post.externalUrl)
+              }))}
+            />
           </div>
         </section>
 
