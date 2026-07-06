@@ -1,3 +1,5 @@
+import { AdminPaginationLinks } from "@/components/admin/admin-pagination-links";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { InternalFileEditor } from "@/components/admin/internal-file-editor";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
@@ -11,12 +13,26 @@ function formatFileSize(size: number) {
   return `${size} B`;
 }
 
-export default async function AdminInternalFilesPage() {
-  await requireAdminSession();
+const PAGE_SIZE = 20;
 
-  const files = await prisma.internalFile.findMany({
-    orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }]
-  });
+export default async function AdminInternalFilesPage({
+  searchParams
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  await requireAdminSession();
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, Number.parseInt(String(page || "1"), 10) || 1);
+
+  const [files, totalFiles] = await Promise.all([
+    prisma.internalFile.findMany({
+      orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE
+    }),
+    prisma.internalFile.count()
+  ]);
+  const totalPages = Math.max(1, Math.ceil(totalFiles / PAGE_SIZE));
 
   return (
     <div className="admin-stack">
@@ -59,31 +75,41 @@ export default async function AdminInternalFilesPage() {
                   />
 
                   <div className="post-actions">
-                    <form action={setInternalFileStatus}>
+                    <AdminActionForm action={setInternalFileStatus} className="" successMessage="资料已发布。">
                       <input type="hidden" name="id" value={file.id} />
                       <input type="hidden" name="status" value="PUBLISHED" />
                       <button className="button-ghost" type="submit">
                         发布
                       </button>
-                    </form>
-                    <form action={setInternalFileStatus}>
+                    </AdminActionForm>
+                    <AdminActionForm action={setInternalFileStatus} className="" successMessage="资料已设为草稿。">
                       <input type="hidden" name="id" value={file.id} />
                       <input type="hidden" name="status" value="DRAFT" />
                       <button className="button-ghost" type="submit">
                         设为草稿
                       </button>
-                    </form>
-                    <form action={deleteInternalFile}>
+                    </AdminActionForm>
+                    <AdminActionForm
+                      action={deleteInternalFile}
+                      className=""
+                      successMessage="资料记录已删除。"
+                      confirmMessage={`确认删除内部资料「${file.title}」？`}
+                    >
                       <input type="hidden" name="id" value={file.id} />
+                      <label className="inline-check muted">
+                        <input type="checkbox" name="deleteDiskFile" />
+                        同时删除磁盘文件
+                      </label>
                       <button className="button-ghost danger-text" type="submit">
                         删除
                       </button>
-                    </form>
+                    </AdminActionForm>
                   </div>
                 </div>
               </details>
             ))
           )}
+          <AdminPaginationLinks basePath="/admin/internal/files" currentPage={currentPage} totalPages={totalPages} />
         </div>
       </section>
     </div>

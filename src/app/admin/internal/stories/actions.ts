@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 function parseSortOrder(value: FormDataEntryValue | null) {
@@ -25,11 +27,20 @@ function getStoryData(formData: FormData) {
 }
 
 export async function createInternalStory(formData: FormData) {
-  await prisma.internalStory.create({
+  const session = await requireAdminSession();
+
+  const story = await prisma.internalStory.create({
     data: {
       ...getStoryData(formData),
       status: "PUBLISHED"
     }
+  });
+
+  await logAdminAction({
+    action: "internal-story.create",
+    actor: session.user,
+    target: story.id,
+    metadata: { title: story.title, source: story.source }
   });
 
   revalidatePath("/admin/internal/stories");
@@ -38,11 +49,20 @@ export async function createInternalStory(formData: FormData) {
 }
 
 export async function updateInternalStory(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
-  await prisma.internalStory.update({
+  const story = await prisma.internalStory.update({
     where: { id },
     data: getStoryData(formData)
+  });
+
+  await logAdminAction({
+    action: "internal-story.update",
+    actor: session.user,
+    target: story.id,
+    metadata: { title: story.title, source: story.source }
   });
 
   revalidatePath("/admin/internal/stories");
@@ -50,12 +70,21 @@ export async function updateInternalStory(formData: FormData) {
 }
 
 export async function setInternalStoryStatus(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const status = String(formData.get("status") || "PUBLISHED") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-  await prisma.internalStory.update({
+  const story = await prisma.internalStory.update({
     where: { id },
     data: { status }
+  });
+
+  await logAdminAction({
+    action: "internal-story.set-status",
+    actor: session.user,
+    target: story.id,
+    metadata: { title: story.title, status: story.status }
   });
 
   revalidatePath("/admin/internal/stories");
@@ -64,9 +93,18 @@ export async function setInternalStoryStatus(formData: FormData) {
 }
 
 export async function deleteInternalStory(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
-  await prisma.internalStory.delete({ where: { id } });
+  const story = await prisma.internalStory.delete({ where: { id } });
+
+  await logAdminAction({
+    action: "internal-story.delete",
+    actor: session.user,
+    target: story.id,
+    metadata: { title: story.title, source: story.source }
+  });
 
   revalidatePath("/admin/internal/stories");
   revalidatePath("/internal/stories");

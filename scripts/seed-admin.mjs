@@ -1,12 +1,27 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const prisma = new PrismaClient();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const adminSecurityConfig = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "..", "config", "admin-security.json"), "utf8")
+);
+
+function assertAdminPasswordLength(password) {
+  if (password.length < adminSecurityConfig.minAdminPasswordLength) {
+    throw new Error(`管理员密码至少需要 ${adminSecurityConfig.minAdminPasswordLength} 位。`);
+  }
+}
 
 async function main() {
   const username = process.env.ADMIN_USERNAME || "admin";
   const password = process.env.ADMIN_PASSWORD || "change-this-password";
   const displayName = process.env.ADMIN_DISPLAY_NAME || "ZJUAAA Admin";
+
+  assertAdminPasswordLength(password);
 
   const existing = await prisma.adminUser.findUnique({ where: { username } });
   const passwordHash = await bcrypt.hash(password, 12);

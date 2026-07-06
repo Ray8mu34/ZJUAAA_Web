@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { prisma } from "@/lib/db";
 
@@ -39,26 +40,26 @@ export async function SiteFooter() {
           <div className="footer-cn-links">
             <div>
               <h3>社团发展</h3>
-              <a href="/contact">社团纳新</a>
-              <a href="/about">社团照片</a>
+              <Link href="/contact">社团纳新</Link>
+              <Link href="/about">社团照片</Link>
             </div>
             <div>
               <h3>社团构成</h3>
-              <a href="/about">组织架构</a>
-              <a href="/about">部门成员</a>
+              <Link href="/about">组织架构</Link>
+              <Link href="/about">部门成员</Link>
             </div>
             <div>
               <h3>社团活动</h3>
-              <a href="/knowledge">科普推文</a>
-              <a href="/activities">上山观星</a>
-              <a href="/activities">路边天文</a>
-              <a href="/manual">天文手册</a>
-              <a href="/activities">天文讲座</a>
-              <a href="/activities">品牌联动</a>
+              <Link href="/knowledge">科普推文</Link>
+              <Link href="/activities">上山观星</Link>
+              <Link href="/activities">路边天文</Link>
+              <Link href="/manual">天文手册</Link>
+              <Link href="/activities">天文讲座</Link>
+              <Link href="/activities">品牌联动</Link>
             </div>
             <div>
               <h3>关于我们</h3>
-              <a href="/contact">联系方式</a>
+              <Link href="/contact">联系方式</Link>
               <a href={setting?.joinFormUrl || "/contact"} target="_blank" rel="noreferrer">
                 填写纳新表单
               </a>

@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { MediaPathField } from "@/components/admin/media-path-field";
 
 type MediaOption = {
@@ -26,7 +27,7 @@ type CategoryEditorProps = {
 
 export function CategoryEditor({ action, submitLabel, mediaOptions = [], initialValues }: CategoryEditorProps) {
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="栏目已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
 
       {!initialValues?.id ? (
@@ -70,6 +71,6 @@ export function CategoryEditor({ action, submitLabel, mediaOptions = [], initial
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

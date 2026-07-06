@@ -1,16 +1,29 @@
+import { AdminPaginationLinks } from "@/components/admin/admin-pagination-links";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { AstroPhotoEditor } from "@/components/admin/astro-photo-editor";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { createAstroPhoto, deleteAstroPhoto, setAstroPhotoStatus, updateAstroPhoto } from "./actions";
 
-export default async function AdminGalleryPage() {
-  await requireAdminSession();
+const PAGE_SIZE = 20;
 
-  const [photos, assets] = await Promise.all([
+export default async function AdminGalleryPage({
+  searchParams
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  await requireAdminSession();
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, Number.parseInt(String(page || "1"), 10) || 1);
+
+  const [photos, totalPhotos, assets] = await Promise.all([
     prisma.astroPhoto.findMany({
-      orderBy: { updatedAt: "desc" }
+      orderBy: { updatedAt: "desc" },
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE
     }),
+    prisma.astroPhoto.count(),
     prisma.mediaAsset.findMany({
       orderBy: { createdAt: "desc" },
       take: 50
@@ -23,6 +36,7 @@ export default async function AdminGalleryPage() {
     filePath: asset.filePath,
     category: asset.category
   }));
+  const totalPages = Math.max(1, Math.ceil(totalPhotos / PAGE_SIZE));
 
   return (
     <div className="admin-stack">
@@ -74,34 +88,40 @@ export default async function AdminGalleryPage() {
                   />
 
                   <div className="post-actions">
-                    <form action={setAstroPhotoStatus}>
+                    <AdminActionForm action={setAstroPhotoStatus} className="" successMessage="作品已发布。">
                       <input type="hidden" name="id" value={photo.id} />
                       <input type="hidden" name="status" value="PUBLISHED" />
                       <button className="button-ghost" type="submit">
                         发布
                       </button>
-                    </form>
-                    <form action={setAstroPhotoStatus}>
+                    </AdminActionForm>
+                    <AdminActionForm action={setAstroPhotoStatus} className="" successMessage="作品已设为草稿。">
                       <input type="hidden" name="id" value={photo.id} />
                       <input type="hidden" name="status" value="DRAFT" />
                       <button className="button-ghost" type="submit">
                         设为草稿
                       </button>
-                    </form>
+                    </AdminActionForm>
                     <a className="button-ghost" href={`/astrophotography/${photo.id}`} target="_blank" rel="noreferrer">
                       前台查看
                     </a>
-                    <form action={deleteAstroPhoto}>
+                    <AdminActionForm
+                      action={deleteAstroPhoto}
+                      className=""
+                      successMessage="作品已删除。"
+                      confirmMessage={`确认删除摄影作品「${photo.titleZh}」？`}
+                    >
                       <input type="hidden" name="id" value={photo.id} />
                       <button className="button-ghost danger-text" type="submit">
                         删除
                       </button>
-                    </form>
+                    </AdminActionForm>
                   </div>
                 </div>
               </details>
             ))
           )}
+          <AdminPaginationLinks basePath="/admin/gallery" currentPage={currentPage} totalPages={totalPages} />
         </div>
       </section>
     </div>

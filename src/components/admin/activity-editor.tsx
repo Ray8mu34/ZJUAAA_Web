@@ -1,3 +1,4 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { MediaPathField } from "@/components/admin/media-path-field";
 
 type MediaOption = {
@@ -30,7 +31,7 @@ function formatDatetimeLocal(value?: string) {
 
 export function ActivityEditor({ action, submitLabel, mediaOptions = [], initialValues }: ActivityEditorProps) {
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="活动已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
 
       <input type="hidden" name="titleEn" value="" />
@@ -80,6 +81,6 @@ export function ActivityEditor({ action, submitLabel, mediaOptions = [], initial
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

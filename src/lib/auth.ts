@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
 import { prisma } from "@/lib/db";
+import { clearLoginFailures, getLoginRateLimitState, recordLoginFailure } from "@/lib/login-rate-limit";
 
 const credentialsSchema = z.object({
   username: z.string().min(1),
@@ -32,19 +33,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
+        const rateLimit = getLoginRateLimitState("admin", parsed.data.username);
+        if (rateLimit.blocked) {
+          return null;
+        }
+
         const admin = await prisma.adminUser.findUnique({
           where: { username: parsed.data.username }
         });
 
         if (!admin || admin.status !== "ACTIVE") {
+          recordLoginFailure("admin", parsed.data.username);
           return null;
         }
 
         const isValid = await bcrypt.compare(parsed.data.password, admin.passwordHash);
 
         if (!isValid) {
+          recordLoginFailure("admin", parsed.data.username);
           return null;
         }
+
+        clearLoginFailures("admin", parsed.data.username);
 
         await prisma.adminUser.update({
           where: { id: admin.id },

@@ -2,10 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 export async function updateSecondaryContent(formData: FormData) {
-  await prisma.siteSetting.upsert({
+  const session = await requireAdminSession();
+
+  const setting = await prisma.siteSetting.upsert({
     where: { id: "site" },
     create: { id: "site" },
     update: {
@@ -23,6 +27,18 @@ export async function updateSecondaryContent(formData: FormData) {
       contactIntroZh: String(formData.get("contactIntroZh") || ""),
       aboutGalleryImagePaths: String(formData.get("aboutGalleryImagePaths") || ""),
       alumniGroupsJson: String(formData.get("alumniGroupsJson") || "")
+    }
+  });
+
+  await logAdminAction({
+    action: "secondary-content.update",
+    actor: session.user,
+    target: setting.id,
+    metadata: {
+      contactEmail: setting.contactEmail,
+      aboutGalleryImageCount: setting.aboutGalleryImagePaths
+        ? setting.aboutGalleryImagePaths.split(/\r?\n/).filter(Boolean).length
+        : 0
     }
   });
 

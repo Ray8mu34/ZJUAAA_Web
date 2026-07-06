@@ -1,3 +1,5 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
+
 type InternalStoryEditorProps = {
   action: (formData: FormData) => Promise<void>;
   submitLabel: string;
@@ -12,7 +14,7 @@ type InternalStoryEditorProps = {
 
 export function InternalStoryEditor({ action, submitLabel, initialValues }: InternalStoryEditorProps) {
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="往事已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
 
       <div className="admin-form-grid">
@@ -39,6 +41,6 @@ export function InternalStoryEditor({ action, submitLabel, initialValues }: Inte
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

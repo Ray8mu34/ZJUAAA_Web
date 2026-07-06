@@ -1,25 +1,34 @@
+import { AdminPaginationLinks } from "@/components/admin/admin-pagination-links";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { ManualEditor } from "@/components/admin/manual-editor";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { createManualChapter, deleteManualChapter, setManualChapterStatus, updateManualChapter } from "./actions";
 
-type SearchParams = Promise<{ category?: string }>;
+type SearchParams = Promise<{ category?: string; page?: string }>;
+
+const PAGE_SIZE = 20;
 
 export default async function AdminManualPage({ searchParams }: { searchParams: SearchParams }) {
   await requireAdminSession();
 
-  const { category: filterCategoryId } = await searchParams;
+  const { category: filterCategoryId, page } = await searchParams;
+  const currentPage = Math.max(1, Number.parseInt(String(page || "1"), 10) || 1);
+  const chapterWhere = filterCategoryId ? { categoryId: filterCategoryId } : undefined;
 
-  const [categories, chapters, assets] = await Promise.all([
+  const [categories, chapters, totalChapters, assets] = await Promise.all([
     prisma.manualCategory.findMany({
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
     }),
     prisma.manualChapter.findMany({
-      where: filterCategoryId ? { categoryId: filterCategoryId } : undefined,
+      where: chapterWhere,
       orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
-      include: { category: { select: { titleZh: true, slug: true } } }
+      include: { category: { select: { titleZh: true, slug: true } } },
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE
     }),
+    prisma.manualChapter.count({ where: chapterWhere }),
     prisma.mediaAsset.findMany({
       orderBy: { createdAt: "desc" },
       take: 50
@@ -40,6 +49,7 @@ export default async function AdminManualPage({ searchParams }: { searchParams: 
   }));
 
   const filterCategory = filterCategoryId ? categories.find((c) => c.id === filterCategoryId) : null;
+  const totalPages = Math.max(1, Math.ceil(totalChapters / PAGE_SIZE));
 
   return (
     <div className="admin-stack">
@@ -117,34 +127,45 @@ export default async function AdminManualPage({ searchParams }: { searchParams: 
                   />
 
                   <div className="post-actions">
-                    <form action={setManualChapterStatus}>
+                    <AdminActionForm action={setManualChapterStatus} className="" successMessage="文章已发布。">
                       <input type="hidden" name="id" value={chapter.id} />
                       <input type="hidden" name="status" value="PUBLISHED" />
                       <button className="button-ghost" type="submit">
                         发布
                       </button>
-                    </form>
-                    <form action={setManualChapterStatus}>
+                    </AdminActionForm>
+                    <AdminActionForm action={setManualChapterStatus} className="" successMessage="文章已设为草稿。">
                       <input type="hidden" name="id" value={chapter.id} />
                       <input type="hidden" name="status" value="DRAFT" />
                       <button className="button-ghost" type="submit">
                         设为草稿
                       </button>
-                    </form>
+                    </AdminActionForm>
                     <a className="button-ghost" href={`/manual/${chapter.category.slug}/${chapter.slug}`} target="_blank" rel="noreferrer">
                       前台查看
                     </a>
-                    <form action={deleteManualChapter}>
+                    <AdminActionForm
+                      action={deleteManualChapter}
+                      className=""
+                      successMessage="文章已删除。"
+                      confirmMessage={`确认删除手册文章「${chapter.titleZh}」？`}
+                    >
                       <input type="hidden" name="id" value={chapter.id} />
                       <button className="button-ghost danger-text" type="submit">
                         删除
                       </button>
-                    </form>
+                    </AdminActionForm>
                   </div>
                 </div>
               </details>
             ))
           )}
+          <AdminPaginationLinks
+            basePath="/admin/manual"
+            currentPage={currentPage}
+            totalPages={totalPages}
+            searchParams={{ category: filterCategoryId }}
+          />
         </div>
       </section>
     </div>

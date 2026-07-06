@@ -2,16 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 export async function createActivityNotice(formData: FormData) {
+  const session = await requireAdminSession();
+
   const titleZh = String(formData.get("titleZh") || "").trim();
 
   if (!titleZh) {
     throw new Error("活动标题不能为空。");
   }
 
-  await prisma.activityNotice.create({
+  const activity = await prisma.activityNotice.create({
     data: {
       titleZh,
       titleEn: String(formData.get("titleEn") || "").trim() || null,
@@ -26,15 +30,24 @@ export async function createActivityNotice(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "activity.create",
+    actor: session.user,
+    target: activity.id,
+    metadata: { titleZh: activity.titleZh }
+  });
+
   revalidatePath("/activities");
   revalidatePath("/admin/activities");
   revalidatePath("/");
 }
 
 export async function updateActivityNotice(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
-  await prisma.activityNotice.update({
+  const activity = await prisma.activityNotice.update({
     where: { id },
     data: {
       titleZh: String(formData.get("titleZh") || "").trim(),
@@ -50,18 +63,34 @@ export async function updateActivityNotice(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "activity.update",
+    actor: session.user,
+    target: activity.id,
+    metadata: { titleZh: activity.titleZh }
+  });
+
   revalidatePath("/activities");
   revalidatePath("/admin/activities");
   revalidatePath("/");
 }
 
 export async function setActivityNoticeStatus(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const status = String(formData.get("status") || "DRAFT") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-  await prisma.activityNotice.update({
+  const activity = await prisma.activityNotice.update({
     where: { id },
     data: { status }
+  });
+
+  await logAdminAction({
+    action: "activity.set-status",
+    actor: session.user,
+    target: activity.id,
+    metadata: { titleZh: activity.titleZh, status: activity.status }
   });
 
   revalidatePath("/activities");
@@ -70,8 +99,17 @@ export async function setActivityNoticeStatus(formData: FormData) {
 }
 
 export async function deleteActivityNotice(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
-  await prisma.activityNotice.delete({ where: { id } });
+  const activity = await prisma.activityNotice.delete({ where: { id } });
+
+  await logAdminAction({
+    action: "activity.delete",
+    actor: session.user,
+    target: activity.id,
+    metadata: { titleZh: activity.titleZh }
+  });
 
   revalidatePath("/activities");
   revalidatePath("/admin/activities");

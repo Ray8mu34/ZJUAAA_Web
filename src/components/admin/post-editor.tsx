@@ -1,3 +1,4 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { MediaPathField } from "@/components/admin/media-path-field";
 
 type MediaOption = {
@@ -25,7 +26,7 @@ type PostEditorProps = {
 
 export function PostEditor({ action, submitLabel, mediaOptions = [], initialValues }: PostEditorProps) {
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="文章已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
       {!initialValues?.id ? (
         <label>
@@ -79,6 +80,6 @@ export function PostEditor({ action, submitLabel, mediaOptions = [], initialValu
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

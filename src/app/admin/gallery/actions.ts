@@ -3,18 +3,22 @@
 import { revalidatePath } from "next/cache";
 
 import { createUniqueAstroPhotoSlug, generateDefaultAstroPhotoTitle } from "@/lib/astro-photo";
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 const DEFAULT_PHOTOGRAPHER = "天小协";
 
 export async function createAstroPhoto(formData: FormData) {
+  const session = await requireAdminSession();
+
   const rawTitle = String(formData.get("titleZh") || "").trim();
   const titleZh = rawTitle || generateDefaultAstroPhotoTitle();
   const photographer = String(formData.get("photographer") || "").trim() || DEFAULT_PHOTOGRAPHER;
   const rawSlug = String(formData.get("slug") || "").trim();
   const slug = await createUniqueAstroPhotoSlug(rawSlug || titleZh);
 
-  await prisma.astroPhoto.create({
+  const photo = await prisma.astroPhoto.create({
     data: {
       slug,
       titleZh,
@@ -36,15 +40,24 @@ export async function createAstroPhoto(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "astro-photo.create",
+    actor: session.user,
+    target: photo.id,
+    metadata: { titleZh: photo.titleZh, slug: photo.slug, imagePath: photo.imagePath }
+  });
+
   revalidatePath("/");
   revalidatePath("/astrophotography");
   revalidatePath("/admin/gallery");
 }
 
 export async function updateAstroPhoto(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
-  await prisma.astroPhoto.update({
+  const photo = await prisma.astroPhoto.update({
     where: { id },
     data: {
       titleZh: String(formData.get("titleZh") || "").trim() || generateDefaultAstroPhotoTitle(),
@@ -65,6 +78,13 @@ export async function updateAstroPhoto(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "astro-photo.update",
+    actor: session.user,
+    target: photo.id,
+    metadata: { titleZh: photo.titleZh, slug: photo.slug, imagePath: photo.imagePath }
+  });
+
   revalidatePath("/");
   revalidatePath("/astrophotography");
   revalidatePath("/astrophotography/[slug]", "page");
@@ -72,12 +92,21 @@ export async function updateAstroPhoto(formData: FormData) {
 }
 
 export async function setAstroPhotoStatus(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const status = String(formData.get("status") || "PUBLISHED") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-  await prisma.astroPhoto.update({
+  const photo = await prisma.astroPhoto.update({
     where: { id },
     data: { status }
+  });
+
+  await logAdminAction({
+    action: "astro-photo.set-status",
+    actor: session.user,
+    target: photo.id,
+    metadata: { titleZh: photo.titleZh, slug: photo.slug, status: photo.status }
   });
 
   revalidatePath("/");
@@ -86,8 +115,17 @@ export async function setAstroPhotoStatus(formData: FormData) {
 }
 
 export async function deleteAstroPhoto(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
-  await prisma.astroPhoto.delete({ where: { id } });
+  const photo = await prisma.astroPhoto.delete({ where: { id } });
+
+  await logAdminAction({
+    action: "astro-photo.delete",
+    actor: session.user,
+    target: photo.id,
+    metadata: { titleZh: photo.titleZh, slug: photo.slug, imagePath: photo.imagePath }
+  });
 
   revalidatePath("/");
   revalidatePath("/astrophotography");

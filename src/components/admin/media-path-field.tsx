@@ -23,7 +23,7 @@ type MediaPathFieldProps = {
 };
 
 const INITIAL_VISIBLE_COUNT = 8;
-const LOAD_MORE_COUNT = 8;
+const PICKER_PAGE_SIZE = 24;
 
 export function MediaPathField({
   name,
@@ -36,13 +36,17 @@ export function MediaPathField({
   const [selectedPath, setSelectedPath] = useState(value || "");
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
-  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
+  const [page, setPage] = useState(1);
+  const [remoteOptions, setRemoteOptions] = useState<MediaOption[]>([]);
+  const [totalCount, setTotalCount] = useState(options.length);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setSelectedPath(value || "");
   }, [value]);
 
-  const filteredOptions = useMemo(() => {
+  const localFilteredOptions = useMemo(() => {
     const categoryMatched =
       !categories || categories.length === 0
         ? options
@@ -64,13 +68,51 @@ export function MediaPathField({
     });
   }, [categories, keyword, options]);
 
+  useEffect(() => {
+    if (!isPickerOpen) return;
+
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      page: String(page),
+      pageSize: String(PICKER_PAGE_SIZE)
+    });
+
+    if (keyword.trim()) {
+      params.set("q", keyword.trim());
+    }
+
+    if (categories && categories.length > 0) {
+      params.set("categories", categories.join(","));
+    }
+
+    setIsLoading(true);
+    fetch(`/admin/api/media/search?${params.toString()}`, {
+      signal: controller.signal
+    })
+      .then((res) => (res.ok ? res.json() : Promise.reject(new Error("媒体搜索失败"))))
+      .then((data: { items?: MediaOption[]; total?: number; totalPages?: number }) => {
+        setRemoteOptions(data.items || []);
+        setTotalCount(data.total || 0);
+        setTotalPages(data.totalPages || 1);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          setRemoteOptions(localFilteredOptions.slice(0, PICKER_PAGE_SIZE));
+          setTotalCount(localFilteredOptions.length);
+          setTotalPages(Math.max(1, Math.ceil(localFilteredOptions.length / PICKER_PAGE_SIZE)));
+        }
+      })
+      .finally(() => setIsLoading(false));
+
+    return () => controller.abort();
+  }, [categories, isPickerOpen, keyword, localFilteredOptions, page]);
+
   const selectedOption = useMemo(
-    () => options.find((option) => option.filePath === selectedPath),
-    [options, selectedPath]
+    () => [...options, ...remoteOptions].find((option) => option.filePath === selectedPath),
+    [options, remoteOptions, selectedPath]
   );
 
-  const visibleOptions = filteredOptions.slice(0, visibleCount);
-  const hasMore = filteredOptions.length > visibleCount;
+  const pickerOptions = isPickerOpen ? remoteOptions : localFilteredOptions.slice(0, INITIAL_VISIBLE_COUNT);
 
   const handleOpenPicker = () => {
     setIsPickerOpen((prev) => !prev);
@@ -82,7 +124,12 @@ export function MediaPathField({
 
   const handleKeywordChange = (nextValue: string) => {
     setKeyword(nextValue);
-    setVisibleCount(INITIAL_VISIBLE_COUNT);
+    setPage(1);
+  };
+
+  const handleSelect = (filePath: string) => {
+    setSelectedPath(filePath);
+    setIsPickerOpen(false);
   };
 
   return (
@@ -93,7 +140,7 @@ export function MediaPathField({
         <span>{label}</span>
         <div className="media-field-actions">
           <button className="button-ghost" type="button" onClick={handleOpenPicker}>
-            {isPickerOpen ? "收起选图面板" : `打开选图面板 (${filteredOptions.length})`}
+            打开选图弹窗
           </button>
           {selectedPath ? (
             <button className="button-ghost" type="button" onClick={handleClear}>
@@ -120,7 +167,8 @@ export function MediaPathField({
       </div>
 
       {isPickerOpen ? (
-        filteredOptions.length > 0 ? (
+        <div className="media-picker-modal" role="dialog" aria-modal="true" aria-label={`${label}选图`}>
+          <div className="media-picker-backdrop" onClick={() => setIsPickerOpen(false)} />
           <div className="media-picker-panel">
             <div className="media-picker-toolbar">
               <input
@@ -129,43 +177,60 @@ export function MediaPathField({
                 onChange={(event) => handleKeywordChange(event.target.value)}
                 placeholder="搜索图片标题或路径"
               />
-              <span className="muted">共 {filteredOptions.length} 张</span>
+              <span className="muted">{isLoading ? "搜索中..." : `共 ${totalCount} 张`}</span>
+              <button className="button-ghost" type="button" onClick={() => setIsPickerOpen(false)}>
+                关闭
+              </button>
             </div>
 
-            <div className="media-picker-scroll">
-              <div className="media-picker-grid">
-                {visibleOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    className={option.filePath === selectedPath ? "media-picker-item active" : "media-picker-item"}
-                    type="button"
-                    onClick={() => setSelectedPath(option.filePath)}
-                  >
-                    <div className="media-picker-thumb">
-                      <Image src={getImageVariantUrl(option.filePath, "thumb")} alt={option.title} fill sizes="96px" />
-                    </div>
-                    <strong>{option.title}</strong>
-                    <span>{option.filePath}</span>
-                  </button>
-                ))}
+            {pickerOptions.length > 0 ? (
+              <div className="media-picker-scroll">
+                <div className="media-picker-grid">
+                  {pickerOptions.map((option) => (
+                    <button
+                      key={option.id}
+                      className={option.filePath === selectedPath ? "media-picker-item active" : "media-picker-item"}
+                      type="button"
+                      onClick={() => handleSelect(option.filePath)}
+                    >
+                      <div className="media-picker-thumb">
+                        <Image src={getImageVariantUrl(option.filePath, "thumb")} alt={option.title} fill sizes="96px" />
+                      </div>
+                      <strong>{option.title}</strong>
+                      <span>{option.filePath}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="empty-state">{isLoading ? "正在搜索图片..." : emptyMessage}</div>
+            )}
 
-            {hasMore ? (
+            {totalPages > 1 ? (
               <div className="media-picker-footer">
                 <button
                   className="button-ghost"
+                  disabled={page <= 1 || isLoading}
                   type="button"
-                  onClick={() => setVisibleCount((count) => count + LOAD_MORE_COUNT)}
+                  onClick={() => setPage((value) => Math.max(1, value - 1))}
                 >
-                  再显示 {Math.min(LOAD_MORE_COUNT, filteredOptions.length - visibleCount)} 张
+                  上一页
+                </button>
+                <span className="muted">
+                  第 {page} / {totalPages} 页
+                </span>
+                <button
+                  className="button-ghost"
+                  disabled={page >= totalPages || isLoading}
+                  type="button"
+                  onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+                >
+                  下一页
                 </button>
               </div>
             ) : null}
           </div>
-        ) : (
-          <div className="empty-state">{emptyMessage}</div>
-        )
+        </div>
       ) : null}
     </div>
   );

@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 function slugify(value: string) {
@@ -14,6 +16,8 @@ function slugify(value: string) {
 }
 
 export async function createManualChapter(formData: FormData) {
+  const session = await requireAdminSession();
+
   const titleZh = String(formData.get("titleZh") || "").trim();
   const categoryId = String(formData.get("categoryId") || "").trim();
 
@@ -45,7 +49,7 @@ export async function createManualChapter(formData: FormData) {
     chapterNo = (maxChapter._max.chapterNo ? Number(maxChapter._max.chapterNo) : 0) + 1;
   }
 
-  await prisma.manualChapter.create({
+  const chapter = await prisma.manualChapter.create({
     data: {
       slug,
       categoryId,
@@ -61,11 +65,20 @@ export async function createManualChapter(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "manual-chapter.create",
+    actor: session.user,
+    target: chapter.id,
+    metadata: { titleZh: chapter.titleZh, slug: chapter.slug, categoryId: chapter.categoryId }
+  });
+
   revalidatePath("/manual");
   revalidatePath("/admin/manual");
 }
 
 export async function updateManualChapter(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const categoryId = String(formData.get("categoryId") || "").trim();
 
@@ -75,7 +88,7 @@ export async function updateManualChapter(formData: FormData) {
 
   const sortOrder = Number(formData.get("sortOrder") || 0);
 
-  await prisma.manualChapter.update({
+  const chapter = await prisma.manualChapter.update({
     where: { id },
     data: {
       categoryId,
@@ -91,6 +104,13 @@ export async function updateManualChapter(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "manual-chapter.update",
+    actor: session.user,
+    target: chapter.id,
+    metadata: { titleZh: chapter.titleZh, slug: chapter.slug, categoryId: chapter.categoryId }
+  });
+
   revalidatePath("/manual");
   revalidatePath("/manual/[category]", "page");
   revalidatePath("/manual/[category]/[chapter]", "page");
@@ -98,12 +118,21 @@ export async function updateManualChapter(formData: FormData) {
 }
 
 export async function setManualChapterStatus(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const status = String(formData.get("status") || "DRAFT") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-  await prisma.manualChapter.update({
+  const chapter = await prisma.manualChapter.update({
     where: { id },
     data: { status }
+  });
+
+  await logAdminAction({
+    action: "manual-chapter.set-status",
+    actor: session.user,
+    target: chapter.id,
+    metadata: { titleZh: chapter.titleZh, slug: chapter.slug, status: chapter.status }
   });
 
   revalidatePath("/manual");
@@ -111,10 +140,19 @@ export async function setManualChapterStatus(formData: FormData) {
 }
 
 export async function deleteManualChapter(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
-  await prisma.manualChapter.delete({
+  const chapter = await prisma.manualChapter.delete({
     where: { id }
+  });
+
+  await logAdminAction({
+    action: "manual-chapter.delete",
+    actor: session.user,
+    target: chapter.id,
+    metadata: { titleZh: chapter.titleZh, slug: chapter.slug, categoryId: chapter.categoryId }
   });
 
   revalidatePath("/manual");

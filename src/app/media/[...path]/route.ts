@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
 import sharp from "sharp";
@@ -45,7 +45,8 @@ async function tryReadFileFromRoots(parts: string[]) {
 
     try {
       const fileBuffer = await readFile(requestedPath);
-      return { fileBuffer, requestedPath };
+      const fileStat = await stat(requestedPath);
+      return { fileBuffer, fileStat, requestedPath };
     } catch {}
   }
 
@@ -137,12 +138,25 @@ export async function GET(req: NextRequest, context: { params: Promise<{ path: s
 
   try {
     const variant = req.nextUrl.searchParams.get("variant") || "raw";
+    const etag = `"${Buffer.from(`${fileResult.requestedPath}:${fileResult.fileStat.size}:${fileResult.fileStat.mtimeMs}:${variant}`).toString("base64url")}"`;
+
+    if (req.headers.get("if-none-match") === etag) {
+      return new Response(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          "Cache-Control": "public, max-age=31536000, immutable"
+        }
+      });
+    }
+
     const { buffer, contentType } = await buildVariantBuffer(fileResult.requestedPath, fileResult.fileBuffer, variant);
 
     return new Response(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": contentType,
+        ETag: etag,
         "Cache-Control": "public, max-age=31536000, immutable"
       }
     });

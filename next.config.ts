@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
     }
   },
   images: {
+    localPatterns: [
+      {
+        pathname: "/media/**"
+      },
+      {
+        pathname: "/uploads/**"
+      }
+    ],
     remotePatterns: []
   }
 };

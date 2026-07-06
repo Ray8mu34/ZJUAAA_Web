@@ -1,4 +1,5 @@
 import { AboutGalleryEditor } from "@/components/admin/about-gallery-editor";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { AlumniGroupsEditor } from "@/components/admin/alumni-groups-editor";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
@@ -37,7 +38,7 @@ export default async function AdminSettingsPage() {
       <h2>页面内容设置</h2>
       <p className="muted">这里维护各页面说明文案、“关于我们”照片墙，以及历届成员名单。</p>
 
-      <form action={updateSecondaryContent} className="admin-form">
+      <AdminActionForm action={updateSecondaryContent} successMessage="页面内容已保存。">
         <label>
           <span>联系邮箱</span>
           <input name="contactEmail" defaultValue={setting.contactEmail} />
@@ -77,7 +78,7 @@ export default async function AdminSettingsPage() {
 
         <label>
           <span>天文手册顶部内容（Markdown）</span>
-          <small className="muted">在栏目卡片上方显示的内容，支持 Markdown 格式。留空则显示默认的"第一次来到这里？"引导区。</small>
+          <small className="muted">在栏目卡片上方显示的内容，支持 Markdown 格式。留空则显示默认的“第一次来到这里？”引导区。</small>
           <textarea name="manualStartMd" rows={12} defaultValue={setting.manualStartMd} placeholder="# 天协知识手册 · 内容清单&#10;&#10;在这里粘贴 Markdown 内容..." />
         </label>
 
@@ -109,7 +110,7 @@ export default async function AdminSettingsPage() {
         <button className="button-link" type="submit">
           保存页面内容设置
         </button>
-      </form>
+      </AdminActionForm>
     </section>
   );
 }

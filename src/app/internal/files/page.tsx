@@ -23,7 +23,8 @@ export default async function InternalFilesPage() {
 
   const files = await prisma.internalFile.findMany({
     where: { status: "PUBLISHED" },
-    orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }]
+    orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
+    take: 80
   });
 
   return (

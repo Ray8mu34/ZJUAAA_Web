@@ -1,15 +1,16 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
+import { createStoredFilename } from "@/lib/upload-names";
 import { getUploadDir, getUploadPublicPath } from "@/lib/uploads";
-
-const MAX_IMAGE_SIZE = 80 * 1024 * 1024;
+import { validateImageFile } from "@/lib/upload-validation";
 
 function parseSortOrder(value: FormDataEntryValue | null) {
   const parsed = Number.parseInt(String(value || "0"), 10);
@@ -27,33 +28,28 @@ function parseDate(value: FormDataEntryValue | null) {
 async function savePublicityImage(file: File, title: string) {
   if (file.size <= 0) return null;
 
-  if (!file.type.startsWith("image/")) {
-    throw new Error("宣传部作品只支持上传图片。");
-  }
-
-  if (file.size > MAX_IMAGE_SIZE) {
-    throw new Error("图片超过 80MB，请压缩后再上传。");
-  }
+  const image = await validateImageFile(file, {
+    label: "宣传部作品图片"
+  });
 
   const uploadDir = getUploadDir();
   await mkdir(uploadDir, { recursive: true });
 
-  const safeName = file.name.replace(/[^\w.\u4e00-\u9fa5-]/g, "-");
-  const outputName = `${Date.now()}-${randomUUID().slice(0, 8)}-${safeName}`;
+  const outputName = createStoredFilename(image.originalName);
   const outputPath = path.join(uploadDir, outputName);
   const publicPath = getUploadPublicPath(outputName);
 
-  await writeFile(outputPath, Buffer.from(await file.arrayBuffer()));
+  await writeFile(outputPath, image.buffer);
 
   await prisma.mediaAsset.create({
     data: {
       title: title || file.name,
       category: "publicity",
       filePath: publicPath,
-      mimeType: file.type || "image/*",
+      mimeType: image.mimeType,
       altZh: title || null,
       altEn: null,
-      fileSize: file.size
+      fileSize: image.buffer.byteLength
     }
   });
 
@@ -61,6 +57,8 @@ async function savePublicityImage(file: File, title: string) {
 }
 
 export async function createPublicityWork(formData: FormData) {
+  const session = await requireAdminSession();
+
   const title = String(formData.get("title") || "").trim() || "宣传部作品";
   const uploadedFile = formData.get("imageFile");
   const uploadedPath = uploadedFile instanceof File ? await savePublicityImage(uploadedFile, title) : null;
@@ -70,7 +68,7 @@ export async function createPublicityWork(formData: FormData) {
     throw new Error("请上传或选择一张作品图片。");
   }
 
-  await prisma.publicityWork.create({
+  const work = await prisma.publicityWork.create({
     data: {
       title,
       imagePath,
@@ -82,18 +80,27 @@ export async function createPublicityWork(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "publicity-work.create",
+    actor: session.user,
+    target: work.id,
+    metadata: { title: work.title, imagePath: work.imagePath, author: work.author }
+  });
+
   revalidatePath("/admin/internal/publicity");
   revalidatePath("/internal/publicity");
 }
 
 export async function updatePublicityWork(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const title = String(formData.get("title") || "").trim() || "宣传部作品";
   const uploadedFile = formData.get("imageFile");
   const uploadedPath = uploadedFile instanceof File ? await savePublicityImage(uploadedFile, title) : null;
   const selectedPath = String(formData.get("imagePath") || "").trim();
 
-  await prisma.publicityWork.update({
+  const work = await prisma.publicityWork.update({
     where: { id },
     data: {
       title,
@@ -105,17 +112,33 @@ export async function updatePublicityWork(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "publicity-work.update",
+    actor: session.user,
+    target: work.id,
+    metadata: { title: work.title, imagePath: work.imagePath, author: work.author }
+  });
+
   revalidatePath("/admin/internal/publicity");
   revalidatePath("/internal/publicity");
 }
 
 export async function setPublicityWorkStatus(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const status = String(formData.get("status") || "PUBLISHED") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-  await prisma.publicityWork.update({
+  const work = await prisma.publicityWork.update({
     where: { id },
     data: { status }
+  });
+
+  await logAdminAction({
+    action: "publicity-work.set-status",
+    actor: session.user,
+    target: work.id,
+    metadata: { title: work.title, status: work.status }
   });
 
   revalidatePath("/admin/internal/publicity");
@@ -123,8 +146,17 @@ export async function setPublicityWorkStatus(formData: FormData) {
 }
 
 export async function deletePublicityWork(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
-  await prisma.publicityWork.delete({ where: { id } });
+  const work = await prisma.publicityWork.delete({ where: { id } });
+
+  await logAdminAction({
+    action: "publicity-work.delete",
+    actor: session.user,
+    target: work.id,
+    metadata: { title: work.title, imagePath: work.imagePath }
+  });
 
   revalidatePath("/admin/internal/publicity");
   revalidatePath("/internal/publicity");

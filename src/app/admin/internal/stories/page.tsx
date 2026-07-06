@@ -1,15 +1,31 @@
+import { AdminPaginationLinks } from "@/components/admin/admin-pagination-links";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { InternalStoryEditor } from "@/components/admin/internal-story-editor";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
 import { createInternalStory, deleteInternalStory, setInternalStoryStatus, updateInternalStory } from "./actions";
 
-export default async function AdminInternalStoriesPage() {
-  await requireAdminSession();
+const PAGE_SIZE = 20;
 
-  const stories = await prisma.internalStory.findMany({
-    orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }]
-  });
+export default async function AdminInternalStoriesPage({
+  searchParams
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  await requireAdminSession();
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, Number.parseInt(String(page || "1"), 10) || 1);
+
+  const [stories, totalStories] = await Promise.all([
+    prisma.internalStory.findMany({
+      orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE
+    }),
+    prisma.internalStory.count()
+  ]);
+  const totalPages = Math.max(1, Math.ceil(totalStories / PAGE_SIZE));
 
   return (
     <div className="admin-stack">
@@ -52,34 +68,40 @@ export default async function AdminInternalStoriesPage() {
                   />
 
                   <div className="post-actions">
-                    <form action={setInternalStoryStatus}>
+                    <AdminActionForm action={setInternalStoryStatus} className="" successMessage="往事已发布。">
                       <input type="hidden" name="id" value={story.id} />
                       <input type="hidden" name="status" value="PUBLISHED" />
                       <button className="button-ghost" type="submit">
                         发布
                       </button>
-                    </form>
-                    <form action={setInternalStoryStatus}>
+                    </AdminActionForm>
+                    <AdminActionForm action={setInternalStoryStatus} className="" successMessage="往事已设为草稿。">
                       <input type="hidden" name="id" value={story.id} />
                       <input type="hidden" name="status" value="DRAFT" />
                       <button className="button-ghost" type="submit">
                         设为草稿
                       </button>
-                    </form>
+                    </AdminActionForm>
                     <a className="button-ghost" href="/internal/stories" target="_blank" rel="noreferrer">
                       前台查看
                     </a>
-                    <form action={deleteInternalStory}>
+                    <AdminActionForm
+                      action={deleteInternalStory}
+                      className=""
+                      successMessage="往事已删除。"
+                      confirmMessage={`确认删除这条天协往事？`}
+                    >
                       <input type="hidden" name="id" value={story.id} />
                       <button className="button-ghost danger-text" type="submit">
                         删除
                       </button>
-                    </form>
+                    </AdminActionForm>
                   </div>
                 </div>
               </details>
             ))
           )}
+          <AdminPaginationLinks basePath="/admin/internal/stories" currentPage={currentPage} totalPages={totalPages} />
         </div>
       </section>
     </div>

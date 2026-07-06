@@ -1,3 +1,5 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
+
 type InternalFileEditorProps = {
   action: (formData: FormData) => Promise<void>;
   submitLabel: string;
@@ -12,7 +14,7 @@ type InternalFileEditorProps = {
 
 export function InternalFileEditor({ action, submitLabel, initialValues }: InternalFileEditorProps) {
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="内部资料已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
 
       <div className="admin-form-grid">
@@ -45,6 +47,6 @@ export function InternalFileEditor({ action, submitLabel, initialValues }: Inter
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

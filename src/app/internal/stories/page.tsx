@@ -17,7 +17,8 @@ export default async function InternalStoriesPage() {
 
   const stories = await prisma.internalStory.findMany({
     where: { status: "PUBLISHED" },
-    orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }]
+    orderBy: [{ sortOrder: "asc" }, { updatedAt: "desc" }],
+    take: 160
   });
 
   return (

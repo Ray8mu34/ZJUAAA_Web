@@ -34,7 +34,8 @@ export default async function AstroPhotographyPage({
             }
           : {})
       },
-      orderBy: { updatedAt: "desc" }
+      orderBy: { updatedAt: "desc" },
+      take: 80
     })
   ]);
   const randomizedPhotos = shuffleItems(photos);

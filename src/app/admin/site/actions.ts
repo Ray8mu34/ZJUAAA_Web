@@ -2,10 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 export async function updateSiteSettings(formData: FormData) {
-  await prisma.siteSetting.upsert({
+  const session = await requireAdminSession();
+
+  const setting = await prisma.siteSetting.upsert({
     where: { id: "site" },
     create: {
       id: "site"
@@ -35,6 +39,17 @@ export async function updateSiteSettings(formData: FormData) {
       qqLabel: String(formData.get("qqLabel") || ""),
       addressZh: String(formData.get("addressZh") || ""),
       addressEn: String(formData.get("addressEn") || "")
+    }
+  });
+
+  await logAdminAction({
+    action: "site-settings.update",
+    actor: session.user,
+    target: setting.id,
+    metadata: {
+      siteNameZh: setting.siteNameZh,
+      heroImagePath: setting.heroImagePath,
+      logoImagePath: setting.logoImagePath
     }
   });
 

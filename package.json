@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "ops:preflight": "node scripts/preflight-production.mjs",
+    "ops:scan-orphan-uploads": "node scripts/scan-orphan-uploads.mjs",
+    "ops:summarize-downloads": "node scripts/summarize-download-logs.mjs",
     "db:generate": "prisma generate",
     "db:init": "node scripts/init-db.mjs",
     "db:sync": "node scripts/sync-db.mjs",
@@ -29,16 +35,22 @@
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
+    "sharp": "^0.35.3",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
+    "@playwright/test": "^1.61.1",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/adm-zip": "^0.5.8",
     "@types/node": "^22.19.15",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^15.5.13",
     "prisma": "^6.19.2",
     "tailwindcss": "^4.2.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }

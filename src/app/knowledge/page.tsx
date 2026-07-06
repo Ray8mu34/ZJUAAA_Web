@@ -30,7 +30,8 @@ export default async function KnowledgePage({
             }
           : {})
       },
-      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }]
+      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
+      take: 60
     })
   ]);
 

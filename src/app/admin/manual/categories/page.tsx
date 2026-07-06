@@ -1,3 +1,5 @@
+import { AdminPaginationLinks } from "@/components/admin/admin-pagination-links";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
@@ -5,14 +7,25 @@ import { CategoryEditor } from "@/components/admin/category-editor";
 
 import { createManualCategory, deleteManualCategory, toggleCategoryVisibility, updateManualCategory } from "./actions";
 
-export default async function AdminManualCategoriesPage() {
-  await requireAdminSession();
+const PAGE_SIZE = 20;
 
-  const [categories, assets] = await Promise.all([
+export default async function AdminManualCategoriesPage({
+  searchParams
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  await requireAdminSession();
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, Number.parseInt(String(page || "1"), 10) || 1);
+
+  const [categories, totalCategories, assets] = await Promise.all([
     prisma.manualCategory.findMany({
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-      include: { _count: { select: { chapters: true } } }
+      include: { _count: { select: { chapters: true } } },
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE
     }),
+    prisma.manualCategory.count(),
     prisma.mediaAsset.findMany({
       orderBy: { createdAt: "desc" },
       take: 50
@@ -25,6 +38,7 @@ export default async function AdminManualCategoriesPage() {
     filePath: asset.filePath,
     category: asset.category
   }));
+  const totalPages = Math.max(1, Math.ceil(totalCategories / PAGE_SIZE));
 
   return (
     <div className="admin-stack">
@@ -78,24 +92,30 @@ export default async function AdminManualCategoriesPage() {
                   />
 
                   <div className="post-actions">
-                    <form action={toggleCategoryVisibility}>
+                    <AdminActionForm action={toggleCategoryVisibility} className="" successMessage="栏目可见性已更新。">
                       <input type="hidden" name="id" value={category.id} />
                       <input type="hidden" name="isVisible" value={String(category.isVisible)} />
                       <button className="button-ghost" type="submit">
                         {category.isVisible ? "设为隐藏" : "设为可见"}
                       </button>
-                    </form>
-                    <form action={deleteManualCategory}>
+                    </AdminActionForm>
+                    <AdminActionForm
+                      action={deleteManualCategory}
+                      className=""
+                      successMessage="栏目已删除。"
+                      confirmMessage={`确认删除栏目「${category.titleZh}」？`}
+                    >
                       <input type="hidden" name="id" value={category.id} />
                       <button className="button-ghost danger-text" type="submit">
                         删除栏目
                       </button>
-                    </form>
+                    </AdminActionForm>
                   </div>
                 </div>
               </details>
             ))
           )}
+          <AdminPaginationLinks basePath="/admin/manual/categories" currentPage={currentPage} totalPages={totalPages} />
         </div>
       </section>
     </div>

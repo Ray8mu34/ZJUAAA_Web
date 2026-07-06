@@ -98,7 +98,8 @@ export default async function ActivitiesPage({
             }
           : {})
       },
-      orderBy: [{ startAt: "asc" }, { createdAt: "desc" }]
+      orderBy: [{ startAt: "asc" }, { createdAt: "desc" }],
+      take: 80
     })
   ]);
 

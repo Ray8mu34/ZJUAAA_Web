@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { MediaPathField } from "@/components/admin/media-path-field";
 
 type MediaOption = {
@@ -42,6 +43,8 @@ function buildMarkdownImage(title: string, filePath: string) {
 export function ManualEditor({ action, submitLabel, mediaOptions = [], categories = [], initialValues }: ManualEditorProps) {
   const markdownRef = useRef<HTMLTextAreaElement | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState("");
   const insertableOptions = useMemo(
     () => mediaOptions.filter((option) => ["manual", "shared"].includes(option.category || "shared")),
     [mediaOptions]
@@ -69,26 +72,47 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
 
   const handleUpload = useCallback(async (file: File) => {
     setUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("category", "manual");
+    setUploadProgress(0);
+    setUploadError("");
 
-      const res = await fetch("/admin/api/upload", { method: "POST", body: fd });
-      const data = await res.json();
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("category", "manual");
 
-      if (!res.ok) {
-        alert(data.error || "上传失败");
+    const request = new XMLHttpRequest();
+    request.upload.onprogress = (progressEvent) => {
+      if (!progressEvent.lengthComputable) return;
+      setUploadProgress(Math.round((progressEvent.loaded / progressEvent.total) * 100));
+    };
+
+    request.onload = () => {
+      setUploading(false);
+      setUploadProgress(request.status >= 200 && request.status < 300 ? 100 : 0);
+
+      let data: { filePath?: string; error?: string } = {};
+      try {
+        data = JSON.parse(request.responseText);
+      } catch {
+        data = {};
+      }
+
+      if (request.status < 200 || request.status >= 300 || !data.filePath) {
+        setUploadError(data.error || "上传失败，请稍后重试。");
         return;
       }
 
       const title = file.name.replace(/\.[^.]+$/, "");
       insertImageSyntax(title, data.filePath);
-    } catch {
-      alert("上传出错，请重试。");
-    } finally {
+    };
+
+    request.onerror = () => {
       setUploading(false);
-    }
+      setUploadProgress(0);
+      setUploadError("网络连接中断，上传失败。");
+    };
+
+    request.open("POST", "/admin/api/upload");
+    request.send(fd);
   }, []);
 
   const handleDrop = useCallback(
@@ -119,7 +143,7 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
   );
 
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="手册文章已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
       {!initialValues?.id ? <input type="hidden" name="slug" value="" /> : null}
 
@@ -188,14 +212,20 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
           onPaste={handlePaste}
           placeholder="在此输入 Markdown 正文..."
         />
-        {uploading ? <small className="muted">正在上传图片...</small> : null}
+        {uploading ? (
+          <div className="admin-upload-progress" aria-label={`手册图片上传进度 ${uploadProgress}%`}>
+            <span style={{ width: `${uploadProgress}%` }} />
+            <strong>{uploadProgress}%</strong>
+          </div>
+        ) : null}
+        {uploadError ? <div className="admin-toast error">{uploadError}</div> : null}
       </label>
 
       <div className="manual-media-helper">
         <div>
           <strong>手册插图助手</strong>
           <p className="muted">
-            先在媒体库上传图片，再从这里点"插入到正文"，系统会自动把 Markdown 图片语法插入到当前光标位置。也可以直接在上方编辑器中拖拽或粘贴图片。
+            先在媒体库上传图片，再从这里点“插入到正文”，系统会自动把 Markdown 图片语法插入到当前光标位置。也可以直接在上方编辑器中拖拽或粘贴图片。
           </p>
         </div>
 
@@ -227,6 +257,6 @@ export function ManualEditor({ action, submitLabel, mediaOptions = [], categorie
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

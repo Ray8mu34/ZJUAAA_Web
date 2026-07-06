@@ -3,6 +3,7 @@
 import { ArrowDown, ArrowUp, GripVertical, LoaderCircle } from "lucide-react";
 import { DragEvent, useEffect, useRef, useState, useTransition } from "react";
 
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { PostEditor } from "@/components/admin/post-editor";
 
 type ServerAction = (formData: FormData) => Promise<void>;
@@ -240,29 +241,34 @@ export function PostOrderList({
               />
 
               <div className="post-actions">
-                <form action={statusAction}>
+                <AdminActionForm action={statusAction} className="" successMessage="文章已发布。">
                   <input type="hidden" name="id" value={post.id} />
                   <input type="hidden" name="status" value="PUBLISHED" />
                   <button className="button-ghost" type="submit">
                     发布
                   </button>
-                </form>
-                <form action={statusAction}>
+                </AdminActionForm>
+                <AdminActionForm action={statusAction} className="" successMessage="文章已转为草稿。">
                   <input type="hidden" name="id" value={post.id} />
                   <input type="hidden" name="status" value="DRAFT" />
                   <button className="button-ghost" type="submit">
                     转为草稿
                   </button>
-                </form>
+                </AdminActionForm>
                 <a className="button-ghost" href={post.externalUrl || "#"} target="_blank" rel="noreferrer">
                   查看外链
                 </a>
-                <form action={deleteAction}>
+                <AdminActionForm
+                  action={deleteAction}
+                  className=""
+                  successMessage="文章已删除。"
+                  confirmMessage={`确认删除文章「${post.titleZh}」？`}
+                >
                   <input type="hidden" name="id" value={post.id} />
                   <button className="button-ghost danger-text" type="submit">
                     删除
                   </button>
-                </form>
+                </AdminActionForm>
               </div>
             </div>
           </details>

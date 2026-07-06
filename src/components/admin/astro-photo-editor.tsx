@@ -1,3 +1,4 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { MediaPathField } from "@/components/admin/media-path-field";
 
 type MediaOption = {
@@ -30,7 +31,7 @@ type AstroPhotoEditorProps = {
 
 export function AstroPhotoEditor({ action, submitLabel, mediaOptions = [], initialValues }: AstroPhotoEditorProps) {
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="摄影作品已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
       {!initialValues?.id ? (
         <label>
@@ -119,6 +120,6 @@ export function AstroPhotoEditor({ action, submitLabel, mediaOptions = [], initi
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

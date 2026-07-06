@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { MediaFrame } from "@/components/site/media-frame";
@@ -28,9 +29,9 @@ export default async function AstroPhotographyDetailPage({
       <main className="section">
         <div className="shell admin-stack">
           <section className="content-card">
-            <a className="button-ghost detail-back-button" href="/astrophotography">
+            <Link className="button-ghost detail-back-button" href="/astrophotography">
               返回摄影列表
-            </a>
+            </Link>
             <p className="muted">天文摄影 / {photo.photographer}</p>
             <h1>{photo.titleZh}</h1>
             <p>{photo.descriptionZh || "暂无作品介绍。"}</p>

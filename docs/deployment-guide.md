@@ -183,6 +183,24 @@ ufw enable
 
 ## 6. 日常更新代码
 
+如果本次只是前端、后台逻辑、测试、文档或依赖更新，没有修改 `prisma/schema.prisma`，使用这组命令：
+
+```bash
+cd /srv/apps/zjuaaa-site
+git pull
+npm install
+npm run ops:preflight
+npm run ops:scan-orphan-uploads
+npm run lint
+npm run typecheck
+npm run test:unit
+npm run build
+pm2 restart zjuaaa-site
+pm2 logs zjuaaa-site --lines 30
+```
+
+这组命令不会同步或迁移数据库结构。上传大小仍由 `next.config.ts` 的 `bodySizeLimit: "512mb"` 和 Nginx 的 `client_max_body_size 512M` 控制。
+
 通用更新命令：
 
 ```bash
@@ -208,13 +226,14 @@ pm2 logs zjuaaa-site --lines 30
 | `INTERNAL_USERNAME` | 内部资料账号 |
 | `INTERNAL_PASSWORD` | 内部资料密码 |
 | `INTERNAL_FILE_DIR` | 内部文件保存目录，建议 `/srv/data/zjuaaa-site/internal-files` |
+| `AUDIT_LOG_DIR` | 管理员操作日志和内部资料下载日志目录，建议 `/srv/data/zjuaaa-site/logs` |
 
 更新或首次配置内部资料变量：
 
 ```bash
 cd /srv/apps/zjuaaa-site
 cp .env ".env.bak.$(date +%Y%m%d%H%M%S)"
-grep -vE '^(INTERNAL_AUTH_SECRET|INTERNAL_USERNAME|INTERNAL_PASSWORD|INTERNAL_FILE_DIR)=' .env > .env.tmp
+grep -vE '^(INTERNAL_AUTH_SECRET|INTERNAL_USERNAME|INTERNAL_PASSWORD|INTERNAL_FILE_DIR|AUDIT_LOG_DIR)=' .env > .env.tmp
 cat .env.tmp > .env
 rm .env.tmp
 cat >> .env <<EOF
@@ -222,14 +241,38 @@ INTERNAL_AUTH_SECRET="$(openssl rand -base64 48 | tr -d '\n')"
 INTERNAL_USERNAME="替换为内部资料账号"
 INTERNAL_PASSWORD="替换为内部资料密码"
 INTERNAL_FILE_DIR="/srv/data/zjuaaa-site/internal-files"
+AUDIT_LOG_DIR="/srv/data/zjuaaa-site/logs"
 EOF
 mkdir -p /srv/data/zjuaaa-site/internal-files
+mkdir -p /srv/data/zjuaaa-site/logs
 pm2 restart zjuaaa-site
 ```
 
 注意：内部资料账号密码不是后台管理员账号。修改后，已登录的内部资料访问者可能需要重新登录。
 
-## 8. 数据库结构变更
+## 8. 上传与媒体检查
+
+- 单文件上传大小由 Nginx `client_max_body_size 512M` 和 Next `bodySizeLimit: "512mb"` 控制。
+- 新上传图片支持 JPG、PNG、GIF、WebP；不再接受 SVG 上传。已有 SVG 文件如果已经在上传目录中，媒体读取路由仍可按原路径访问。
+- 管理员操作日志和内部资料下载日志默认写入项目下 `logs/`，也可以用 `AUDIT_LOG_DIR` 指向 `/srv/data/zjuaaa-site/logs` 这类持久目录。
+- 下载日志只读汇总：
+
+```bash
+cd /srv/apps/zjuaaa-site
+npm run ops:summarize-downloads
+```
+
+- 日志轮转建议：如果使用 `/srv/data/zjuaaa-site/logs`，可按月归档 `audit.jsonl` 与 `downloads.jsonl`，归档前先 `cp` 备份，再用 `: > downloads.jsonl` 清空当前文件。不要删除整个日志目录。
+- 只读扫描孤儿上传文件：
+
+```bash
+cd /srv/apps/zjuaaa-site
+npm run ops:scan-orphan-uploads
+```
+
+该命令只输出报告，不删除任何文件。
+
+## 9. 数据库结构变更
 
 当 `prisma/schema.prisma` 发生变化时，生产环境需要同步数据库结构：
 
@@ -248,27 +291,27 @@ pm2 restart zjuaaa-site
 - 如果新增非空字段，最好在 schema 中设置默认值，避免已有数据无法迁移。
 - 执行数据库同步前建议先备份。
 
-## 9. 备份与恢复
+## 10. 备份与恢复
 
-### 9.1 备份数据库
+### 10.1 备份数据库
 
 ```bash
 cp /srv/data/zjuaaa-site/dev.db /srv/backups/zjuaaa-site/dev-$(date +%F-%H%M).db
 ```
 
-### 9.2 备份公开上传文件
+### 10.2 备份公开上传文件
 
 ```bash
 rsync -a /srv/data/zjuaaa-site/uploads/ /srv/backups/zjuaaa-site/uploads-$(date +%F-%H%M)/
 ```
 
-### 9.3 备份内部文件
+### 10.3 备份内部文件
 
 ```bash
 rsync -a /srv/data/zjuaaa-site/internal-files/ /srv/backups/zjuaaa-site/internal-files-$(date +%F-%H%M)/
 ```
 
-### 9.4 恢复数据库
+### 10.4 恢复数据库
 
 ```bash
 pm2 stop zjuaaa-site
@@ -276,7 +319,7 @@ cp /srv/backups/zjuaaa-site/dev-2026-03-26-1200.db /srv/data/zjuaaa-site/dev.db
 pm2 start zjuaaa-site
 ```
 
-### 9.5 恢复上传文件
+### 10.5 恢复上传文件
 
 ```bash
 rsync -a /srv/backups/zjuaaa-site/uploads-2026-03-26-1200/ /srv/data/zjuaaa-site/uploads/
@@ -284,7 +327,23 @@ rsync -a /srv/backups/zjuaaa-site/internal-files-2026-03-26-1200/ /srv/data/zjua
 pm2 restart zjuaaa-site
 ```
 
-## 10. 常用运维命令
+### 10.6 无数据库更新回滚
+
+如果一次更新没有执行 `prisma db push`，通常只需要回滚代码和依赖构建产物：
+
+```bash
+cd /srv/apps/zjuaaa-site
+git log --oneline -5
+git checkout <上一个可用提交>
+npm install
+npm run build
+pm2 restart zjuaaa-site
+pm2 logs zjuaaa-site --lines 30
+```
+
+这不会修改数据库，也不会删除 `UPLOAD_DIR`、`INTERNAL_FILE_DIR` 或 `AUDIT_LOG_DIR` 里的文件。
+
+## 11. 常用运维命令
 
 查看服务：
 
@@ -334,7 +393,7 @@ sqlite3 /srv/data/zjuaaa-site/dev.db
 .quit
 ```
 
-## 11. 上线检查清单
+## 12. 上线检查清单
 
 - [ ] 首页可以打开。
 - [ ] `/admin` 会要求登录。
@@ -351,7 +410,7 @@ sqlite3 /srv/data/zjuaaa-site/dev.db
 - [ ] HTTPS 生效。
 - [ ] 已完成数据库、公开上传文件和内部文件备份。
 
-## 12. 常见故障排查
+## 13. 常见故障排查
 
 | 问题 | 排查方向 |
 | --- | --- |

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { SiteFooter } from "@/components/site/footer";
@@ -35,7 +36,8 @@ export default async function ManualCategoryPage({
       categoryId: category.id,
       status: "PUBLISHED"
     },
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    take: 120
   });
 
   return (
@@ -44,9 +46,9 @@ export default async function ManualCategoryPage({
       <main className="section">
         <div className="shell">
           <section className="manual-category-head">
-            <a className="manual-category-parent" href="/manual">
+            <Link className="manual-category-parent" href="/manual">
               天文手册
-            </a>
+            </Link>
             <h1>{category.titleZh}</h1>
             {category.summaryZh ? <p>{category.summaryZh}</p> : null}
             <span>{chapters.length} 篇文章</span>
@@ -58,7 +60,7 @@ export default async function ManualCategoryPage({
               <div className="empty-state">该栏目下还没有发布的文章。</div>
             ) : (
               chapters.map((chapter, index) => (
-                <a key={chapter.id} className="manual-chapter-card manual-post-card" href={`/manual/${category.slug}/${chapter.slug}`}>
+                <Link key={chapter.id} className="manual-chapter-card manual-post-card" href={`/manual/${category.slug}/${chapter.slug}`}>
                   <div className="manual-post-index" aria-hidden="true">
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <time>{formatManualDate(chapter.updatedAt)}</time>
@@ -69,15 +71,15 @@ export default async function ManualCategoryPage({
                     {chapter.author ? <p className="manual-card-author">作者：{chapter.author}</p> : null}
                     {chapter.summaryZh ? <p className="manual-card-summary">{chapter.summaryZh}</p> : null}
                   </div>
-                </a>
+                </Link>
               ))
             )}
           </section>
 
           <div className="manual-back-link">
-            <a className="button-ghost" href="/manual">
+            <Link className="button-ghost" href="/manual">
               返回栏目总览
-            </a>
+            </Link>
           </div>
         </div>
       </main>

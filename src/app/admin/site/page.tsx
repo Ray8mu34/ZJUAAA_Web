@@ -1,3 +1,4 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { MediaPathField } from "@/components/admin/media-path-field";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
@@ -31,7 +32,7 @@ export default async function AdminSitePage() {
       <h2>首页管理</h2>
       <p className="muted">这里维护首页主标题、按钮、视觉图、协会 Logo，以及全站卡片样式。</p>
 
-      <form action={updateSiteSettings} className="admin-form">
+      <AdminActionForm action={updateSiteSettings} successMessage="首页设置已保存。">
         <div className="admin-form-grid">
           <label>
             <span>站点中文名</span>
@@ -174,7 +175,7 @@ export default async function AdminSitePage() {
         <button className="button-link" type="submit">
           保存首页设置
         </button>
-      </form>
+      </AdminActionForm>
     </section>
   );
 }

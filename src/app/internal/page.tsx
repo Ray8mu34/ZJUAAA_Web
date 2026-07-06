@@ -5,16 +5,21 @@ import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
 import { hasInternalAccess } from "@/lib/internal-auth";
+import { formatRetryAfter } from "@/lib/login-rate-limit";
 
 import { internalSignIn, internalSignOut } from "./actions";
 
 type InternalPageProps = {
-  searchParams: Promise<{ error?: string; next?: string }>;
+  searchParams: Promise<{ error?: string; next?: string; retry?: string }>;
 };
 
-function getErrorMessage(error?: string) {
+function getErrorMessage(error?: string, retry?: string) {
   if (error === "config") {
     return "服务器还没有配置内部资料账号和密码，请先设置 INTERNAL_USERNAME 与 INTERNAL_PASSWORD。";
+  }
+
+  if (error === "rate-limited") {
+    return `尝试次数过多，请在 ${formatRetryAfter(Number(retry || 60))} 再试。`;
   }
 
   if (error === "invalid") {
@@ -35,7 +40,7 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
     })
   ]);
   const callbackUrl = params.next?.startsWith("/internal") ? params.next : "/internal";
-  const errorMessage = getErrorMessage(params.error);
+  const errorMessage = getErrorMessage(params.error, params.retry);
 
   return (
     <>

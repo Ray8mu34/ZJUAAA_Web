@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 
 import { deleteMediaAsset } from "@/app/admin/media/actions";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { getImageVariantUrl } from "@/lib/image-variants";
 
 type MediaAssetItem = {
@@ -68,12 +69,17 @@ export function AdminMediaGrid({
             <p className="tag">{categoryLabels[asset.category] || asset.category}</p>
             <p className="muted">{asset.filePath}</p>
             <p className="muted">{asset.mimeType}</p>
-            <form action={deleteMediaAsset}>
+            <AdminActionForm
+              action={deleteMediaAsset}
+              className=""
+              successMessage="图片记录已删除。"
+              confirmMessage={`确认删除图片「${asset.title}」？如果图片仍被引用，系统会阻止删除。`}
+            >
               <input type="hidden" name="id" value={asset.id} />
               <button className="button-ghost danger-text" type="submit">
                 删除图片
               </button>
-            </form>
+            </AdminActionForm>
           </article>
         ))}
       </div>

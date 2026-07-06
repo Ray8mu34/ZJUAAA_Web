@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
@@ -15,6 +16,7 @@ export default async function ManualIndexPage() {
     prisma.manualCategory.findMany({
       where: { isVisible: true },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+      take: 60,
       include: {
         _count: {
           select: { chapters: { where: { status: "PUBLISHED" } } }
@@ -38,12 +40,12 @@ export default async function ManualIndexPage() {
           </div>
 
           {/* Start entry */}
-          <a className="manual-start-entry content-card" href="/manual/start">
+          <Link className="manual-start-entry content-card" href="/manual/start">
             <div className="manual-start-content">
               <h3>第一次来到这里？</h3>
               <p className="muted">查看知识手册内容清单，了解全部文章目录。</p>
             </div>
-          </a>
+          </Link>
 
           {/* Category cards */}
           <section className="manual-category-grid">
@@ -51,7 +53,7 @@ export default async function ManualIndexPage() {
               <div className="empty-state">还没有可见的栏目，请在后台管理栏目。</div>
             ) : (
               categories.map((category) => (
-                <a key={category.id} className="manual-category-card" href={`/manual/${category.slug}`}>
+                <Link key={category.id} className="manual-category-card" href={`/manual/${category.slug}`}>
                   <div className="manual-category-cover">
                     {category.coverImagePath ? (
                       <Image
@@ -71,7 +73,7 @@ export default async function ManualIndexPage() {
                       </div>
                     </div>
                   </div>
-                </a>
+                </Link>
               ))
             )}
           </section>

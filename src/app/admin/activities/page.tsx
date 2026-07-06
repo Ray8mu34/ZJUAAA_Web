@@ -1,3 +1,5 @@
+import { AdminPaginationLinks } from "@/components/admin/admin-pagination-links";
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { ActivityEditor } from "@/components/admin/activity-editor";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
@@ -14,13 +16,24 @@ function formatTime(value: Date | null) {
   return value.toLocaleString("zh-CN");
 }
 
-export default async function AdminActivitiesPage() {
-  await requireAdminSession();
+const PAGE_SIZE = 20;
 
-  const [notices, assets] = await Promise.all([
+export default async function AdminActivitiesPage({
+  searchParams
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  await requireAdminSession();
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, Number.parseInt(String(page || "1"), 10) || 1);
+
+  const [notices, totalNotices, assets] = await Promise.all([
     prisma.activityNotice.findMany({
-      orderBy: [{ startAt: "asc" }, { updatedAt: "desc" }]
+      orderBy: [{ startAt: "asc" }, { updatedAt: "desc" }],
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE
     }),
+    prisma.activityNotice.count(),
     prisma.mediaAsset.findMany({
       orderBy: { createdAt: "desc" },
       take: 50
@@ -33,6 +46,7 @@ export default async function AdminActivitiesPage() {
     filePath: asset.filePath,
     category: asset.category
   }));
+  const totalPages = Math.max(1, Math.ceil(totalNotices / PAGE_SIZE));
 
   return (
     <div className="admin-stack">
@@ -79,31 +93,37 @@ export default async function AdminActivitiesPage() {
                   />
 
                   <div className="post-actions">
-                    <form action={setActivityNoticeStatus}>
+                    <AdminActionForm action={setActivityNoticeStatus} className="" successMessage="活动已发布。">
                       <input type="hidden" name="id" value={notice.id} />
                       <input type="hidden" name="status" value="PUBLISHED" />
                       <button className="button-ghost" type="submit">
                         发布
                       </button>
-                    </form>
-                    <form action={setActivityNoticeStatus}>
+                    </AdminActionForm>
+                    <AdminActionForm action={setActivityNoticeStatus} className="" successMessage="活动已设为草稿。">
                       <input type="hidden" name="id" value={notice.id} />
                       <input type="hidden" name="status" value="DRAFT" />
                       <button className="button-ghost" type="submit">
                         设为草稿
                       </button>
-                    </form>
-                    <form action={deleteActivityNotice}>
+                    </AdminActionForm>
+                    <AdminActionForm
+                      action={deleteActivityNotice}
+                      className=""
+                      successMessage="活动已删除。"
+                      confirmMessage={`确认删除活动「${notice.titleZh}」？`}
+                    >
                       <input type="hidden" name="id" value={notice.id} />
                       <button className="button-ghost danger-text" type="submit">
                         删除
                       </button>
-                    </form>
+                    </AdminActionForm>
                   </div>
                 </div>
               </details>
             ))
           )}
+          <AdminPaginationLinks basePath="/admin/activities" currentPage={currentPage} totalPages={totalPages} />
         </div>
       </section>
     </div>

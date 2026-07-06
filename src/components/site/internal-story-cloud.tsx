@@ -22,7 +22,6 @@ import {
   PenTool,
   RefreshCw,
   Rocket,
-  ScrollText,
   Sparkles,
   Star,
   Telescope,

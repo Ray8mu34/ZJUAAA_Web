@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type CategoryOption = {
   id: string;
@@ -13,48 +14,64 @@ type ImportResult = {
   message?: string;
   error?: string;
   results?: Array<{ title: string; slug: string }>;
+  importedImages?: Array<{ originalPath: string; filePath: string }>;
+  skippedFiles?: Array<{ fileName: string; reason: string }>;
 };
 
 export default function AdminManualImportPage() {
   const [importing, setImporting] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<ImportResult | null>(null);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
-  const [categoriesLoaded, setCategoriesLoaded] = useState(false);
 
-  // Load categories on mount
-  if (!categoriesLoaded) {
-    setCategoriesLoaded(true);
+  useEffect(() => {
     fetch("/admin/api/import/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data.categories || []))
       .catch(() => {});
-  }
+  }, []);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setImporting(true);
+    setProgress(0);
     setResult(null);
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const request = new XMLHttpRequest();
 
-    try {
-      const res = await fetch("/admin/api/import", {
-        method: "POST",
-        body: formData
-      });
+    request.upload.onprogress = (progressEvent) => {
+      if (!progressEvent.lengthComputable) return;
+      setProgress(Math.round((progressEvent.loaded / progressEvent.total) * 100));
+    };
 
-      const data = await res.json();
+    request.onload = () => {
+      setImporting(false);
+      setProgress(request.status >= 200 && request.status < 300 ? 100 : 0);
+
+      let data: ImportResult = {};
+      try {
+        data = JSON.parse(request.responseText);
+      } catch {
+        data = { error: "导入失败，请检查服务器响应。" };
+      }
+
       setResult(data);
 
       if (data.success) {
         form.reset();
       }
-    } catch {
-      setResult({ error: "上传失败，请重试。" });
-    } finally {
+    };
+
+    request.onerror = () => {
       setImporting(false);
-    }
+      setProgress(0);
+      setResult({ error: "上传失败，请重试。" });
+    };
+
+    request.open("POST", "/admin/api/import");
+    request.send(formData);
   }
 
   return (
@@ -65,9 +82,9 @@ export default function AdminManualImportPage() {
             <h2>批量导入手册内容</h2>
             <p className="muted">上传 ZIP 文件，一次性导入整个栏目的文章和图片。</p>
           </div>
-          <a className="button-ghost" href="/admin/manual">
+          <Link className="button-ghost" href="/admin/manual">
             返回文章管理
-          </a>
+          </Link>
         </div>
 
         <div className="admin-import-info">
@@ -80,7 +97,7 @@ export default function AdminManualImportPage() {
     ├── 图片1.jpg
     └── 图片2.png`}</pre>
           <ul>
-            <li>文件夹名称将作为栏目名称（如果选择"自动创建栏目"）</li>
+            <li>文件夹名称将作为栏目名称（如果选择“自动创建栏目”）</li>
             <li>Markdown 文件名前的数字将作为排序依据（如 01、02）</li>
             <li>支持在 Markdown 文件头部使用 YAML frontmatter 设置标题、作者等信息</li>
             <li>图片路径请使用相对路径，如 <code>![描述](images/图片1.jpg)</code></li>
@@ -111,6 +128,13 @@ export default function AdminManualImportPage() {
           </button>
         </form>
 
+        {importing ? (
+          <div className="admin-upload-progress" aria-label={`导入上传进度 ${progress}%`}>
+            <span style={{ width: `${progress}%` }} />
+            <strong>{progress}%</strong>
+          </div>
+        ) : null}
+
         {result && (
           <div className={`admin-import-result ${result.success ? "success" : "error"}`}>
             {result.success ? (
@@ -125,6 +149,30 @@ export default function AdminManualImportPage() {
                     ))}
                   </ul>
                 )}
+                {result.importedImages && result.importedImages.length > 0 ? (
+                  <>
+                    <p className="muted">导入图片：</p>
+                    <ul>
+                      {result.importedImages.map((item) => (
+                        <li key={item.filePath}>
+                          {item.originalPath} <span className="muted">→ {item.filePath}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
+                {result.skippedFiles && result.skippedFiles.length > 0 ? (
+                  <>
+                    <p className="form-error">跳过文件：</p>
+                    <ul>
+                      {result.skippedFiles.map((item) => (
+                        <li key={item.fileName}>
+                          {item.fileName} <span className="muted">({item.reason})</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
                 <p className="muted">文章已导入为草稿状态，请在文章管理中发布。</p>
               </>
             ) : (

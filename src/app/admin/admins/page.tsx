@@ -1,3 +1,4 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
@@ -15,7 +16,7 @@ export default async function AdminAdminsPage() {
       <section className="admin-card">
         <h2>新增管理员</h2>
         <p className="muted">第一阶段先支持新增账号、修改显示名、重置密码和停用账号。</p>
-        <form action={createAdminUser} className="admin-form">
+        <AdminActionForm action={createAdminUser} successMessage="管理员已创建。" resetOnSuccess>
           <div className="admin-form-grid">
             <label>
               <span>用户名</span>
@@ -33,7 +34,7 @@ export default async function AdminAdminsPage() {
           <button className="button-link" type="submit">
             创建管理员
           </button>
-        </form>
+        </AdminActionForm>
       </section>
 
       <section className="admin-card">
@@ -56,7 +57,7 @@ export default async function AdminAdminsPage() {
               </div>
 
               <div className="admin-form-grid">
-                <form action={updateAdminProfile} className="admin-form compact-form">
+                <AdminActionForm action={updateAdminProfile} className="admin-form compact-form" successMessage="显示名已保存。">
                   <input type="hidden" name="id" value={admin.id} />
                   <label>
                     <span>显示名</span>
@@ -65,9 +66,14 @@ export default async function AdminAdminsPage() {
                   <button className="button-ghost" type="submit">
                     保存显示名
                   </button>
-                </form>
+                </AdminActionForm>
 
-                <form action={resetAdminPassword} className="admin-form compact-form">
+                <AdminActionForm
+                  action={resetAdminPassword}
+                  className="admin-form compact-form"
+                  successMessage="密码已重置。"
+                  confirmMessage={`确认重置管理员「${admin.username}」的密码？`}
+                >
                   <input type="hidden" name="id" value={admin.id} />
                   <label>
                     <span>重置密码</span>
@@ -76,26 +82,31 @@ export default async function AdminAdminsPage() {
                   <button className="button-ghost" type="submit">
                     重置密码
                   </button>
-                </form>
+                </AdminActionForm>
               </div>
 
               <div className="post-actions">
                 {admin.status === "ACTIVE" ? (
-                  <form action={setAdminStatus}>
+                  <AdminActionForm
+                    action={setAdminStatus}
+                    className=""
+                    successMessage="管理员已停用。"
+                    confirmMessage={`确认停用管理员「${admin.username}」？`}
+                  >
                     <input type="hidden" name="id" value={admin.id} />
                     <input type="hidden" name="status" value="DISABLED" />
                     <button className="button-ghost danger-text" type="submit">
                       停用账号
                     </button>
-                  </form>
+                  </AdminActionForm>
                 ) : (
-                  <form action={setAdminStatus}>
+                  <AdminActionForm action={setAdminStatus} className="" successMessage="管理员已重新启用。">
                     <input type="hidden" name="id" value={admin.id} />
                     <input type="hidden" name="status" value="ACTIVE" />
                     <button className="button-ghost" type="submit">
                       重新启用
                     </button>
-                  </form>
+                  </AdminActionForm>
                 )}
               </div>
             </article>

@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 function slugify(value: string) {
@@ -45,6 +47,8 @@ function parsePostOrderIds(value: FormDataEntryValue | null) {
 }
 
 export async function createKnowledgePost(formData: FormData) {
+  const session = await requireAdminSession();
+
   const titleZh = String(formData.get("titleZh") || "").trim();
   const author = String(formData.get("author") || "").trim();
 
@@ -62,7 +66,7 @@ export async function createKnowledgePost(formData: FormData) {
     slug = `${baseSlug}-${suffix}`;
   }
 
-  await prisma.knowledgePost.create({
+  const post = await prisma.knowledgePost.create({
     data: {
       slug,
       titleZh,
@@ -79,15 +83,24 @@ export async function createKnowledgePost(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "knowledge-post.create",
+    actor: session.user,
+    target: post.id,
+    metadata: { titleZh: post.titleZh, slug: post.slug, isFeatured: post.isFeatured }
+  });
+
   revalidatePath("/");
   revalidatePath("/knowledge");
   revalidatePath("/admin/posts");
 }
 
 export async function updateKnowledgePost(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
-  await prisma.knowledgePost.update({
+  const post = await prisma.knowledgePost.update({
     where: { id },
     data: {
       titleZh: String(formData.get("titleZh") || "").trim(),
@@ -103,6 +116,13 @@ export async function updateKnowledgePost(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "knowledge-post.update",
+    actor: session.user,
+    target: post.id,
+    metadata: { titleZh: post.titleZh, slug: post.slug, isFeatured: post.isFeatured }
+  });
+
   revalidatePath("/");
   revalidatePath("/knowledge");
   revalidatePath("/knowledge/[slug]", "page");
@@ -110,15 +130,24 @@ export async function updateKnowledgePost(formData: FormData) {
 }
 
 export async function setKnowledgePostStatus(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const status = String(formData.get("status") || "DRAFT") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
-  await prisma.knowledgePost.update({
+  const post = await prisma.knowledgePost.update({
     where: { id },
     data: {
       status,
       publishedAt: status === "PUBLISHED" ? new Date() : null
     }
+  });
+
+  await logAdminAction({
+    action: "knowledge-post.set-status",
+    actor: session.user,
+    target: post.id,
+    metadata: { titleZh: post.titleZh, slug: post.slug, status: post.status }
   });
 
   revalidatePath("/");
@@ -127,6 +156,8 @@ export async function setKnowledgePostStatus(formData: FormData) {
 }
 
 export async function reorderKnowledgePosts(formData: FormData) {
+  const session = await requireAdminSession();
+
   const ids = parsePostOrderIds(formData.get("ids"));
 
   if (ids.length < 2) {
@@ -144,14 +175,29 @@ export async function reorderKnowledgePosts(formData: FormData) {
     )
   );
 
+  await logAdminAction({
+    action: "knowledge-post.reorder",
+    actor: session.user,
+    metadata: { count: ids.length }
+  });
+
   revalidatePath("/");
   revalidatePath("/knowledge");
   revalidatePath("/admin/posts");
 }
 
 export async function deleteKnowledgePost(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
-  await prisma.knowledgePost.delete({ where: { id } });
+  const post = await prisma.knowledgePost.delete({ where: { id } });
+
+  await logAdminAction({
+    action: "knowledge-post.delete",
+    actor: session.user,
+    target: post.id,
+    metadata: { titleZh: post.titleZh, slug: post.slug }
+  });
 
   revalidatePath("/");
   revalidatePath("/knowledge");

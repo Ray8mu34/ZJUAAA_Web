@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
 
 function slugify(value: string) {
@@ -14,6 +16,8 @@ function slugify(value: string) {
 }
 
 export async function createManualCategory(formData: FormData) {
+  const session = await requireAdminSession();
+
   const titleZh = String(formData.get("titleZh") || "").trim();
 
   if (!titleZh) {
@@ -33,7 +37,7 @@ export async function createManualCategory(formData: FormData) {
   const maxSort = await prisma.manualCategory.aggregate({ _max: { sortOrder: true } });
   const nextSort = (maxSort._max.sortOrder ?? 0) + 1;
 
-  await prisma.manualCategory.create({
+  const category = await prisma.manualCategory.create({
     data: {
       slug,
       titleZh,
@@ -44,15 +48,24 @@ export async function createManualCategory(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "manual-category.create",
+    actor: session.user,
+    target: category.id,
+    metadata: { titleZh: category.titleZh, slug: category.slug, isVisible: category.isVisible }
+  });
+
   revalidatePath("/manual");
   revalidatePath("/admin/manual");
   revalidatePath("/admin/manual/categories");
 }
 
 export async function updateManualCategory(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
-  await prisma.manualCategory.update({
+  const category = await prisma.manualCategory.update({
     where: { id },
     data: {
       titleZh: String(formData.get("titleZh") || "").trim(),
@@ -63,6 +76,13 @@ export async function updateManualCategory(formData: FormData) {
     }
   });
 
+  await logAdminAction({
+    action: "manual-category.update",
+    actor: session.user,
+    target: category.id,
+    metadata: { titleZh: category.titleZh, slug: category.slug, isVisible: category.isVisible }
+  });
+
   revalidatePath("/manual");
   revalidatePath("/manual/[category]", "page");
   revalidatePath("/admin/manual");
@@ -70,6 +90,8 @@ export async function updateManualCategory(formData: FormData) {
 }
 
 export async function deleteManualCategory(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
 
   const chapterCount = await prisma.manualChapter.count({ where: { categoryId: id } });
@@ -77,7 +99,14 @@ export async function deleteManualCategory(formData: FormData) {
     throw new Error("该栏目下还有文章，请先删除或移走文章后再删除栏目。");
   }
 
-  await prisma.manualCategory.delete({ where: { id } });
+  const category = await prisma.manualCategory.delete({ where: { id } });
+
+  await logAdminAction({
+    action: "manual-category.delete",
+    actor: session.user,
+    target: category.id,
+    metadata: { titleZh: category.titleZh, slug: category.slug }
+  });
 
   revalidatePath("/manual");
   revalidatePath("/admin/manual");
@@ -85,12 +114,21 @@ export async function deleteManualCategory(formData: FormData) {
 }
 
 export async function toggleCategoryVisibility(formData: FormData) {
+  const session = await requireAdminSession();
+
   const id = String(formData.get("id") || "");
   const isVisible = formData.get("isVisible") === "true";
 
-  await prisma.manualCategory.update({
+  const category = await prisma.manualCategory.update({
     where: { id },
     data: { isVisible: !isVisible }
+  });
+
+  await logAdminAction({
+    action: "manual-category.toggle-visibility",
+    actor: session.user,
+    target: category.id,
+    metadata: { titleZh: category.titleZh, slug: category.slug, isVisible: category.isVisible }
   });
 
   revalidatePath("/manual");

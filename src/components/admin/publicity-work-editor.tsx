@@ -1,3 +1,4 @@
+import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { MediaPathField } from "@/components/admin/media-path-field";
 
 type MediaOption = {
@@ -29,7 +30,7 @@ function formatDateInput(value?: Date | null) {
 
 export function PublicityWorkEditor({ action, submitLabel, mediaOptions = [], initialValues }: PublicityWorkEditorProps) {
   return (
-    <form action={action} className="admin-form">
+    <AdminActionForm action={action} successMessage="宣传部作品已保存。" resetOnSuccess={!initialValues?.id}>
       {initialValues?.id ? <input type="hidden" name="id" value={initialValues.id} /> : null}
 
       <div className="admin-form-grid">
@@ -50,7 +51,7 @@ export function PublicityWorkEditor({ action, submitLabel, mediaOptions = [], in
         </label>
         <label>
           <span>{initialValues?.id ? "上传新图片（可选）" : "直接上传图片"}</span>
-          <input className="file-input" name="imageFile" type="file" accept="image/*" />
+          <input className="file-input" name="imageFile" type="file" accept="image/png,image/jpeg,image/gif,image/webp" />
         </label>
       </div>
 
@@ -76,6 +77,6 @@ export function PublicityWorkEditor({ action, submitLabel, mediaOptions = [], in
       <button className="button-link" type="submit">
         {submitLabel}
       </button>
-    </form>
+    </AdminActionForm>
   );
 }

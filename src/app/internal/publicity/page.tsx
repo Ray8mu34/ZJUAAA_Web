@@ -22,7 +22,8 @@ export default async function InternalPublicityPage() {
 
   const works = await prisma.publicityWork.findMany({
     where: { status: "PUBLISHED" },
-    orderBy: [{ sortOrder: "asc" }, { workDate: "desc" }, { updatedAt: "desc" }]
+    orderBy: [{ sortOrder: "asc" }, { workDate: "desc" }, { updatedAt: "desc" }],
+    take: 120
   });
 
   return (

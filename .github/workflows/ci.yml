@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: cp .env.example .env
+      - run: npm run db:init
+      - run: npm run db:seed-admin
+      - run: npm run db:seed-categories
+      - run: npx playwright install --with-deps chromium
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - run: npm run build
+      - run: npm run ops:preflight
+      - run: npm run ops:preflight
+        env:
+          NODE_ENV: production
+          AUTH_SECRET: ci-auth-secret-long-enough
+          NEXTAUTH_SECRET: ci-auth-secret-long-enough
+          INTERNAL_AUTH_SECRET: ci-internal-secret-long-enough
+          INTERNAL_USERNAME: ci-member
+          INTERNAL_PASSWORD: ci-internal-password-long-enough
+          AUDIT_LOG_DIR: ./logs
+      - run: npm run ops:scan-orphan-uploads
+      - run: npm run test:e2e

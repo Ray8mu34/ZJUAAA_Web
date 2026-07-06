@@ -5,8 +5,12 @@ import AdmZip from "adm-zip";
 import matter from "gray-matter";
 
 import { requireAdminSession } from "@/lib/admin-session";
+import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
+import { createStoredFilename } from "@/lib/upload-names";
 import { getUploadDir, getUploadPublicPath } from "@/lib/uploads";
+import { UploadValidationError, validateImageBuffer } from "@/lib/upload-validation";
+import { validateZipImportEntries, ZipImportValidationError } from "@/lib/zip-import-validation";
 
 function slugify(value: string) {
   return value
@@ -18,7 +22,7 @@ function slugify(value: string) {
 }
 
 export async function POST(request: NextRequest) {
-  await requireAdminSession();
+  const session = await requireAdminSession();
 
   try {
     const formData = await request.formData();
@@ -36,11 +40,12 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const zip = new AdmZip(buffer);
     const entries = zip.getEntries();
+    validateZipImportEntries(entries);
 
     // Find all markdown files and images
     const mdFiles: AdmZip.IZipEntry[] = [];
     const imageFiles: AdmZip.IZipEntry[] = [];
-    const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"];
+    const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".webp"];
 
     for (const entry of entries) {
       if (entry.isDirectory) continue;
@@ -103,15 +108,28 @@ export async function POST(request: NextRequest) {
     await fs.mkdir(targetDir, { recursive: true });
 
     const imagePathMap = new Map<string, string>();
+    const importedImages: Array<{ originalPath: string; filePath: string }> = [];
+    const skippedFiles: Array<{ fileName: string; reason: string }> = [];
 
     for (const imgEntry of imageFiles) {
-      const ext = path.extname(imgEntry.entryName);
-      const timestamp = Date.now();
-      const safeName = path.basename(imgEntry.entryName).replace(/[^a-zA-Z0-9._-]/g, "_");
-      const filename = `${timestamp}-${safeName}${ext}`;
+      let image: Awaited<ReturnType<typeof validateImageBuffer>>;
+      try {
+        image = await validateImageBuffer({
+          buffer: imgEntry.getData(),
+          fileName: path.basename(imgEntry.entryName)
+        });
+      } catch (error) {
+        skippedFiles.push({
+          fileName: imgEntry.entryName,
+          reason: error instanceof Error ? error.message : "图片校验失败"
+        });
+        continue;
+      }
+
+      const filename = createStoredFilename(image.originalName);
 
       const filePath = path.join(targetDir, filename);
-      await fs.writeFile(filePath, imgEntry.getData());
+      await fs.writeFile(filePath, image.buffer);
 
       const publicPath = getUploadPublicPath(`manual/${filename}`);
 
@@ -119,15 +137,16 @@ export async function POST(request: NextRequest) {
       const originalPath = imgEntry.entryName;
       imagePathMap.set(originalPath, publicPath);
       imagePathMap.set(path.basename(originalPath), publicPath);
+      importedImages.push({ originalPath, filePath: publicPath });
 
       // Create MediaAsset record
       await prisma.mediaAsset.create({
         data: {
-          title: path.basename(originalPath, ext),
+          title: path.basename(originalPath, image.ext),
           category: "manual",
           filePath: publicPath,
-          mimeType: `image/${ext.replace(".", "")}`,
-          fileSize: imgEntry.header.size
+          mimeType: image.mimeType,
+          fileSize: image.buffer.byteLength
         }
       });
     }
@@ -208,12 +227,30 @@ export async function POST(request: NextRequest) {
       sortOrder++;
     }
 
+    await logAdminAction({
+      action: "manual-import.zip",
+      actor: session.user,
+      target: categoryId,
+      metadata: {
+        sourceFile: file.name,
+        importedChapters: results.length,
+        importedImages: importedImages.length,
+        skippedFiles: skippedFiles.length
+      }
+    });
+
     return NextResponse.json({
       success: true,
-      message: `成功导入 ${results.length} 篇文章和 ${imageFiles.length} 张图片。`,
-      results
+      message: `成功导入 ${results.length} 篇文章和 ${importedImages.length} 张图片。${skippedFiles.length ? `跳过 ${skippedFiles.length} 个文件。` : ""}`,
+      results,
+      importedImages,
+      skippedFiles
     });
   } catch (error) {
+    if (error instanceof UploadValidationError || error instanceof ZipImportValidationError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
     console.error("Import error:", error);
     return NextResponse.json({ error: "导入失败，请检查 ZIP 文件格式。" }, { status: 500 });
   }

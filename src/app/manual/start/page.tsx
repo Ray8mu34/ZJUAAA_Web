@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { MarkdownRenderer } from "@/components/site/markdown-renderer";
@@ -17,7 +19,7 @@ export default async function ManualStartPage() {
         <div className="shell">
           <section className="content-card">
             <p className="muted">
-              <a href="/manual">天文手册</a> / 内容清单
+              <Link href="/manual">天文手册</Link> / 内容清单
             </p>
           </section>
 
@@ -32,9 +34,9 @@ export default async function ManualStartPage() {
           )}
 
           <div className="manual-back-link">
-            <a className="button-ghost" href="/manual">
+            <Link className="button-ghost" href="/manual">
               返回手册首页
-            </a>
+            </Link>
           </div>
         </div>
       </main>
