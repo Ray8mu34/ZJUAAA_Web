@@ -45,7 +45,7 @@ export default async function AstroPhotographyPage({
       <SiteHeader />
       <main className="section">
         <div className="shell">
-          <div className="section-head">
+          <div className="section-head" data-reveal>
             <div>
               <h2>天文摄影</h2>
               <p className="muted">
@@ -55,7 +55,7 @@ export default async function AstroPhotographyPage({
             <p className="muted">共 {photos.length} 幅作品</p>
           </div>
 
-          <form className="search-form" action="/astrophotography">
+          <form className="search-form" action="/astrophotography" data-reveal>
             <input name="q" defaultValue={q} placeholder="搜索作品标题、拍摄者或天区" />
             <button className="button-secondary" type="submit">
               搜索

@@ -1,6 +1,6 @@
 "use client";
 
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { getImageVariantUrl } from "@/lib/image-variants";
@@ -15,10 +15,25 @@ type AboutGalleryLightboxProps = {
 export function AboutGalleryLightbox({ images }: AboutGalleryLightboxProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const activeImage = activeIndex === null ? null : images[activeIndex] || null;
+
+  const closeLightbox = useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    closeTimerRef.current = setTimeout(() => {
+      setActiveIndex(null);
+      setClosing(false);
+    }, 220);
+  }, [closing]);
 
   useEffect(() => {
     setMounted(true);
+
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -33,7 +48,7 @@ export function AboutGalleryLightbox({ images }: AboutGalleryLightboxProps) {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setActiveIndex(null);
+        closeLightbox();
       }
     };
 
@@ -43,15 +58,15 @@ export function AboutGalleryLightbox({ images }: AboutGalleryLightboxProps) {
       document.body.style.overflow = overflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [activeIndex]);
+  }, [activeIndex, closeLightbox]);
 
   const modal =
     mounted && activeImage
       ? createPortal(
-          <div className="about-lightbox-modal" role="dialog" aria-modal="true">
-            <div className="about-lightbox-backdrop" aria-hidden="true" onClick={() => setActiveIndex(null)} />
+          <div className={`about-lightbox-modal${closing ? " is-closing" : ""}`} role="dialog" aria-modal="true">
+            <div className="about-lightbox-backdrop" aria-hidden="true" onClick={closeLightbox} />
             <div className="about-lightbox-panel">
-              <button className="about-lightbox-close" type="button" onClick={() => setActiveIndex(null)}>
+              <button className="about-lightbox-close" type="button" onClick={closeLightbox}>
                 关闭
               </button>
               <div className="about-lightbox-image">
@@ -79,7 +94,10 @@ export function AboutGalleryLightbox({ images }: AboutGalleryLightboxProps) {
               key={`${image.src}-${index}`}
               type="button"
               onMouseDown={(event: MouseEvent<HTMLButtonElement>) => event.preventDefault()}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => {
+                setClosing(false);
+                setActiveIndex(index);
+              }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img alt={image.alt} loading="lazy" src={getImageVariantUrl(image.src, "thumb")} />

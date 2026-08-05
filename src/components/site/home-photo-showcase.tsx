@@ -67,10 +67,11 @@ export function HomePhotoShowcase({
       </div>
 
       <div className="home-photo-showcase-window">
-        <div className="about-gallery-masonry home-photo-showcase-masonry">
+        <div className="about-gallery-masonry home-photo-showcase-masonry" key={seed}>
           {featured.map((photo, index) => (
             <button
               className={`about-gallery-item home-photo-showcase-item astro-height-${(index % 4) + 1}`}
+              data-photo-enter
               key={photo.id}
               type="button"
               onClick={() => setActiveId(photo.id)}

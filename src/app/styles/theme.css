@@ -187,7 +187,22 @@ html[data-theme="light"] .button-secondary {
 }
 
 .content-list-card.content-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+}
+
+.content-list-card .media-frame img,
+.home-knowledge-card .media-frame img,
+.activity-feature-card .media-frame img,
+.activity-record-card .media-frame img {
+  transition: transform 560ms var(--ease-out), filter var(--motion-base) ease;
+}
+
+.content-list-card:hover .media-frame img,
+.home-knowledge-card:hover .media-frame img,
+.activity-feature-card:hover .media-frame img,
+.activity-record-card:hover .media-frame img {
+  transform: scale(1.035);
+  filter: brightness(1.04) saturate(1.04);
 }
 
 .content-list-card .content-cover {
@@ -310,13 +325,13 @@ html[data-theme="light"] .content-list-link:hover strong {
   min-width: 0;
   scroll-snap-align: start;
   transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
+    opacity var(--motion-fast) ease,
+    transform var(--motion-base) var(--ease-out);
 }
 
 .home-knowledge-card:hover {
-  opacity: 0.86;
-  transform: translateY(-2px);
+  opacity: 0.94;
+  transform: translateY(-4px);
 }
 
 .home-knowledge-card .home-knowledge-cover {

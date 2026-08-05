@@ -69,7 +69,7 @@ export default async function HomePage() {
       <main>
         <section className="hero">
           <div className="shell hero-grid">
-            <div className="hero-copy">
+            <div className="hero-copy" data-hero-motion>
               <h1 className="hero-title">
                 <span className="gradient hero-gradient-block">
                   {heroLines.map((line) => (
@@ -95,7 +95,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section home-feature-section">
+        <section className="section home-feature-section" data-reveal>
           <div className="shell home-feature-shell">
             <div className="section-head">
               <div>
@@ -121,7 +121,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section home-feature-section home-feature-section-right">
+        <section className="section home-feature-section home-feature-section-right" data-reveal>
           <div className="shell home-feature-shell">
             <div className="section-head">
               <div className="home-feature-title-right">
@@ -136,7 +136,7 @@ export default async function HomePage() {
                 </article>
               ) : (
                 featuredNotices.map((notice) => (
-                  <article className={activityCardClassName} key={notice.id}>
+                  <article className={activityCardClassName} data-reveal-item key={notice.id}>
                     <MediaFrame src={notice.coverImagePath} alt={notice.titleZh} className="content-cover" label="活动封面" />
                     <a
                       className="content-list-link"
@@ -164,7 +164,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section home-feature-section">
+        <section className="section home-feature-section" data-reveal>
           <div className="shell home-feature-shell">
             <div className="section-head">
               <div>
@@ -184,7 +184,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section home-ending-section">
+        <section className="section home-ending-section" data-reveal>
           <div className="shell">
             <div className="home-ending-copy">
               <p>我们是</p>

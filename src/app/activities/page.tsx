@@ -112,7 +112,7 @@ export default async function ActivitiesPage({
       <SiteHeader />
       <main className="section">
         <div className="shell">
-          <div className="section-head activity-section-head">
+          <div className="section-head activity-section-head" data-reveal>
             <div>
               <h2>社团活动</h2>
               <p className="muted">
@@ -122,14 +122,14 @@ export default async function ActivitiesPage({
             <p className="muted activity-count">共 {notices.length} 项活动</p>
           </div>
 
-          <form className="search-form" action="/activities">
+          <form className="search-form" action="/activities" data-reveal>
             <input name="q" defaultValue={q} placeholder="搜索活动标题、摘要或地点" />
             <button className="button-secondary" type="submit">
               搜索
             </button>
           </form>
 
-          <section className="activity-feature-section">
+          <section className="activity-feature-section" data-reveal>
             <div className="activity-subhead">
               <div>
                 <h3>活动预告</h3>
@@ -148,7 +148,7 @@ export default async function ActivitiesPage({
                   const href = notice.externalUrl || "/activities";
 
                   return (
-                    <article className="activity-feature-card" key={notice.id}>
+                    <article className="activity-feature-card" data-reveal-item key={notice.id}>
                       <a className="activity-feature-media" href={href} target={notice.externalUrl ? "_blank" : undefined} rel={notice.externalUrl ? "noreferrer" : undefined}>
                         <MediaFrame src={notice.coverImagePath} alt={notice.titleZh} className="activity-feature-cover" label="活动封面" />
                         <div className="activity-feature-date">
@@ -186,7 +186,7 @@ export default async function ActivitiesPage({
             )}
           </section>
 
-          <section className="activity-record-section">
+          <section className="activity-record-section" data-reveal>
             <div className="activity-subhead">
               <div>
                 <h3>活动记录</h3>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { ThemeToggle } from "@/components/site/theme-toggle";
+import { PublicMotion } from "@/components/site/public-motion";
 
 const navItems = [
   { href: "/", zh: "主页", exact: true },
@@ -20,6 +21,7 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
+      <PublicMotion />
       <div className="shell nav-row nav-row-site">
         <nav className="nav-links nav-links-compact" aria-label="Primary" suppressHydrationWarning>
           {navItems.map((item) => {

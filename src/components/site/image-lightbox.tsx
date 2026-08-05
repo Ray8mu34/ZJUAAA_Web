@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type ImageLightboxProps = {
   open: boolean;
@@ -23,6 +23,18 @@ export function ImageLightbox({
   onClose,
   children
 }: ImageLightboxProps) {
+  const [closing, setClosing] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const requestClose = useCallback(() => {
+    if (closing) return;
+    setClosing(true);
+    closeTimerRef.current = setTimeout(() => {
+      onClose();
+      setClosing(false);
+    }, 220);
+  }, [closing, onClose]);
+
   useEffect(() => {
     if (!open) {
       return;
@@ -31,18 +43,31 @@ export function ImageLightbox({
     const { overflow } = document.body.style;
     document.body.style.overflow = "hidden";
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") requestClose();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = overflow;
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, [open, requestClose]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
 
   if (!open) {
     return null;
   }
 
   return (
-    <div className="astro-detail-modal" role="dialog" aria-modal="true">
-      <div className="astro-detail-backdrop" aria-hidden="true" onClick={onClose} />
+    <div className={`astro-detail-modal${closing ? " is-closing" : ""}`} role="dialog" aria-modal="true">
+      <div className="astro-detail-backdrop" aria-hidden="true" onClick={requestClose} />
       <div className="astro-detail-panel content-card">
         <div className="astro-detail-head">
           <div>
@@ -55,7 +80,7 @@ export function ImageLightbox({
                 查看原图
               </a>
             ) : null}
-            <button className="button-ghost" type="button" onClick={onClose}>
+            <button className="button-ghost" type="button" onClick={requestClose}>
               关闭
             </button>
           </div>

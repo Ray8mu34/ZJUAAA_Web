@@ -43,7 +43,7 @@ export default async function KnowledgePage({
       <SiteHeader />
       <main className="section">
         <div className="shell">
-          <div className="section-head">
+          <div className="section-head" data-reveal>
             <div>
               <h2>知识科普</h2>
               <p className="muted">
@@ -53,14 +53,14 @@ export default async function KnowledgePage({
             <p className="muted">共 {posts.length} 篇内容</p>
           </div>
 
-          <form className="search-form" action="/knowledge">
+          <form className="search-form" action="/knowledge" data-reveal>
             <input name="q" defaultValue={q} placeholder="搜索标题、摘要或作者" />
             <button className="button-secondary" type="submit">
               搜索
             </button>
           </form>
 
-          <div className="cards-grid content-list-grid">
+          <div className="cards-grid content-list-grid" data-reveal>
             {posts.length === 0 ? (
               <div className={cardClassName}>
                 <strong>还没有已发布的科普文章</strong>
@@ -68,7 +68,7 @@ export default async function KnowledgePage({
               </div>
             ) : (
               posts.map((post) => (
-                <article className={cardClassName} key={post.id}>
+                <article className={cardClassName} data-reveal-item key={post.id}>
                   <MediaFrame src={post.coverImagePath} alt={post.titleZh} className="content-cover" label="科普封面" />
                   <a
                     className="content-list-link"

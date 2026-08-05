@@ -51,6 +51,7 @@ export function AstroPhotoMasonry({
           {visiblePhotos.map((photo, index) => (
             <button
               className={`about-gallery-item astro-gallery-item astro-height-${(index % 4) + 1}`}
+              data-photo-enter
               key={photo.id}
               type="button"
               onClick={() => setActiveId(photo.id)}

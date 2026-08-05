@@ -30,7 +30,7 @@ export default async function ManualIndexPage() {
       <SiteHeader />
       <main className="section">
         <div className="shell">
-          <div className="section-head">
+          <div className="section-head" data-reveal>
             <div>
               <h2>天文手册</h2>
               <p className="muted">
@@ -40,7 +40,7 @@ export default async function ManualIndexPage() {
           </div>
 
           {/* Start entry */}
-          <Link className="manual-start-entry content-card" href="/manual/start">
+          <Link className="manual-start-entry content-card" data-reveal href="/manual/start">
             <div className="manual-start-content">
               <h3>第一次来到这里？</h3>
               <p className="muted">查看知识手册内容清单，了解全部文章目录。</p>
@@ -48,12 +48,12 @@ export default async function ManualIndexPage() {
           </Link>
 
           {/* Category cards */}
-          <section className="manual-category-grid">
+          <section className="manual-category-grid" data-reveal>
             {categories.length === 0 ? (
               <div className="empty-state">还没有可见的栏目，请在后台管理栏目。</div>
             ) : (
               categories.map((category) => (
-                <Link key={category.id} className="manual-category-card" href={`/manual/${category.slug}`}>
+                <Link key={category.id} className="manual-category-card" data-reveal-item href={`/manual/${category.slug}`}>
                   <div className="manual-category-cover">
                     {category.coverImagePath ? (
                       <Image

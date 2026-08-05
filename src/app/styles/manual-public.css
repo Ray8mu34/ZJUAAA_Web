@@ -643,6 +643,9 @@
   height: auto;
   max-height: 680px;
   object-fit: cover;
+  transition:
+    transform 520ms var(--ease-out),
+    filter var(--motion-base) ease;
 }
 
 .about-gallery-item,
@@ -662,13 +665,48 @@
 .astro-gallery-item,
 .home-photo-showcase-item {
   border-radius: 24px;
-  transition: transform 0.18s ease, border-color 0.18s ease;
+  transition:
+    transform var(--motion-base) var(--ease-out),
+    border-color var(--motion-base) ease,
+    box-shadow var(--motion-base) ease;
 }
 
 .astro-gallery-item:hover,
 .home-photo-showcase-item:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px);
   border-color: rgba(78, 169, 255, 0.22);
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.28);
+}
+
+.about-gallery-item:hover img,
+.astro-gallery-item:hover img,
+.home-photo-showcase-item:hover img {
+  transform: scale(1.035);
+  filter: brightness(1.04) saturate(1.04);
+}
+
+[data-photo-enter] {
+  animation: photo-tile-in 520ms var(--ease-out) both;
+}
+
+[data-photo-enter]:nth-child(2) {
+  animation-delay: 55ms;
+}
+
+[data-photo-enter]:nth-child(3) {
+  animation-delay: 110ms;
+}
+
+[data-photo-enter]:nth-child(4) {
+  animation-delay: 165ms;
+}
+
+[data-photo-enter]:nth-child(5) {
+  animation-delay: 220ms;
+}
+
+[data-photo-enter]:nth-child(n + 6) {
+  animation-delay: 275ms;
 }
 
 .astro-gallery-placeholder {
@@ -1080,6 +1118,7 @@
   inset: 0;
   background: rgba(0, 0, 0, 0.58);
   cursor: pointer;
+  animation: lightbox-backdrop-in 220ms ease-out both;
 }
 
 .astro-detail-panel {
@@ -1092,6 +1131,7 @@
   display: grid;
   gap: 22px;
   padding: 28px;
+  animation: lightbox-panel-in 280ms var(--ease-out) both;
 }
 
 .astro-detail-panel.content-card:hover {
@@ -1170,6 +1210,7 @@
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.72);
+  animation: lightbox-backdrop-in 220ms ease-out both;
 }
 
 .about-lightbox-panel {
@@ -1184,6 +1225,61 @@
   border: 1px solid var(--line);
   background: #222;
   box-shadow: var(--shadow);
+  animation: lightbox-panel-in 280ms var(--ease-out) both;
+}
+
+.astro-detail-modal.is-closing .astro-detail-backdrop,
+.about-lightbox-modal.is-closing .about-lightbox-backdrop {
+  animation: lightbox-backdrop-out 220ms ease-in both;
+}
+
+.astro-detail-modal.is-closing .astro-detail-panel,
+.about-lightbox-modal.is-closing .about-lightbox-panel {
+  animation: lightbox-panel-out 220ms ease-in both;
+  pointer-events: none;
+}
+
+@keyframes photo-tile-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes lightbox-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes lightbox-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes lightbox-panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.975);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes lightbox-panel-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.985);
+  }
 }
 
 .about-lightbox-close {
