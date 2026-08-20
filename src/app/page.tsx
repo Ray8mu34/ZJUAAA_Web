@@ -1,6 +1,5 @@
 import { HomePhotoShowcase } from "@/components/site/home-photo-showcase";
 import { HomeKnowledgeCarousel } from "@/components/site/home-knowledge-carousel";
-import { MediaFrame } from "@/components/site/media-frame";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
@@ -33,6 +32,30 @@ function spreadText(text: string) {
   return Array.from(text.trim() || "追逐星辰的浙大人");
 }
 
+function formatHomeActivityTime(startAt?: Date | null, endAt?: Date | null) {
+  const formatDateTime = (date: Date) =>
+    date.toLocaleString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+
+  if (!startAt && !endAt) return "时间待定";
+  if (startAt && !endAt) return formatDateTime(startAt);
+  if (!startAt && endAt) return `截至 ${formatDateTime(endAt)}`;
+
+  if (startAt!.toDateString() === endAt!.toDateString()) {
+    return `${formatDateTime(startAt!)} — ${endAt!.toLocaleTimeString("zh-CN", {
+      hour: "2-digit",
+      minute: "2-digit"
+    })}`;
+  }
+
+  return `${formatDateTime(startAt!)} — ${formatDateTime(endAt!)}`;
+}
+
 export default async function HomePage() {
   const [setting, featuredPosts, featuredNotices, featuredPhotos] = await Promise.all([
     prisma.siteSetting.upsert({
@@ -58,9 +81,6 @@ export default async function HomePage() {
   const heroLines = splitHeroTitle(setting.heroTitleZh);
   const heroSubtitle = spreadText(setting.heroSubtitleZh);
   const manifesto = setting.manifestoZh?.trim() || "由此，上达群星";
-  const cardClassName = setting.cardTheme === "light" ? "content-card card-theme-light" : "content-card";
-  const activityCardClassName =
-    setting.cardTheme === "light" ? "content-card card-theme-light content-list-card activity-card" : "content-card content-list-card activity-card";
   const homePhotos = shuffleItems(featuredPhotos).slice(0, 15);
 
   return (
@@ -128,36 +148,22 @@ export default async function HomePage() {
                 <h2>近期活动</h2>
               </div>
             </div>
-            <div className="cards-grid content-list-grid">
+            <div className="home-knowledge-track home-activity-track">
               {featuredNotices.length === 0 ? (
-                <article className={cardClassName}>
-                  <strong>还没有已发布活动</strong>
-                  <p>你们可以先去后台新增活动预告，填写时间、地点、封面和公众号链接，再点击“发布”。</p>
-                </article>
+                <p className="home-activity-empty">还没有已发布活动</p>
               ) : (
                 featuredNotices.map((notice) => (
-                  <article className={activityCardClassName} data-reveal-item key={notice.id}>
-                    <MediaFrame src={notice.coverImagePath} alt={notice.titleZh} className="content-cover" label="活动封面" />
-                    <a
-                      className="content-list-link"
-                      href={notice.externalUrl || "/activities"}
-                      target={notice.externalUrl ? "_blank" : undefined}
-                      rel={notice.externalUrl ? "noreferrer" : undefined}
-                    >
-                      <strong>{notice.titleZh}</strong>
-                    <p>{notice.summaryZh || "点击后查看活动详情或跳转到外部活动页面。"}</p>
-                    <p className="muted">地点：{notice.locationZh || "待补充"}</p>
-                    </a>
-                    {notice.externalUrl ? (
-                      <a className="button-secondary content-list-button-fallback" href={notice.externalUrl} target="_blank" rel="noreferrer">
-                        查看活动
-                      </a>
-                    ) : (
-                      <a className="button-secondary content-list-button-fallback" href="/activities">
-                        查看活动
-                      </a>
-                    )}
-                  </article>
+                  <a
+                    className="home-knowledge-card home-activity-item"
+                    data-reveal-item
+                    href={notice.externalUrl || "/activities"}
+                    key={notice.id}
+                    target={notice.externalUrl ? "_blank" : undefined}
+                    rel={notice.externalUrl ? "noreferrer" : undefined}
+                  >
+                    <strong>{notice.titleZh}</strong>
+                    <p>{formatHomeActivityTime(notice.startAt, notice.endAt)}</p>
+                  </a>
                 ))
               )}
             </div>

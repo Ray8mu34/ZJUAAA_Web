@@ -55,11 +55,10 @@ export default async function AstroPhotographyPage({
             <p className="muted">共 {photos.length} 幅作品</p>
           </div>
 
-          <form className="search-form" action="/astrophotography" data-reveal>
-            <input name="q" defaultValue={q} placeholder="搜索作品标题、拍摄者或天区" />
-            <button className="button-secondary" type="submit">
-              搜索
-            </button>
+          <form className="search-form editorial-search" action="/astrophotography" data-reveal>
+            <label htmlFor="astrophotography-search-input">检索作品</label>
+            <input id="astrophotography-search-input" name="q" defaultValue={q} placeholder="作品标题、拍摄者或天区" />
+            <button type="submit">搜索</button>
           </form>
 
           <AstroPhotoMasonry

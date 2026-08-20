@@ -3,6 +3,22 @@ import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
 
+const knowledgeDateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "Asia/Shanghai"
+});
+
+function formatKnowledgeDate(date: Date) {
+  const parts = knowledgeDateFormatter.formatToParts(date);
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  return [year, month, day].filter(Boolean).join(".");
+}
+
 export default async function KnowledgePage({
   searchParams
 }: {
@@ -35,60 +51,80 @@ export default async function KnowledgePage({
     })
   ]);
 
-  const cardClassName =
-    setting.cardTheme === "light" ? "content-card card-theme-light content-list-card knowledge-card" : "content-card content-list-card knowledge-card";
+  const introduction = (setting.knowledgeIntroZh || "这里展示科普文章封面与摘要。点击文章后，会跳转到原文。")
+    .replace("点击卡片后", "点击文章后");
 
   return (
     <>
       <SiteHeader />
-      <main className="section">
+      <main className="section knowledge-index-page">
         <div className="shell">
           <div className="section-head" data-reveal>
             <div>
               <h2>知识科普</h2>
-              <p className="muted">
-                {setting.knowledgeIntroZh || "这里展示科普文章封面与摘要。点击卡片后，会跳转到你们的公众号原文。"}
-              </p>
+              <p className="muted">{introduction}</p>
             </div>
             <p className="muted">共 {posts.length} 篇内容</p>
           </div>
 
-          <form className="search-form" action="/knowledge" data-reveal>
-            <input name="q" defaultValue={q} placeholder="搜索标题、摘要或作者" />
-            <button className="button-secondary" type="submit">
-              搜索
-            </button>
+          <form className="search-form editorial-search" action="/knowledge" data-reveal>
+            <label htmlFor="knowledge-search-input">检索科普</label>
+            <input id="knowledge-search-input" name="q" defaultValue={q} placeholder="标题、摘要或作者" />
+            <button type="submit">搜索</button>
           </form>
 
-          <div className="cards-grid content-list-grid" data-reveal>
+          <div className="knowledge-index-list" data-reveal>
             {posts.length === 0 ? (
-              <div className={cardClassName}>
+              <div className="knowledge-index-empty">
                 <strong>还没有已发布的科普文章</strong>
-                <p>你们可以先去后台新增科普文章，填写封面、摘要和公众号链接，再点击“发布”。</p>
+                {q ? <p>没有找到与“{q}”相关的内容。</p> : null}
               </div>
             ) : (
-              posts.map((post) => (
-                <article className={cardClassName} data-reveal-item key={post.id}>
-                  <MediaFrame src={post.coverImagePath} alt={post.titleZh} className="content-cover" label="科普封面" />
+              posts.map((post) => {
+                const articleDate = formatKnowledgeDate(post.publishedAt || post.createdAt);
+                const author = post.author?.trim();
+
+                return (
                   <a
-                    className="content-list-link"
+                    className="knowledge-index-row"
                     href={post.externalUrl || `/knowledge/${post.slug}`}
                     target={post.externalUrl ? "_blank" : undefined}
                     rel={post.externalUrl ? "noreferrer" : undefined}
+                    data-reveal-item
+                    key={post.id}
                   >
-                    <strong>{post.titleZh}</strong>
-                  <p>{post.summaryZh || "点击后查看文章详情。"}</p>
-                  <p className="muted">作者：{post.author}</p>
-                  </a><a
-                    className="button-secondary content-list-button-fallback"
-                    href={post.externalUrl || `/knowledge/${post.slug}`}
-                    target={post.externalUrl ? "_blank" : undefined}
-                    rel={post.externalUrl ? "noreferrer" : undefined}
-                  >
-                    {post.externalUrl ? "跳转公众号" : "阅读更多"}
+                    <span className="knowledge-index-media" aria-hidden="true">
+                      <MediaFrame
+                        src={post.coverImagePath}
+                        alt=""
+                        className="knowledge-index-cover"
+                        label="科普封面"
+                        sizes="(max-width: 760px) 100vw, (max-width: 1120px) 38vw, 380px"
+                      />
+                    </span>
+
+                    <span className="knowledge-index-copy">
+                      <span className="knowledge-index-kicker">科普文章</span>
+                      <strong className="knowledge-index-title">{post.titleZh}</strong>
+                      {post.summaryZh ? <span className="knowledge-index-summary">{post.summaryZh}</span> : null}
+
+                      <span className="knowledge-index-footer">
+                        <span className="knowledge-index-byline">
+                          {author ? <span>{author}</span> : null}
+                          {author && articleDate ? <span aria-hidden="true">·</span> : null}
+                          {articleDate ? <time dateTime={(post.publishedAt || post.createdAt).toISOString()}>{articleDate}</time> : null}
+                        </span>
+                        <span className="knowledge-index-read">
+                          阅读文章
+                          <span className="knowledge-index-arrow" aria-hidden="true">
+                            {post.externalUrl ? "↗" : "→"}
+                          </span>
+                        </span>
+                      </span>
+                    </span>
                   </a>
-                </article>
-              ))
+                );
+              })
             )}
           </div>
         </div>

@@ -135,7 +135,6 @@ export default async function ActivitiesPage({
         <div className="shell">
           <header className="section-head activity-page-header" data-reveal>
             <div>
-              <p className="activity-page-kicker">EVENTS / 社团日程</p>
               <h2>社团活动</h2>
               <p className="muted activity-page-intro">
                 {setting.activitiesIntroZh || "这里展示社团活动卡片信息。点击按钮后，会跳转到公众号文章或外部活动页面。"}
@@ -147,7 +146,7 @@ export default async function ActivitiesPage({
             </p>
           </header>
 
-          <form className="search-form activity-search" action="/activities" data-reveal>
+          <form className="search-form editorial-search activity-search" action="/activities" data-reveal>
             <label htmlFor="activity-search-input">检索活动</label>
             <input id="activity-search-input" name="q" defaultValue={q} placeholder="标题、简介或地点" />
             <button type="submit">搜索</button>
@@ -156,10 +155,8 @@ export default async function ActivitiesPage({
           <section className="activity-promotion-section" aria-labelledby="upcoming-heading" data-reveal>
             <div className="activity-editorial-heading">
               <div>
-                <p>UPCOMING / 活动预告</p>
-                <h3 id="upcoming-heading">下一次相遇</h3>
+                <h3 id="upcoming-heading">近期活动</h3>
               </div>
-              <span>未来是需要被期待的</span>
             </div>
 
             {!featuredNotice ? (
@@ -187,7 +184,6 @@ export default async function ActivitiesPage({
                       <div className="activity-feature-copy">
                         <div className="activity-promotion-topline">
                           <span className="activity-promotion-status" data-status={status}>{status}</span>
-                          <span>FEATURED EVENT · 01</span>
                         </div>
 
                         <time className="activity-feature-date" dateTime={notice.startAt?.toISOString()}>
@@ -211,8 +207,8 @@ export default async function ActivitiesPage({
                         {notice.summaryZh ? <p className="activity-feature-summary">{notice.summaryZh}</p> : null}
 
                         <dl className="activity-feature-meta">
-                          <div><dt>TIME</dt><dd>{formatActivityTime(notice.startAt, notice.endAt)}</dd></div>
-                          {notice.locationZh ? <div><dt>PLACE</dt><dd>{notice.locationZh}</dd></div> : null}
+                          <div><dt>时间</dt><dd>{formatActivityTime(notice.startAt, notice.endAt)}</dd></div>
+                          {notice.locationZh ? <div><dt>地点</dt><dd>{notice.locationZh}</dd></div> : null}
                         </dl>
 
                         <a className="activity-editorial-link" {...linkProps}>
@@ -272,10 +268,9 @@ export default async function ActivitiesPage({
           <section className="activity-archive-section" aria-labelledby="archive-heading" data-reveal>
             <div className="activity-editorial-heading activity-archive-heading">
               <div>
-                <p>PAST EVENTS / 活动档案</p>
-                <h3 id="archive-heading">过去的活动</h3>
+                <h3 id="archive-heading">往期活动</h3>
               </div>
-              <span>{recordNotices.length} RECORDS · 按时间归档</span>
+              <span>共 {recordNotices.length} 场 · 按时间归档</span>
             </div>
 
             {recordGroups.length === 0 ? (
