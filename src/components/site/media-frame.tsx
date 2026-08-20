@@ -7,9 +7,10 @@ type MediaFrameProps = {
   alt: string;
   className?: string;
   label?: string;
+  sizes?: string;
 };
 
-export function MediaFrame({ src, alt, className = "", label = "图片预览" }: MediaFrameProps) {
+export function MediaFrame({ src, alt, className = "", label = "图片预览", sizes = "(max-width: 980px) 100vw, 33vw" }: MediaFrameProps) {
   if (!src) {
     return (
       <div className={`media-frame placeholder ${className}`}>
@@ -20,7 +21,7 @@ export function MediaFrame({ src, alt, className = "", label = "图片预览" }:
 
   return (
     <div className={`media-frame ${className}`}>
-      <Image src={getImageVariantUrl(src, "thumb")} alt={alt} fill sizes="(max-width: 980px) 100vw, 33vw" />
+      <Image src={getImageVariantUrl(src, "thumb")} alt={alt} fill sizes={sizes} />
     </div>
   );
 }
