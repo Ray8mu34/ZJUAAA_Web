@@ -5,9 +5,10 @@
   --line: rgba(255, 255, 255, 0.12);
   --text: #f7f7f7;
   --muted: #bdbdbd;
-  --accent-start: #7df0bf;
-  --accent-mid: #4ea9ff;
-  --accent-end: #7644ff;
+  --accent: #177A91;
+  --accent-start: #177A91;
+  --accent-mid: #177A91;
+  --accent-end: #177A91;
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
   --motion-fast: 160ms;
   --motion-base: 280ms;
@@ -28,7 +29,7 @@ html {
 body {
   margin: 0;
   background:
-    radial-gradient(circle at top, rgba(78, 169, 255, 0.12), transparent 28%),
+    radial-gradient(circle at top, rgba(23, 122, 145, 0.12), transparent 28%),
     linear-gradient(180deg, #1f1f1f 0%, #2b2b2b 24%, #2f2f2f 100%);
   color: var(--text);
   font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
@@ -87,7 +88,7 @@ textarea {
   height: 20px;
   border-radius: 6px;
   background: linear-gradient(135deg, var(--accent-start), var(--accent-mid));
-  box-shadow: 0 0 24px rgba(78, 169, 255, 0.35);
+  box-shadow: 0 0 24px rgba(23, 122, 145, 0.35);
 }
 
 .brand-mark strong {
@@ -138,12 +139,12 @@ textarea {
 }
 
 .nav-links a.active {
-  background: rgba(48, 229, 255, 0.9);
-  box-shadow: inset 0 0 0 1px rgba(48, 229, 255, 0.28);
+  background: #177A91;
+  box-shadow: inset 0 0 0 1px rgba(23, 122, 145, 0.28);
 }
 
 .nav-links a.active span {
-  color: #10212c;
+  color: #ffffff;
 }
 
 .nav-links small,
@@ -159,8 +160,8 @@ textarea {
   min-height: 48px;
   padding: 0 24px;
   border-radius: 999px;
-  background: #69d2da;
-  color: #10212c;
+  background: #177A91;
+  color: #ffffff;
   font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
   font-size: 1rem;
   font-weight: 700;
@@ -174,7 +175,7 @@ textarea {
 .nav-contact-button:hover {
   transform: translateY(-2px);
   filter: brightness(1.06);
-  box-shadow: 0 12px 28px rgba(105, 210, 218, 0.2);
+  box-shadow: 0 12px 28px rgba(23, 122, 145, 0.2);
 }
 
 .nav-contact-button:active {
@@ -211,9 +212,9 @@ textarea {
   background: linear-gradient(
     90deg,
     var(--accent-start) 0%,
-    #72e7cf 18%,
+    var(--accent) 18%,
     var(--accent-mid) 48%,
-    #5b89ff 68%,
+    var(--accent) 68%,
     var(--accent-end) 100%
   );
   -webkit-background-clip: text;
@@ -441,7 +442,7 @@ textarea {
   height: 5px;
   margin-top: 32px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent-start) 0%, var(--accent-mid) 58%, rgba(118, 68, 255, 0.9) 100%);
+  background: linear-gradient(90deg, var(--accent-start) 0%, var(--accent-mid) 58%, rgba(23, 122, 145, 0.9) 100%);
 }
 
 .manifesto-section {
@@ -457,7 +458,7 @@ textarea {
   border-radius: 28px;
   border: 1px solid var(--line);
   background:
-    linear-gradient(90deg, rgba(125, 240, 191, 0.06), rgba(78, 169, 255, 0.03)),
+    linear-gradient(90deg, rgba(23, 122, 145, 0.06), rgba(23, 122, 145, 0.03)),
     rgba(255, 255, 255, 0.03);
   box-shadow: var(--shadow);
 }
@@ -543,7 +544,7 @@ textarea {
 }
 
 .content-card:hover {
-  border-color: rgba(78, 169, 255, 0.24);
+  border-color: rgba(23, 122, 145, 0.24);
   background: rgba(255, 255, 255, 0.045);
   box-shadow: 0 26px 68px rgba(0, 0, 0, 0.32);
 }
@@ -561,8 +562,8 @@ textarea {
   display: inline-flex;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(125, 240, 191, 0.12);
-  color: #b8ffd8;
+  background: #177A91;
+  color: #ffffff;
   font-size: 0.82rem;
 }
 
@@ -584,9 +585,9 @@ textarea {
 }
 
 .search-form .button-secondary {
-  background: #69d2da;
-  border-color: #69d2da;
-  color: #10212c;
+  background: #177A91;
+  border-color: #177A91;
+  color: #ffffff;
 }
 
 .hero::before {
@@ -595,7 +596,7 @@ textarea {
   inset: 0 auto auto 0;
   width: min(48vw, 640px);
   height: min(48vw, 640px);
-  background: radial-gradient(circle, rgba(125, 240, 191, 0.12), transparent 62%);
+  background: radial-gradient(circle, rgba(23, 122, 145, 0.12), transparent 62%);
   filter: blur(24px);
   pointer-events: none;
 }

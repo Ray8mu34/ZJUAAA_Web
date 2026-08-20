@@ -180,8 +180,8 @@
 }
 
 .media-picker-item.active {
-  border-color: rgba(78, 169, 255, 0.35);
-  background: rgba(78, 169, 255, 0.08);
+  border-color: rgba(23, 122, 145, 0.35);
+  background: rgba(23, 122, 145, 0.08);
 }
 
 .media-picker-item span {
@@ -253,15 +253,15 @@
 
 .admin-select option:checked,
 .admin-select option:hover {
-  background: #69d2da;
-  color: #10212c;
+  background: #177A91;
+  color: #ffffff;
 }
 
 .admin-select:focus,
 .file-input:focus {
   outline: none;
-  border-color: rgba(105, 210, 218, 0.7);
-  box-shadow: 0 0 0 3px rgba(105, 210, 218, 0.12);
+  border-color: rgba(23, 122, 145, 0.7);
+  box-shadow: 0 0 0 3px rgba(23, 122, 145, 0.12);
 }
 
 .file-input {
@@ -278,8 +278,8 @@
   border: none;
   border-radius: 12px;
   padding: 10px 18px;
-  background: #69d2da;
-  color: #10212c;
+  background: #177A91;
+  color: #ffffff;
   font-weight: 700;
   cursor: pointer;
 }
@@ -289,8 +289,8 @@
   border: none;
   border-radius: 12px;
   padding: 10px 18px;
-  background: #69d2da;
-  color: #10212c;
+  background: #177A91;
+  color: #ffffff;
   font-weight: 700;
   cursor: pointer;
 }
@@ -334,16 +334,16 @@
   position: relative;
   overflow: hidden;
   min-height: 28px;
-  border: 1px solid rgba(105, 210, 218, 0.36);
+  border: 1px solid rgba(23, 122, 145, 0.36);
   border-radius: 8px;
-  background: rgba(105, 210, 218, 0.1);
+  background: rgba(23, 122, 145, 0.1);
 }
 
 .admin-upload-progress span {
   position: absolute;
   inset: 0 auto 0 0;
   width: 0;
-  background: linear-gradient(90deg, rgba(105, 210, 218, 0.7), rgba(142, 230, 177, 0.7));
+  background: rgba(23, 122, 145, 0.7);
   transition: width 0.18s ease;
 }
 
@@ -409,13 +409,13 @@
 }
 
 .admin-sidebar-nav a.active {
-  background: rgba(45, 209, 232, 0.9);
-  color: #111111;
+  background: #177A91;
+  color: #ffffff;
 }
 
 .admin-sidebar-nav a.active span,
 .admin-sidebar-nav a.active svg {
-  color: #111111;
+  color: #ffffff;
   stroke: currentColor;
 }
 
@@ -556,7 +556,7 @@
   min-height: 34px;
   padding: 0 12px;
   border-radius: 999px;
-  background: rgba(105, 210, 218, 0.12);
+  background: rgba(23, 122, 145, 0.12);
   color: #d8fcff;
   font-size: 0.9rem;
 }
@@ -577,8 +577,8 @@
 }
 
 .post-sort-row.is-dragging .post-item {
-  border-color: rgba(105, 210, 218, 0.46);
-  background: rgba(105, 210, 218, 0.06);
+  border-color: rgba(23, 122, 145, 0.46);
+  background: rgba(23, 122, 145, 0.06);
 }
 
 .post-sort-controls {
@@ -608,8 +608,8 @@
 }
 
 .icon-button:hover:not(:disabled) {
-  border-color: rgba(105, 210, 218, 0.48);
-  background: rgba(105, 210, 218, 0.1);
+  border-color: rgba(23, 122, 145, 0.48);
+  background: rgba(23, 122, 145, 0.1);
 }
 
 .icon-button:disabled {
@@ -735,7 +735,7 @@
 
 .markdown-body blockquote {
   padding-left: 1rem;
-  border-left: 3px solid rgba(125, 240, 191, 0.45);
+  border-left: 3px solid rgba(23, 122, 145, 0.45);
   color: var(--muted);
 }
 

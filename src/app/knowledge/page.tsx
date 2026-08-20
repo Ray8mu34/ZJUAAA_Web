@@ -99,7 +99,7 @@ export default async function KnowledgePage({
                         alt=""
                         className="knowledge-index-cover"
                         label="科普封面"
-                        sizes="(max-width: 680px) 34vw, (max-width: 1120px) 240px, 320px"
+                        sizes="(max-width: 680px) 34vw, (max-width: 1120px) 220px, 300px"
                       />
                     </span>
 
