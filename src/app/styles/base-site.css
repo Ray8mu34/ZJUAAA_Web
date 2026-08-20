@@ -543,7 +543,6 @@ textarea {
 }
 
 .content-card:hover {
-  transform: translateY(-4px);
   border-color: rgba(78, 169, 255, 0.24);
   background: rgba(255, 255, 255, 0.045);
   box-shadow: 0 26px 68px rgba(0, 0, 0, 0.32);
@@ -840,11 +839,6 @@ html.motion-ready [data-reveal] [data-reveal-item] {
 html.motion-ready [data-reveal].is-revealed [data-reveal-item] {
   opacity: 1;
   transform: translate3d(0, 0, 0);
-}
-
-html.motion-ready [data-reveal].is-revealed [data-reveal-item]:hover,
-html.motion-ready [data-reveal].is-revealed.manual-start-entry:hover {
-  transform: translateY(-4px);
 }
 
 html.motion-ready [data-reveal].is-revealed [data-reveal-item]:nth-child(2) {

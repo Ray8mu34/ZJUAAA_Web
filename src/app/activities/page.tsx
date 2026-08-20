@@ -133,17 +133,14 @@ export default async function ActivitiesPage({
       <SiteHeader />
       <main className="section activity-page">
         <div className="shell">
-          <header className="section-head activity-page-header" data-reveal>
+          <header className="section-head" data-reveal>
             <div>
               <h2>社团活动</h2>
-              <p className="muted activity-page-intro">
+              <p className="muted">
                 {setting.activitiesIntroZh || "这里展示社团活动卡片信息。点击按钮后，会跳转到公众号文章或外部活动页面。"}
               </p>
             </div>
-            <p className="activity-count">
-              <strong>{String(notices.length).padStart(2, "0")}</strong>
-              <span>场活动</span>
-            </p>
+            <p className="muted">共 {notices.length} 场活动</p>
           </header>
 
           <form className="search-form editorial-search activity-search" action="/activities" data-reveal>

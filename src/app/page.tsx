@@ -1,5 +1,6 @@
 import { HomePhotoShowcase } from "@/components/site/home-photo-showcase";
 import { HomeKnowledgeCarousel } from "@/components/site/home-knowledge-carousel";
+import { MediaFrame } from "@/components/site/media-frame";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
@@ -32,28 +33,31 @@ function spreadText(text: string) {
   return Array.from(text.trim() || "追逐星辰的浙大人");
 }
 
-function formatHomeActivityTime(startAt?: Date | null, endAt?: Date | null) {
-  const formatDateTime = (date: Date) =>
-    date.toLocaleString("zh-CN", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+const homeActivityDateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "Asia/Shanghai"
+});
 
-  if (!startAt && !endAt) return "时间待定";
-  if (startAt && !endAt) return formatDateTime(startAt);
-  if (!startAt && endAt) return `截至 ${formatDateTime(endAt)}`;
+function formatHomeActivityDate(date: Date) {
+  const parts = homeActivityDateFormatter.formatToParts(date);
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
 
-  if (startAt!.toDateString() === endAt!.toDateString()) {
-    return `${formatDateTime(startAt!)} — ${endAt!.toLocaleTimeString("zh-CN", {
-      hour: "2-digit",
-      minute: "2-digit"
-    })}`;
-  }
+  return [year, month, day].filter(Boolean).join(".");
+}
 
-  return `${formatDateTime(startAt!)} — ${formatDateTime(endAt!)}`;
+function formatHomeActivityDateRange(startAt?: Date | null, endAt?: Date | null) {
+  if (!startAt && !endAt) return "日期待定";
+  if (startAt && !endAt) return formatHomeActivityDate(startAt);
+  if (!startAt && endAt) return `截至 ${formatHomeActivityDate(endAt)}`;
+
+  const startDate = formatHomeActivityDate(startAt!);
+  const endDate = formatHomeActivityDate(endAt!);
+
+  return startDate === endDate ? startDate : `${startDate} — ${endDate}`;
 }
 
 export default async function HomePage() {
@@ -161,8 +165,14 @@ export default async function HomePage() {
                     target={notice.externalUrl ? "_blank" : undefined}
                     rel={notice.externalUrl ? "noreferrer" : undefined}
                   >
+                    <MediaFrame
+                      src={notice.coverImagePath}
+                      alt={notice.titleZh}
+                      className="home-knowledge-cover"
+                      label="活动封面"
+                    />
                     <strong>{notice.titleZh}</strong>
-                    <p>{formatHomeActivityTime(notice.startAt, notice.endAt)}</p>
+                    <p>{formatHomeActivityDateRange(notice.startAt, notice.endAt)}</p>
                   </a>
                 ))
               )}

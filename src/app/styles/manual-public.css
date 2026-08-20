@@ -292,15 +292,12 @@
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.02);
   transition:
-    transform 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
 .manual-category-card:hover {
-  transform: translateY(-4px);
   border-color: rgba(78, 169, 255, 0.3);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
 .manual-category-cover {
@@ -312,6 +309,13 @@
 
 .manual-category-cover img {
   object-fit: cover;
+  transform-origin: center center;
+  transition: transform 520ms var(--ease-out);
+}
+
+.manual-category-card:hover .manual-category-cover img,
+.manual-category-card:focus-visible .manual-category-cover img {
+  transform: scale(1.025);
 }
 
 .manual-category-placeholder {
@@ -643,9 +647,8 @@
   height: auto;
   max-height: 680px;
   object-fit: cover;
-  transition:
-    transform 520ms var(--ease-out),
-    filter var(--motion-base) ease;
+  transform-origin: center center;
+  transition: transform 520ms var(--ease-out);
 }
 
 .about-gallery-item,
@@ -665,24 +668,15 @@
 .astro-gallery-item,
 .home-photo-showcase-item {
   border-radius: 24px;
-  transition:
-    transform var(--motion-base) var(--ease-out),
-    border-color var(--motion-base) ease,
-    box-shadow var(--motion-base) ease;
-}
-
-.astro-gallery-item:hover,
-.home-photo-showcase-item:hover {
-  transform: translateY(-5px);
-  border-color: rgba(78, 169, 255, 0.22);
-  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.28);
 }
 
 .about-gallery-item:hover img,
 .astro-gallery-item:hover img,
-.home-photo-showcase-item:hover img {
-  transform: scale(1.035);
-  filter: brightness(1.04) saturate(1.04);
+.home-photo-showcase-item:hover img,
+.about-gallery-item:focus-visible img,
+.astro-gallery-item:focus-visible img,
+.home-photo-showcase-item:focus-visible img {
+  transform: scale(1.025);
 }
 
 [data-photo-enter] {

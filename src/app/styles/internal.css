@@ -20,7 +20,6 @@
   padding: 70px 0 18px;
 }
 
-.internal-login-panel,
 .internal-section-head,
 .internal-file-list,
 .publicity-stage {
@@ -29,14 +28,10 @@
 }
 
 .internal-login-panel {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
-  gap: 38px;
-  align-items: stretch;
+  width: min(100%, 440px);
+  margin: 0 auto;
 }
 
-.internal-login-copy,
-.internal-login-form,
 .internal-module-card,
 .internal-file-card,
 .internal-empty {
@@ -46,23 +41,19 @@
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.18);
 }
 
-.internal-login-copy {
-  display: flex;
-  min-height: 420px;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: clamp(28px, 5vw, 58px);
-}
-
-.internal-kicker {
-  display: inline-flex;
+.internal-page.internal-login-page {
+  display: grid;
+  min-height: 72vh;
   align-items: center;
-  gap: 8px;
-  color: #22a7c7;
-  font-weight: 700;
+  padding: clamp(64px, 10vh, 104px) 0;
+  background: var(--bg);
 }
 
-.internal-login-copy h1,
+.internal-login-page > .shell {
+  display: grid;
+  place-items: center;
+}
+
 .internal-section-head h1 {
   margin: 0;
   color: var(--heading-color);
@@ -79,7 +70,6 @@
   line-height: 1.04;
 }
 
-.internal-login-copy p,
 .internal-portal-head p,
 .internal-section-head p {
   max-width: 660px;
@@ -93,38 +83,98 @@
   margin-top: 14px;
 }
 
-.internal-login-copy h1 {
-  margin: 12px 0;
+.internal-login-heading h1 {
+  margin: 0;
+  color: var(--heading-color);
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: clamp(2.25rem, 5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.internal-login-heading p {
+  margin: 14px 0 0;
+  color: var(--muted-text);
+  font-size: 0.96rem;
+  line-height: 1.8;
 }
 
 .internal-login-form {
   display: grid;
-  align-content: center;
-  gap: 18px;
-  padding: 32px;
+  gap: 17px;
+  margin-top: 32px;
 }
 
 .internal-login-form label {
   display: grid;
-  gap: 8px;
+  gap: 9px;
   color: var(--heading-color);
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .internal-login-form input {
   width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
   border: 1px solid var(--border-color);
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--surface-bg) 72%, transparent);
+  border-radius: 10px;
+  outline: none;
+  background: color-mix(in srgb, var(--surface-bg) 42%, transparent);
   color: var(--body-color);
   font: inherit;
-  padding: 14px 16px;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.internal-login-form input:focus {
+  border-color: #22a7c7;
+  background: color-mix(in srgb, var(--surface-bg) 68%, transparent);
+}
+
+.internal-login-submit {
+  min-height: 50px;
+  margin-top: 3px;
+  border: 1px solid #1599b6;
+  border-radius: 10px;
+  background: #1599b6;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.internal-login-submit:hover {
+  border-color: #22a7c7;
+  background: #22a7c7;
 }
 
 .internal-form-error {
   margin: 0;
   color: #ef6f6c;
+  font-size: 0.88rem;
   font-weight: 700;
+}
+
+.internal-login-help {
+  margin: 18px 0 0;
+  color: var(--muted-text);
+  font-size: 0.82rem;
+}
+
+.internal-login-help a {
+  margin-left: 3px;
+  color: var(--muted-text);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.internal-login-help a:hover {
+  color: #22a7c7;
+  text-decoration-color: currentColor;
 }
 
 .internal-portal-head {
@@ -1095,8 +1145,10 @@ html[data-theme="light"] .internal-page {
     #f5f9fc;
 }
 
-html[data-theme="light"] .internal-login-copy,
-html[data-theme="light"] .internal-login-form,
+html[data-theme="light"] .internal-page.internal-login-page {
+  background: #f5f9fc;
+}
+
 html[data-theme="light"] .internal-module-card,
 html[data-theme="light"] .internal-file-card,
 html[data-theme="light"] .internal-empty {
@@ -1150,12 +1202,10 @@ html[data-theme="light"] .internal-empty {
 
 @media (max-width: 820px) {
   .admin-quick-grid,
-  .internal-login-panel,
   .internal-module-grid {
     grid-template-columns: 1fr;
   }
 
-  .internal-login-copy h1,
   .internal-section-head h1 {
     font-size: clamp(2.6rem, 7vw, 5.4rem);
   }

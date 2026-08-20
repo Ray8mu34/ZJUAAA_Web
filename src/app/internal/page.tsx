@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Images, LockKeyhole, LogOut, ScrollText } from "lucide-react";
+import { Download, Images, LogOut, ScrollText } from "lucide-react";
 
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
@@ -45,34 +45,38 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
   return (
     <>
       <SiteHeader />
-      <main className={hasAccess ? "internal-page internal-portal-page" : "internal-page"}>
+      <main className={hasAccess ? "internal-page internal-portal-page" : "internal-page internal-login-page"}>
         <div className="shell">
           {!hasAccess ? (
             <section className="internal-login-panel">
-              <div className="internal-login-copy">
-                <span className="internal-kicker">
-                  <LockKeyhole size={18} />
-                  内部资料
-                </span>
-                <h1>成员资料入口</h1>
-                <p>输入内部资料账号和密码后，可以查看社团资料下载、宣传部作品等仅供内部使用的内容。</p>
-              </div>
+              <header className="internal-login-heading">
+                <h1>内部资料</h1>
+                <p>
+                  仅限社团成员访问。
+                  <br />
+                  请使用内部账号登录。
+                </p>
+              </header>
 
               <form action={internalSignIn} className="internal-login-form">
                 <input type="hidden" name="callbackUrl" value={callbackUrl} />
                 <label>
                   <span>账号</span>
-                  <input name="username" type="text" autoComplete="username" placeholder="内部资料账号" required />
+                  <input name="username" type="text" autoComplete="username" placeholder="请输入账号" required />
                 </label>
                 <label>
                   <span>密码</span>
-                  <input name="password" type="password" autoComplete="current-password" placeholder="内部资料密码" required />
+                  <input name="password" type="password" autoComplete="current-password" placeholder="请输入密码" required />
                 </label>
                 {errorMessage ? <p className="internal-form-error">{errorMessage}</p> : null}
-                <button className="button-link" type="submit">
-                  进入内部资料
+                <button className="internal-login-submit" type="submit">
+                  登录
                 </button>
               </form>
+
+              <p className="internal-login-help">
+                登录遇到问题？<Link href="/contact">联系管理员</Link>
+              </p>
             </section>
           ) : (
             <section className="internal-portal">
