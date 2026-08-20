@@ -99,12 +99,11 @@ export default async function KnowledgePage({
                         alt=""
                         className="knowledge-index-cover"
                         label="科普封面"
-                        sizes="(max-width: 760px) 100vw, (max-width: 1120px) 38vw, 380px"
+                        sizes="(max-width: 680px) 34vw, (max-width: 1120px) 240px, 320px"
                       />
                     </span>
 
                     <span className="knowledge-index-copy">
-                      <span className="knowledge-index-kicker">科普文章</span>
                       <strong className="knowledge-index-title">{post.titleZh}</strong>
                       {post.summaryZh ? <span className="knowledge-index-summary">{post.summaryZh}</span> : null}
 
