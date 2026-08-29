@@ -39,14 +39,6 @@ export default async function ManualIndexPage() {
             </div>
           </div>
 
-          {/* Start entry */}
-          <Link className="manual-start-entry content-card" data-reveal href="/manual/start">
-            <div className="manual-start-content">
-              <h3>第一次来到这里？</h3>
-              <p className="muted">查看知识手册内容清单，了解全部文章目录。</p>
-            </div>
-          </Link>
-
           {/* Category cards */}
           <section className="manual-category-grid" data-reveal>
             {categories.length === 0 ? (
@@ -60,17 +52,13 @@ export default async function ManualIndexPage() {
                         src={getImageVariantUrl(category.coverImagePath, "thumb")}
                         alt={category.titleZh}
                         fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
+                        sizes="(max-width: 720px) 100vw, (max-width: 980px) 50vw, 33vw"
                       />
                     ) : (
                       <div className="manual-category-placeholder" />
                     )}
                     <div className="manual-category-overlay">
-                      <div className="manual-category-info">
-                        <strong>{category.titleZh}</strong>
-                        <p>{category.summaryZh || "点击进入查看文章列表。"}</p>
-                        <span className="manual-category-count">{category._count.chapters} 篇文章</span>
-                      </div>
+                      <strong className="manual-category-title">{category.titleZh}</strong>
                     </div>
                   </div>
                 </Link>

@@ -2,7 +2,7 @@
 :root,
 html[data-theme="dark"] {
   --page-bg:
-    radial-gradient(circle at top, rgba(23, 122, 145, 0.1), transparent 28%),
+    radial-gradient(circle at top, rgba(78, 169, 255, 0.1), transparent 28%),
     linear-gradient(180deg, #222222 0%, #2a2a2a 24%, #2d2d2d 100%);
   --header-bg: rgba(34, 34, 34, 0.88);
   --header-line: rgba(255, 255, 255, 0.12);
@@ -29,7 +29,7 @@ html[data-theme="dark"] {
   --footer-logo-bg: rgba(255, 255, 255, 0.06);
   --manual-list-bg: rgba(38, 40, 42, 0.96);
   --manual-list-index-bg:
-    linear-gradient(180deg, rgba(23, 122, 145, 0.13), rgba(23, 122, 145, 0.06)),
+    linear-gradient(180deg, rgba(78, 169, 255, 0.13), rgba(125, 240, 191, 0.06)),
     rgba(255, 255, 255, 0.035);
   --manual-list-line: rgba(255, 255, 255, 0.1);
   --manual-list-heading: #f4f6f8;
@@ -52,7 +52,7 @@ html[data-theme="light"] {
   --muted: rgba(21, 25, 34, 0.64);
   --shadow: 0 20px 56px rgba(44, 62, 80, 0.12);
   --page-bg:
-    radial-gradient(circle at top, rgba(23, 122, 145, 0.13), transparent 30%),
+    radial-gradient(circle at top, rgba(78, 169, 255, 0.13), transparent 30%),
     linear-gradient(180deg, #f8fbff 0%, #eef4f8 42%, #f6f8fb 100%);
   --header-bg: rgba(255, 255, 255, 0.86);
   --header-line: rgba(22, 24, 26, 0.1);
@@ -79,7 +79,7 @@ html[data-theme="light"] {
   --footer-logo-bg: rgba(20, 26, 34, 0.06);
   --manual-list-bg: rgba(248, 250, 252, 0.96);
   --manual-list-index-bg:
-    linear-gradient(180deg, rgba(23, 122, 145, 0.08), rgba(23, 122, 145, 0.05)),
+    linear-gradient(180deg, rgba(78, 169, 255, 0.08), rgba(125, 240, 191, 0.05)),
     #f3f7fb;
   --manual-list-line: rgba(22, 24, 26, 0.08);
   --manual-list-heading: #111827;
@@ -215,7 +215,7 @@ html[data-theme="light"] .button-secondary {
 }
 
 .content-list-link:hover strong {
-  color: #177A91;
+  color: #6dd8e4;
 }
 
 .content-list-card strong {
@@ -274,7 +274,7 @@ html[data-theme="light"] .content-list-link > p:not(.muted) {
 }
 
 html[data-theme="light"] .content-list-link:hover strong {
-  color: #177A91;
+  color: #177a91;
 }
 
 .home-knowledge-carousel {
@@ -407,7 +407,7 @@ html[data-theme="light"] .home-knowledge-card .home-knowledge-cover {
 
 /* Activities: promotion above, archive below */
 .activity-page {
-  --activity-accent: #177A91;
+  --activity-accent: #6dd8e4;
   --activity-paper: #26292b;
   --activity-paper-strong: #202224;
   --activity-line: rgba(255, 255, 255, 0.18);
@@ -417,7 +417,7 @@ html[data-theme="light"] .home-knowledge-card .home-knowledge-cover {
 }
 
 html[data-theme="light"] .activity-page {
-  --activity-accent: #177A91;
+  --activity-accent: #177a91;
   --activity-paper: #f5f6f3;
   --activity-paper-strong: #ebece7;
   --activity-line: rgba(21, 25, 34, 0.2);
@@ -427,7 +427,7 @@ html[data-theme="light"] .activity-page {
 }
 
 .search-form.editorial-search {
-  --search-accent: #177A91;
+  --search-accent: #6dd8e4;
   --search-hover-ink: #202224;
   --search-line: var(--surface-line);
   --search-muted: var(--muted);
@@ -441,7 +441,7 @@ html[data-theme="light"] .activity-page {
 }
 
 html[data-theme="light"] .search-form.editorial-search {
-  --search-accent: #177A91;
+  --search-accent: #177a91;
   --search-hover-ink: #ffffff;
 }
 
@@ -490,14 +490,14 @@ html[data-theme="light"] .search-form.editorial-search {
 .knowledge-index-page {
   --knowledge-line: var(--surface-line);
   --knowledge-quiet: var(--muted-text);
-  --knowledge-accent: #177A91;
+  --knowledge-accent: #6dd8e4;
   --knowledge-item-bg: #343331;
   --knowledge-item-border: rgba(174, 196, 211, 0.16);
   --knowledge-item-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 html[data-theme="light"] .knowledge-index-page {
-  --knowledge-accent: #177A91;
+  --knowledge-accent: #177a91;
   --knowledge-item-bg: #fbfaf6;
   --knowledge-item-border: rgba(105, 128, 145, 0.22);
   --knowledge-item-shadow: 0 3px 10px rgba(52, 67, 78, 0.08);
@@ -892,7 +892,7 @@ html[data-theme="light"] .knowledge-index-page {
 }
 
 .activity-promotion-status[data-status="进行中"]::before {
-  background: #177A91;
+  background: #7df0bf;
 }
 
 .activity-page .activity-feature-date {
@@ -1482,7 +1482,7 @@ html[data-theme="light"] .knowledge-index-page {
 
 .theme-toggle:hover {
   transform: translateY(-1px);
-  border-color: rgba(23, 122, 145, 0.35);
+  border-color: rgba(78, 169, 255, 0.35);
 }
 
 .admin-theme-toggle {
@@ -1627,7 +1627,7 @@ html[data-theme="light"] .theme-toggle-moon {
 }
 
 .manual-article-card .markdown-body blockquote {
-  background: rgba(23, 122, 145, 0.1);
+  background: rgba(78, 169, 255, 0.1);
   color: var(--manual-article-muted);
 }
 
