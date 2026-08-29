@@ -591,11 +591,7 @@ html[data-theme="light"] .knowledge-index-page {
   font-weight: 700;
   letter-spacing: -0.015em;
   line-height: 1.25;
-  text-decoration-color: transparent;
-  text-decoration-line: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.14em;
-  transition: text-decoration-color 180ms ease;
+  text-decoration: none;
 }
 
 .knowledge-index-summary {
@@ -648,11 +644,6 @@ html[data-theme="light"] .knowledge-index-page {
 .knowledge-index-row:hover .knowledge-index-cover img,
 .knowledge-index-row:focus-visible .knowledge-index-cover img {
   transform: scale(1.025);
-}
-
-.knowledge-index-row:hover .knowledge-index-title,
-.knowledge-index-row:focus-visible .knowledge-index-title {
-  text-decoration-color: currentColor;
 }
 
 .knowledge-index-row:hover .knowledge-index-arrow,

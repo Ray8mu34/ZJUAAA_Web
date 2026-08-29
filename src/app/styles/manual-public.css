@@ -259,7 +259,7 @@
 
 .manual-category-card {
   display: block;
-  border-radius: 6px;
+  border-radius: 0;
   overflow: hidden;
   border: 0;
   background: rgba(255, 255, 255, 0.02);
