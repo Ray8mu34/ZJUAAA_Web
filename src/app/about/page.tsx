@@ -78,14 +78,14 @@ export default async function AboutPage() {
   return (
     <>
       <SiteHeader />
-      <main className="section">
+      <main className="section about-page">
         <div className="shell">
-          <div className="section-head" data-reveal>
+          <header className="section-head" data-reveal>
             <div>
               <h2>关于我们</h2>
               <p className="muted">{setting?.aboutIntroZh || "这里展示社团介绍、内部活动照片和历届成员信息。"}</p>
             </div>
-          </div>
+          </header>
 
           <section className="content-card about-gallery-section" data-reveal>
             <div className="about-section-head">
