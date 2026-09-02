@@ -83,7 +83,7 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
               <div className="internal-portal-head">
                 <div>
                   <h1>内部资料</h1>
-                  <p>{setting.internalIntroZh || "这里收纳社团内部文件、宣传部作品和后续可以继续扩展的成员资料。"}</p>
+                  <p>{setting.internalIntroZh || "社团文件、宣传作品与共同记忆。"}</p>
                 </div>
                 <form action={internalSignOut}>
                   <button className="button-ghost internal-logout" type="submit">
@@ -97,17 +97,17 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
                 <Link className="internal-module-card" href="/internal/files">
                   <Download size={24} />
                   <strong>文件下载</strong>
-                  <span>望远镜操作视频、图文资料、表格与培训文件。</span>
+                  <span>望远镜操作视频、图文、表格与培训资料。</span>
                 </Link>
                 <Link className="internal-module-card" href="/internal/publicity">
                   <Images size={24} />
                   <strong>宣传部作品</strong>
-                  <span>海报、传单、纳新视觉和社团传播物料作品墙。</span>
+                  <span>海报、传单、纳新视觉与传播物料。</span>
                 </Link>
                 <Link className="internal-module-card" href="/internal/stories">
                   <ScrollText size={24} />
                   <strong>天协往事</strong>
-                  <span>随机翻看社团里的短句、片段和回忆，像在星图里拾起几颗旧光点。</span>
+                  <span>社团片段、趣事与共同回忆。</span>
                 </Link>
               </div>
             </section>

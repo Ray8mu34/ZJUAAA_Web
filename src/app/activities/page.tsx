@@ -1,4 +1,5 @@
 import { MediaFrame } from "@/components/site/media-frame";
+import { ActivityEventStage, type ActivityEventStageItem } from "@/components/site/activity-event-stage";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
@@ -25,32 +26,34 @@ function formatDay(date?: Date | null) {
   };
 }
 
-function formatDateTime(date?: Date | null) {
-  if (!date) return "待定";
-
-  return date.toLocaleString("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+function formatStageDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const weekday = date.toLocaleDateString("zh-CN", { weekday: "short" });
+  return `${year}.${month}.${day} · ${weekday}`;
 }
 
-function formatActivityTime(startAt?: Date | null, endAt?: Date | null) {
-  if (!startAt && !endAt) return "时间待定";
-  if (startAt && !endAt) return formatDateTime(startAt);
-  if (!startAt && endAt) return `截至 ${formatDateTime(endAt)}`;
+function formatStageClock(date: Date) {
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
 
-  const sameDay = startAt!.toDateString() === endAt!.toDateString();
-  if (sameDay) {
-    return `${formatDateTime(startAt)} — ${endAt!.toLocaleTimeString("zh-CN", {
-      hour: "2-digit",
-      minute: "2-digit"
-    })}`;
+function formatStageSchedule(startAt?: Date | null, endAt?: Date | null) {
+  if (!startAt && !endAt) return { dateLabel: null, timeLabel: null };
+  if (!startAt && endAt) {
+    return { dateLabel: `截至 ${formatStageDate(endAt)}`, timeLabel: formatStageClock(endAt) };
+  }
+  if (startAt && !endAt) {
+    return { dateLabel: formatStageDate(startAt), timeLabel: formatStageClock(startAt) };
   }
 
-  return `${formatDateTime(startAt)} — ${formatDateTime(endAt)}`;
+  const sameDay = startAt!.toDateString() === endAt!.toDateString();
+  return {
+    dateLabel: formatStageDate(startAt!),
+    timeLabel: sameDay
+      ? `${formatStageClock(startAt!)}—${formatStageClock(endAt!)}`
+      : `${formatStageClock(startAt!)}—${formatStageDate(endAt!)} ${formatStageClock(endAt!)}`
+  };
 }
 
 function getActivityStatus(startAt?: Date | null, endAt?: Date | null) {
@@ -114,8 +117,23 @@ export default async function ActivitiesPage({
 
   const upcomingNotices = notices.filter((notice) => !isActivityRecord(notice.startAt, notice.endAt)).sort(sortByUpcomingTime);
   const recordNotices = notices.filter((notice) => isActivityRecord(notice.startAt, notice.endAt)).sort(sortByRecordTime);
-  const featuredNotice = upcomingNotices[0];
-  const supportingNotices = upcomingNotices.slice(1);
+  const stageActivities: ActivityEventStageItem[] = upcomingNotices.map((notice) => {
+    const schedule = formatStageSchedule(notice.startAt, notice.endAt);
+    return {
+      id: notice.id,
+      title: notice.titleZh,
+      titleEn: notice.titleEn,
+      poster: notice.coverImagePath,
+      dateLabel: schedule.dateLabel,
+      timeLabel: schedule.timeLabel,
+      startAt: notice.startAt?.toISOString() || null,
+      location: notice.locationZh,
+      description: notice.summaryZh,
+      status: getActivityStatus(notice.startAt, notice.endAt),
+      url: notice.externalUrl || "/activities",
+      isExternal: Boolean(notice.externalUrl)
+    };
+  });
   const recordGroups = Array.from(
     recordNotices
       .reduce((groups, notice) => {
@@ -137,7 +155,7 @@ export default async function ActivitiesPage({
             <div>
               <h2>社团活动</h2>
               <p className="muted">
-                {setting.activitiesIntroZh || "这里展示社团活动卡片信息。点击按钮后，会跳转到公众号文章或外部活动页面。"}
+                {setting.activitiesIntroZh || "关注社团最新活动与往期记录。"}
               </p>
             </div>
             <p className="muted">共 {notices.length} 场活动</p>
@@ -149,125 +167,23 @@ export default async function ActivitiesPage({
             <button type="submit">搜索</button>
           </form>
 
-          <section className="activity-promotion-section" aria-labelledby="upcoming-heading" data-reveal>
-            <div className="activity-editorial-heading">
-              <div>
-                <h3 id="upcoming-heading">近期活动</h3>
+          {stageActivities.length > 0 ? (
+            <section className="activity-promotion-section" aria-labelledby="upcoming-heading" data-reveal>
+              <div className="activity-editorial-heading">
+                <div>
+                  <h3 id="upcoming-heading">近期活动</h3>
+                </div>
               </div>
-            </div>
-
-            {!featuredNotice ? (
-              <div className="activity-empty-state"><strong>暂无活动预告</strong></div>
-            ) : (
-              <div className="activity-promotions">
-                {(() => {
-                  const notice = featuredNotice;
-                  const date = formatDay(notice.startAt);
-                  const status = getActivityStatus(notice.startAt, notice.endAt);
-                  const linkProps = getActivityLinkProps(notice.externalUrl);
-
-                  return (
-                    <article className="activity-feature" data-reveal-item>
-                      <a className="activity-feature-media" {...linkProps} aria-label={`查看活动：${notice.titleZh}`}>
-                        <MediaFrame
-                          src={notice.coverImagePath}
-                          alt={notice.titleZh}
-                          className="activity-feature-cover"
-                          label="活动主视觉"
-                          sizes="(max-width: 720px) 100vw, (max-width: 1180px) 62vw, 700px"
-                        />
-                      </a>
-
-                      <div className="activity-feature-copy">
-                        <div className="activity-promotion-topline">
-                          <span className="activity-promotion-status" data-status={status}>{status}</span>
-                        </div>
-
-                        <time className="activity-feature-date" dateTime={notice.startAt?.toISOString()}>
-                          {date.isScheduled ? (
-                            <>
-                              <span key="month">{date.month}</span>
-                              <i key="separator">/</i>
-                              <span key="day">{date.day}</span>
-                              <small key="context">{date.year} · {date.weekday}</small>
-                            </>
-                          ) : (
-                            <strong>日期待定</strong>
-                          )}
-                        </time>
-
-                        <a className="activity-feature-title" {...linkProps}>
-                          <h3>{notice.titleZh}</h3>
-                          {notice.titleEn ? <span>{notice.titleEn}</span> : null}
-                        </a>
-
-                        {notice.summaryZh ? <p className="activity-feature-summary">{notice.summaryZh}</p> : null}
-
-                        <dl className="activity-feature-meta">
-                          <div><dt>时间</dt><dd>{formatActivityTime(notice.startAt, notice.endAt)}</dd></div>
-                          {notice.locationZh ? <div><dt>地点</dt><dd>{notice.locationZh}</dd></div> : null}
-                        </dl>
-
-                        <a className="activity-editorial-link" {...linkProps}>
-                          查看活动 <span aria-hidden="true">{notice.externalUrl ? "↗" : "→"}</span>
-                        </a>
-                      </div>
-                    </article>
-                  );
-                })()}
-
-                {supportingNotices.length > 0 ? (
-                  <div className="activity-supporting-grid">
-                    {supportingNotices.map((notice) => {
-                      const date = formatDay(notice.startAt);
-                      const status = getActivityStatus(notice.startAt, notice.endAt);
-                      const linkProps = getActivityLinkProps(notice.externalUrl);
-
-                      return (
-                        <article className="activity-supporting" data-reveal-item key={notice.id}>
-                          <a className="activity-supporting-media" {...linkProps} aria-label={`查看活动：${notice.titleZh}`}>
-                            <MediaFrame
-                              src={notice.coverImagePath}
-                              alt={notice.titleZh}
-                              className="activity-supporting-cover"
-                              label="活动主视觉"
-                              sizes="(max-width: 720px) 100vw, (max-width: 1180px) 50vw, 560px"
-                            />
-                          </a>
-                          <div className="activity-supporting-copy">
-                            <div className="activity-supporting-date">
-                              <time dateTime={notice.startAt?.toISOString()}>{date.isScheduled ? date.monthDay : "日期待定"}</time>
-                              <span>{date.isScheduled ? `${date.year} · ${date.weekday}` : status}</span>
-                            </div>
-                            <span className="activity-promotion-status" data-status={status}>{status}</span>
-                            <a className="activity-supporting-title" {...linkProps}>
-                              <h4>{notice.titleZh}</h4>
-                              {notice.titleEn ? <span>{notice.titleEn}</span> : null}
-                            </a>
-                            {notice.summaryZh ? <p>{notice.summaryZh}</p> : null}
-                            <div className="activity-supporting-meta">
-                              <time>{formatActivityTime(notice.startAt, notice.endAt)}</time>
-                              {notice.locationZh ? <span>{notice.locationZh}</span> : null}
-                            </div>
-                            <a className="activity-editorial-link" {...linkProps}>
-                              查看活动 <span aria-hidden="true">{notice.externalUrl ? "↗" : "→"}</span>
-                            </a>
-                          </div>
-                        </article>
-                      );
-                    })}
-                  </div>
-                ) : null}
-              </div>
-            )}
-          </section>
+              <ActivityEventStage activities={stageActivities} />
+            </section>
+          ) : null}
 
           <section className="activity-archive-section" aria-labelledby="archive-heading" data-reveal>
             <div className="activity-editorial-heading activity-archive-heading">
               <div>
                 <h3 id="archive-heading">往期活动</h3>
               </div>
-              <span>共 {recordNotices.length} 场 · 按时间归档</span>
+              <span>共 {recordNotices.length} 场</span>
             </div>
 
             {recordGroups.length === 0 ? (
