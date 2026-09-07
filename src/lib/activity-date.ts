@@ -23,7 +23,9 @@ export function formatActivitySchedule(startAt?: Date | null, endAt?: Date | nul
   return {
     dateLabel: start.dateLabel,
     timeLabel: end
-      ? `${start.timeLabel}–${end.dateLabel === start.dateLabel ? "" : `${end.dateLabel} `}${end.timeLabel}`
+      ? end.dateLabel === start.dateLabel
+        ? `${start.timeLabel} – ${end.timeLabel}`
+        : `${start.month}.${start.day} ${start.timeLabel}\n— ${end.month}.${end.day} ${end.timeLabel}`
       : start.timeLabel
   };
 }

@@ -20,8 +20,8 @@
 
 .activity-event-stage-body {
   display: grid;
-  grid-template-columns: minmax(100px, .48fr) minmax(0, 1.25fr) minmax(0, 1fr);
-  gap: clamp(28px, 4.5vw, 72px);
+  grid-template-columns: minmax(130px, .52fr) minmax(320px, 1.2fr) minmax(300px, 1fr);
+  gap: clamp(42px, 5vw, 84px);
   align-items: center;
 }
 
@@ -31,9 +31,20 @@
   color: var(--activity-quiet);
 }
 
+.activity-stage-date-accessible {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .activity-stage-date-caption {
-  font-size: .65rem;
-  letter-spacing: .25em;
+  font-size: .78rem;
+  letter-spacing: .2em;
 }
 
 .activity-stage-date-numbers {
@@ -60,14 +71,14 @@
 .activity-stage-year {
   display: block;
   margin-top: 20px;
-  font: 1.15rem Georgia, serif;
+  font: 1.25rem Georgia, serif;
   letter-spacing: .16em;
 }
 
 .activity-stage-weekday {
   display: block;
   margin-top: 28px;
-  font: .7rem Georgia, serif;
+  font: .82rem Georgia, serif;
   letter-spacing: .16em;
 }
 
@@ -81,7 +92,7 @@
 
 .activity-stage-date p {
   margin: 28px 0 0;
-  font-size: .68rem;
+  font-size: .78rem;
   line-height: 1.9;
   letter-spacing: .12em;
 }
@@ -89,7 +100,7 @@
 .activity-stage-poster-column {
   position: relative;
   min-width: 0;
-  padding: 32px 17% 12px 0;
+  padding: 54px 12% 0 0;
   isolation: isolate;
 }
 
@@ -97,36 +108,23 @@
   position: absolute;
   z-index: -2;
   background: #1b2b40;
-  inset: 0 22% 38px 10%;
-}
-
-.activity-stage-sky {
-  position: absolute;
-  z-index: -1;
-  top: 24px;
-  bottom: 0;
+  top: 0;
   right: 0;
-  width: 35%;
-  overflow: hidden;
-  background: #162333;
-}
-
-.activity-stage-sky img {
-  object-fit: cover;
-  filter: saturate(.55) brightness(.65);
+  bottom: 11%;
+  left: 14%;
 }
 
 .activity-stage-poster-link, .activity-stage-poster-frame {
   display: block;
   position: relative;
-  width: 100%;
+  width: min(100%, 410px);
 }
 
 .activity-stage-poster-frame img {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 510px;
+  max-height: 560px;
   object-fit: contain;
   object-position: center;
 }
@@ -154,24 +152,17 @@
 
 .activity-stage-copy {
   min-width: 0;
-  padding: 28px 0 12px;
-}
-
-.activity-stage-status {
-  color: var(--activity-quiet);
-  font-size: .7rem;
-  letter-spacing: .18em;
+  padding: 20px 0;
 }
 
 .activity-stage-title {
   display: block;
-  margin-top: 24px;
 }
 
 .activity-stage-title h2 {
   margin: 0;
   font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
-  font-size: clamp(2rem, 3.5vw, 3.4rem);
+  font-size: clamp(2.8rem, 4.7vw, 5rem);
   font-weight: 500;
   line-height: 1.32;
   letter-spacing: -.025em;
@@ -179,83 +170,44 @@
   text-wrap: balance;
 }
 
-.activity-stage-title > span {
-  display: block;
-  margin-top: 12px;
-  font: italic .82rem/1.5 Georgia, serif;
-  color: var(--activity-quiet);
-}
-
-.activity-stage-summary {
-  max-width: 29em;
-  margin: 28px 0 0;
-  font-size: .86rem;
-  line-height: 1.95;
-  color: var(--activity-archive-muted);
-  white-space: pre-line;
-  overflow-wrap: anywhere;
-}
-
 .activity-stage-facts {
   display: grid;
-  gap: 12px;
-  margin-top: 32px;
-  color: var(--activity-archive-muted);
-  font-size: .76rem;
-  line-height: 1.8;
+  gap: 16px;
+  margin-top: clamp(42px, 6vw, 78px);
+  color: var(--text);
+  line-height: 1.45;
   font-variant-numeric: tabular-nums;
 }
 
-.activity-stage-facts > div {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
+.activity-stage-facts > i {
+  display: block;
+  width: 38px;
+  border-top: 1px solid var(--activity-line);
 }
 
-.activity-stage-facts svg {
-  flex-shrink: 0;
-  align-self: flex-start;
-  margin-top: 4px;
+.activity-stage-facts time {
+  font-family: Georgia, "Times New Roman", "Songti SC", serif;
+  font-size: clamp(1.55rem, 2.3vw, 2.25rem);
+  letter-spacing: .1em;
+  white-space: pre-line;
 }
 
-.activity-stage-facts time > span {
-  display: inline-block;
-}
-
-.activity-stage-facts time, .activity-stage-facts span {
+.activity-stage-facts > span {
+  color: var(--activity-archive-muted);
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+  font-size: clamp(1.15rem, 1.55vw, 1.5rem);
+  letter-spacing: .08em;
   overflow-wrap: anywhere;
-}
-
-.activity-stage-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 22px;
-  margin-top: 42px;
-  padding-top: 18px;
-  border-top: 1px solid var(--activity-line-soft);
-}
-
-.activity-stage-link {
-  display: inline-flex;
-  gap: 22px;
-  align-items: center;
-  min-height: 44px;
-  font-size: .78rem;
-}
-
-.activity-stage-link:hover {
-  text-decoration: underline;
-  text-underline-offset: 6px;
 }
 
 .activity-stage-controls {
   display: flex;
   align-items: center;
   gap: 16px;
+  width: fit-content;
+  margin-top: clamp(48px, 8vw, 96px);
   color: var(--activity-quiet);
-  font: .72rem Georgia, serif;
+  font: .8rem Georgia, serif;
 }
 
 .activity-stage-controls > div {
@@ -282,8 +234,8 @@
 
 @media (max-width: 1040px) {
   .activity-event-stage-body {
-    grid-template-columns: 85px minmax(0, 1fr) minmax(0, 1fr);
-    gap: 26px;
+    grid-template-columns: 100px minmax(280px, 1fr) minmax(250px, .9fr);
+    gap: 34px;
   }
 
   .activity-stage-date-numbers {
@@ -291,7 +243,7 @@
   }
 
   .activity-stage-poster-frame img {
-    max-height: 430px;
+    max-height: 500px;
   }
 
 }
@@ -302,7 +254,7 @@
   }
 
   .activity-event-stage-body {
-    grid-template-columns: 65px minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     gap: 30px 22px;
   }
 
@@ -311,7 +263,7 @@
   }
 
   .activity-stage-date-caption {
-    font-size: .6rem;
+    font-size: .68rem;
     letter-spacing: .1em;
   }
 
@@ -325,7 +277,7 @@
   }
 
   .activity-stage-date p {
-    font-size: .6rem;
+    font-size: .68rem;
     letter-spacing: 0;
   }
 
@@ -344,19 +296,23 @@
   }
 
   .activity-stage-title {
-    margin-top: 16px;
-  }
-
-  .activity-stage-summary {
-    margin-top: 20px;
+    margin-top: 4px;
   }
 
   .activity-stage-facts {
-    margin-top: 24px;
+    margin-top: 34px;
   }
 
-  .activity-stage-actions {
-    margin-top: 28px;
+  .activity-stage-facts time {
+    font-size: clamp(1.35rem, 7vw, 1.85rem);
+  }
+
+  .activity-stage-facts > span {
+    font-size: 1.08rem;
+  }
+
+  .activity-stage-controls {
+    margin-top: 36px;
   }
 
 }

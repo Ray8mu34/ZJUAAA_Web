@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CalendarDays, MapPin } from "lucide-react";
 
 import { getImageVariantUrl } from "@/lib/image-variants";
 import { getActivityDate } from "@/lib/activity-date";
@@ -10,21 +9,17 @@ import { getActivityDate } from "@/lib/activity-date";
 export type ActivityEventStageItem = {
   id: string;
   title: string;
-  titleEn?: string | null;
   poster?: string | null;
   dateLabel?: string | null;
   timeLabel?: string | null;
   startAt?: string | null;
   location?: string | null;
-  description?: string | null;
-  status: string;
   url: string;
   isExternal: boolean;
 };
 
 type ActivityEventStageProps = {
   activities: ActivityEventStageItem[];
-  backdrop?: string | null;
 };
 
 function getLinkProps(activity: ActivityEventStageItem) {
@@ -35,7 +30,7 @@ function getLinkProps(activity: ActivityEventStageItem) {
   };
 }
 
-export function ActivityEventStage({ activities, backdrop }: ActivityEventStageProps) {
+export function ActivityEventStage({ activities }: ActivityEventStageProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   if (activities.length === 0) return null;
@@ -52,22 +47,20 @@ export function ActivityEventStage({ activities, backdrop }: ActivityEventStageP
   return (
     <div className="activity-event-stage">
       <article className="activity-event-stage-body" key={activity.id} aria-live="polite">
-        <div className="activity-stage-date" aria-hidden="true">
-          <span className="activity-stage-date-caption">相约星空</span>
-          <div className="activity-stage-date-numbers">
+        <div className="activity-stage-date">
+          <span className="activity-stage-date-accessible">{activity.dateLabel || "时间待定"}</span>
+          <span className="activity-stage-date-caption" aria-hidden="true">相约星空</span>
+          <div className="activity-stage-date-numbers" aria-hidden="true">
             <span>{date?.month || "—"}</span>
             <i />
             <span>{date?.day || "—"}</span>
           </div>
-          <span className="activity-stage-year">{date?.year || "待定"}</span>
-          <span className="activity-stage-weekday">{date?.weekday || "TBA"}</span>
-          <p>在日常之外<br />留一点时间<br />给辽阔的宇宙</p>
+          <span className="activity-stage-year" aria-hidden="true">{date?.year || "待定"}</span>
+          <span className="activity-stage-weekday" aria-hidden="true">{date?.weekday || "TBA"}</span>
+          <p aria-hidden="true">在日常之外<br />留一点时间<br />给辽阔的宇宙</p>
         </div>
         <div className="activity-stage-poster-column">
           <span className="activity-stage-poster-backing" aria-hidden="true" />
-          {backdrop ? <span className="activity-stage-sky" aria-hidden="true">
-            <Image src={getImageVariantUrl(backdrop, "thumb")} alt="" fill sizes="160px" />
-          </span> : null}
           <a className="activity-stage-poster-link" {...linkProps} aria-label={`查看活动：${activity.title}`}>
             {activity.poster ? (
               <span className="activity-stage-poster-frame">
@@ -90,41 +83,29 @@ export function ActivityEventStage({ activities, backdrop }: ActivityEventStageP
         </div>
 
         <div className="activity-stage-copy">
-          <span className="activity-stage-status" data-status={activity.status}>{activity.status}</span>
-
           <a className="activity-stage-title" {...linkProps}>
             <h2>{activity.title}</h2>
-            {activity.titleEn ? <span>{activity.titleEn}</span> : null}
           </a>
 
-          {activity.description ? <p className="activity-stage-summary">{activity.description}</p> : null}
-
-          {activity.dateLabel || activity.timeLabel || activity.location ? (
+          {activity.timeLabel || activity.location ? (
             <div className="activity-stage-facts">
-              <div><CalendarDays aria-hidden="true" size={16} strokeWidth={1.3} />
-                <time dateTime={activity.startAt || undefined}>{activity.dateLabel || "时间待定"}{activity.timeLabel ? <> <span>{activity.timeLabel}</span></> : null}</time>
-              </div>
-              {activity.location ? <div><MapPin aria-hidden="true" size={16} strokeWidth={1.3} /><span>{activity.location}</span></div> : null}
+              <i aria-hidden="true" />
+              <time dateTime={activity.startAt || undefined}>{activity.timeLabel || "时间待定"}</time>
+              {activity.location ? <span>{activity.location}</span> : null}
             </div>
           ) : null}
 
-          <div className="activity-stage-actions">
-            <a className="activity-stage-link" {...linkProps}>
-              查看活动 <span aria-hidden="true">{activity.isExternal ? "↗" : "→"}</span>
-            </a>
-
-            {showControls ? (
-              <div className="activity-stage-controls" aria-label="切换近期活动">
-                <span aria-live="off">
-                  {String(activeIndex + 1).padStart(2, "0")} / {String(activities.length).padStart(2, "0")}
-                </span>
-                <div>
-                  <button type="button" onClick={() => selectRelativeActivity(-1)} aria-label="上一个活动">←</button>
-                  <button type="button" onClick={() => selectRelativeActivity(1)} aria-label="下一个活动">→</button>
-                </div>
+          {showControls ? (
+            <div className="activity-stage-controls" aria-label="切换近期活动">
+              <span aria-live="off">
+                {String(activeIndex + 1).padStart(2, "0")} / {String(activities.length).padStart(2, "0")}
+              </span>
+              <div>
+                <button type="button" onClick={() => selectRelativeActivity(-1)} aria-label="上一个活动">←</button>
+                <button type="button" onClick={() => selectRelativeActivity(1)} aria-label="下一个活动">→</button>
               </div>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
         </div>
       </article>
     </div>

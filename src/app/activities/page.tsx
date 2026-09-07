@@ -27,14 +27,6 @@ function formatDay(date?: Date | null) {
   };
 }
 
-function getActivityStatus(startAt?: Date | null, endAt?: Date | null) {
-  const now = new Date();
-  if (!startAt && !endAt) return "待安排";
-  if (endAt && endAt < now) return "已结束";
-  if (startAt && startAt <= now && (!endAt || endAt >= now)) return "进行中";
-  return "即将开始";
-}
-
 function isActivityRecord(startAt?: Date | null, endAt?: Date | null) {
   const now = new Date();
   if (endAt) return endAt < now;
@@ -93,14 +85,11 @@ export default async function ActivitiesPage({
     return {
       id: notice.id,
       title: notice.titleZh,
-      titleEn: notice.titleEn,
       poster: notice.coverImagePath,
       dateLabel: schedule.dateLabel,
       timeLabel: schedule.timeLabel,
       startAt: notice.startAt?.toISOString() || null,
       location: notice.locationZh,
-      description: notice.summaryZh,
-      status: getActivityStatus(notice.startAt, notice.endAt),
       url: notice.externalUrl || "/activities",
       isExternal: Boolean(notice.externalUrl)
     };
@@ -140,7 +129,7 @@ export default async function ActivitiesPage({
 
           {stageActivities.length > 0 ? (
             <section className="activity-promotion-section" aria-label="近期活动" data-reveal>
-              <ActivityEventStage activities={stageActivities} backdrop={setting.heroImagePath} />
+              <ActivityEventStage activities={stageActivities} />
             </section>
           ) : null}
 
