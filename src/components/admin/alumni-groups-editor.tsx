@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { isGifImagePath } from "@/lib/image-format";
 import { getImageVariantUrl } from "@/lib/image-variants";
 
 type MediaOption = {
@@ -236,7 +237,13 @@ export function AlumniGroupsEditor({
                       <div className="admin-alumni-member-top">
                         <div className="admin-alumni-photo-preview">
                           {member.photoPath ? (
-                            <Image alt={member.name || "成员照片"} fill sizes="120px" src={getImageVariantUrl(member.photoPath, "thumb")} />
+                            <Image
+                              alt={member.name || "成员照片"}
+                              fill
+                              sizes="120px"
+                              src={isGifImagePath(member.photoPath) ? member.photoPath : getImageVariantUrl(member.photoPath, "thumb")}
+                              unoptimized={isGifImagePath(member.photoPath)}
+                            />
                           ) : (
                             <span className="muted">未选择照片</span>
                           )}

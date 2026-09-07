@@ -39,6 +39,10 @@ export default async function AstroPhotographyPage({
     })
   ]);
   const randomizedPhotos = shuffleItems(photos);
+  const savedIntroduction = setting.galleryIntroZh?.trim();
+  const introduction = !savedIntroduction || savedIntroduction.replace(/[。\s]/g, "") === "社团成员的摄影作品"
+    ? "我们成员的摄影作品"
+    : savedIntroduction;
 
   return (
     <>
@@ -49,7 +53,7 @@ export default async function AstroPhotographyPage({
             <div>
               <h2>天文摄影</h2>
               <p className="muted">
-                {setting.galleryIntroZh || "这里展示已发布的摄影作品，后续可继续接入作品图片和更多高级参数。"}
+                {introduction}
               </p>
             </div>
             <p className="muted">共 {photos.length} 幅作品</p>

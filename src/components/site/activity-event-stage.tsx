@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { CalendarDays, MapPin } from "lucide-react";
 
 import { getImageVariantUrl } from "@/lib/image-variants";
+import { getActivityDate } from "@/lib/activity-date";
 
 export type ActivityEventStageItem = {
   id: string;
@@ -22,6 +24,7 @@ export type ActivityEventStageItem = {
 
 type ActivityEventStageProps = {
   activities: ActivityEventStageItem[];
+  backdrop?: string | null;
 };
 
 function getLinkProps(activity: ActivityEventStageItem) {
@@ -32,12 +35,13 @@ function getLinkProps(activity: ActivityEventStageItem) {
   };
 }
 
-export function ActivityEventStage({ activities }: ActivityEventStageProps) {
+export function ActivityEventStage({ activities, backdrop }: ActivityEventStageProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   if (activities.length === 0) return null;
 
-  const activity = activities[activeIndex];
+  const activity = activities[activeIndex] || activities[0];
+  const date = getActivityDate(activity.startAt);
   const linkProps = getLinkProps(activity);
   const showControls = activities.length > 1;
 
@@ -48,16 +52,32 @@ export function ActivityEventStage({ activities }: ActivityEventStageProps) {
   return (
     <div className="activity-event-stage">
       <article className="activity-event-stage-body" key={activity.id} aria-live="polite">
+        <div className="activity-stage-date" aria-hidden="true">
+          <span className="activity-stage-date-caption">相约星空</span>
+          <div className="activity-stage-date-numbers">
+            <span>{date?.month || "—"}</span>
+            <i />
+            <span>{date?.day || "—"}</span>
+          </div>
+          <span className="activity-stage-year">{date?.year || "待定"}</span>
+          <span className="activity-stage-weekday">{date?.weekday || "TBA"}</span>
+          <p>在日常之外<br />留一点时间<br />给辽阔的宇宙</p>
+        </div>
         <div className="activity-stage-poster-column">
+          <span className="activity-stage-poster-backing" aria-hidden="true" />
+          {backdrop ? <span className="activity-stage-sky" aria-hidden="true">
+            <Image src={getImageVariantUrl(backdrop, "thumb")} alt="" fill sizes="160px" />
+          </span> : null}
           <a className="activity-stage-poster-link" {...linkProps} aria-label={`查看活动：${activity.title}`}>
             {activity.poster ? (
               <span className="activity-stage-poster-frame">
                 <Image
-                  src={getImageVariantUrl(activity.poster, "original")}
+                  src={getImageVariantUrl(activity.poster, "raw")}
                   alt={`${activity.title}活动海报`}
-                  fill
+                  width={800}
+                  height={1100}
                   priority={activeIndex === 0}
-                  sizes="(max-width: 760px) calc(100vw - 84px), (max-width: 1040px) 42vw, 440px"
+                  sizes="(max-width: 760px) 65vw, 360px"
                 />
               </span>
             ) : (
@@ -73,21 +93,20 @@ export function ActivityEventStage({ activities }: ActivityEventStageProps) {
           <span className="activity-stage-status" data-status={activity.status}>{activity.status}</span>
 
           <a className="activity-stage-title" {...linkProps}>
-            <h3>{activity.title}</h3>
+            <h2>{activity.title}</h2>
             {activity.titleEn ? <span>{activity.titleEn}</span> : null}
           </a>
 
+          {activity.description ? <p className="activity-stage-summary">{activity.description}</p> : null}
+
           {activity.dateLabel || activity.timeLabel || activity.location ? (
             <div className="activity-stage-facts">
-              {activity.dateLabel ? (
-                <time dateTime={activity.startAt || undefined}>{activity.dateLabel}</time>
-              ) : null}
-              {activity.timeLabel ? <span>{activity.timeLabel}</span> : null}
-              {activity.location ? <span>{activity.location}</span> : null}
+              <div><CalendarDays aria-hidden="true" size={16} strokeWidth={1.3} />
+                <time dateTime={activity.startAt || undefined}>{activity.dateLabel || "时间待定"}{activity.timeLabel ? <> <span>{activity.timeLabel}</span></> : null}</time>
+              </div>
+              {activity.location ? <div><MapPin aria-hidden="true" size={16} strokeWidth={1.3} /><span>{activity.location}</span></div> : null}
             </div>
           ) : null}
-
-          {activity.description ? <p className="activity-stage-summary">{activity.description}</p> : null}
 
           <div className="activity-stage-actions">
             <a className="activity-stage-link" {...linkProps}>

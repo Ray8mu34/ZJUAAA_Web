@@ -27,7 +27,8 @@ async function assertMediaAssetNotReferenced(filePath: string) {
         OR: [
           { heroImagePath: filePath },
           { logoImagePath: filePath },
-          { aboutGalleryImagePaths: { contains: filePath } }
+          { aboutGalleryImagePaths: { contains: filePath } },
+          { alumniGroupsJson: { contains: filePath } }
         ]
       }
     }),

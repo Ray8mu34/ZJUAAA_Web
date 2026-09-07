@@ -1,4 +1,4 @@
-export function getImageVariantUrl(src?: string | null, variant: "thumb" | "original" = "thumb") {
+export function getImageVariantUrl(src?: string | null, variant: "thumb" | "original" | "raw" = "thumb") {
   if (!src) {
     return "";
   }

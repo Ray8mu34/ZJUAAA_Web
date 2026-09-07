@@ -2,8 +2,41 @@ import { describe, expect, it } from "vitest";
 import sharp from "sharp";
 
 import { validateImageBuffer, UploadValidationError } from "@/lib/upload-validation";
+import { animatedGif, staticGif } from "./fixtures/gif";
 
 describe("validateImageBuffer", () => {
+  it.each([
+    ["static", staticGif, 1],
+    ["animated", animatedGif, 2]
+  ] as const)("preserves a valid %s GIF", async (_label, buffer, pages) => {
+    const result = await validateImageBuffer({ buffer, fileName: "image.GIF", mimeType: "image/gif" });
+
+    expect(result).toMatchObject({ ext: ".gif", mimeType: "image/gif" });
+    expect(result.buffer).toBe(buffer);
+    const metadata = await sharp(result.buffer, { animated: true }).metadata();
+    expect(metadata.pages).toBe(pages);
+    if (pages === 2) {
+      expect(metadata.delay).toEqual([100, 200]);
+      expect(metadata.loop).toBe(0);
+    }
+  });
+
+  it.each([
+    ["image.gif", "image/png", "文件类型与扩展名不一致"],
+    ["image.png", "image/png", "扩展名与实际图片格式不一致"]
+  ])("rejects GIF with mismatched name/type: %s %s", async (fileName, mimeType, message) => {
+    await expect(validateImageBuffer({ buffer: animatedGif, fileName, mimeType })).rejects.toThrow(message);
+  });
+
+  it.each(["jpeg", "webp"] as const)("still accepts %s", async (format) => {
+    const buffer = await sharp({
+      create: { width: 2, height: 2, channels: 3, background: "#ffffff" }
+    }).toFormat(format).toBuffer();
+    const result = await validateImageBuffer({ buffer, fileName: `image.${format}`, mimeType: `image/${format}` });
+    expect(result.buffer).toBe(buffer);
+    expect(result.mimeType).toBe(`image/${format}`);
+  });
+
   it("accepts a valid PNG", async () => {
     const buffer = await sharp({
       create: {

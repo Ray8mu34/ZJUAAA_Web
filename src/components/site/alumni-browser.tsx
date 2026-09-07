@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import { isGifImagePath } from "@/lib/image-format";
 
 type AlumniBrowserProps = {
   groups: Array<{
@@ -50,7 +51,7 @@ export function AlumniBrowser({ groups }: AlumniBrowserProps) {
             <article className="alumni-member-card" key={`${activeGroup.year}-${member.name}-${member.role}`}>
               {member.photoPath ? (
                 <div className="alumni-member-photo">
-                  <Image alt={member.name} fill sizes="240px" src={member.photoPath} />
+                  <Image alt={member.name} fill sizes="240px" src={member.photoPath} unoptimized={isGifImagePath(member.photoPath)} />
                 </div>
               ) : (
                 <div className={`alumni-member-portrait ${toneClass}`} />

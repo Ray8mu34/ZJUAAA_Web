@@ -76,6 +76,7 @@ export async function saveMediaUpload({
     const publicPath = getUploadPublicPath(outputName);
     const fallbackTitle = title ? (validatedFiles.length === 1 ? title : `${title} ${index + 1}`) : file.originalName;
 
+    // Store the validated original without re-encoding (including animated GIFs).
     await writeFile(outputPath, file.buffer);
 
     await prisma.mediaAsset.create({

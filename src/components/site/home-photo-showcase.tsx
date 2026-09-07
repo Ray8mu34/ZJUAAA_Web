@@ -60,7 +60,6 @@ export function HomePhotoShowcase({
   return (
     <div className="home-photo-showcase">
       <div className="home-photo-showcase-head">
-        <p className="muted">随机展示近期摄影作品，点击图片可直接查看详情。</p>
         <button className="button-ghost" type="button" onClick={() => setSeed((value) => value + 1)}>
           刷新图片
         </button>

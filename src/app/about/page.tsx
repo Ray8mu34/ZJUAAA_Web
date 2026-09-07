@@ -91,7 +91,6 @@ export default async function AboutPage() {
             <div className="about-section-head">
               <div>
                 <strong>社团照片墙</strong>
-                <p className="muted">点击缩略图可放大查看，弹窗内可继续查看带水印原图。</p>
               </div>
               <span className="muted">共 {galleryPaths.length} 张</span>
             </div>
@@ -107,7 +106,6 @@ export default async function AboutPage() {
             <div className="about-section-head">
               <div>
                 <strong>历届成员名单</strong>
-                <p className="muted">按年份浏览社团成员。</p>
               </div>
             </div>
 

@@ -65,6 +65,7 @@ async function assertRasterImageIsValid(buffer: Buffer, ext: string, fileName: s
   let metadata: Metadata;
 
   try {
+    // Inspect metadata only; keep the original bytes and all GIF frames intact.
     metadata = await sharp(buffer, { animated: ext === ".gif" }).metadata();
   } catch {
     throw new UploadValidationError(`图片“${fileName}”无法被识别，请确认文件未损坏。`);

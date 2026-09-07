@@ -51,8 +51,10 @@ export default async function KnowledgePage({
     })
   ]);
 
-  const introduction = (setting.knowledgeIntroZh || "这里展示科普文章封面与摘要。点击文章后，会跳转到原文。")
-    .replace("点击卡片后", "点击文章后");
+  const savedIntroduction = setting.knowledgeIntroZh?.trim();
+  const introduction = !savedIntroduction || savedIntroduction.replace(/[，,。\s]/g, "") === "天协的科普文章点击卡片跳转公众号文章"
+    ? "部分问题的答案"
+    : savedIntroduction;
 
   return (
     <>

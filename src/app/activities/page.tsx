@@ -2,6 +2,7 @@ import { MediaFrame } from "@/components/site/media-frame";
 import { ActivityEventStage, type ActivityEventStageItem } from "@/components/site/activity-event-stage";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { formatActivitySchedule } from "@/lib/activity-date";
 import { prisma } from "@/lib/db";
 
 function formatDay(date?: Date | null) {
@@ -23,36 +24,6 @@ function formatDay(date?: Date | null) {
     monthDay: date.toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" }),
     weekday: date.toLocaleDateString("zh-CN", { weekday: "short" }),
     year: String(date.getFullYear())
-  };
-}
-
-function formatStageDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const weekday = date.toLocaleDateString("zh-CN", { weekday: "short" });
-  return `${year}.${month}.${day} · ${weekday}`;
-}
-
-function formatStageClock(date: Date) {
-  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-}
-
-function formatStageSchedule(startAt?: Date | null, endAt?: Date | null) {
-  if (!startAt && !endAt) return { dateLabel: null, timeLabel: null };
-  if (!startAt && endAt) {
-    return { dateLabel: `截至 ${formatStageDate(endAt)}`, timeLabel: formatStageClock(endAt) };
-  }
-  if (startAt && !endAt) {
-    return { dateLabel: formatStageDate(startAt), timeLabel: formatStageClock(startAt) };
-  }
-
-  const sameDay = startAt!.toDateString() === endAt!.toDateString();
-  return {
-    dateLabel: formatStageDate(startAt!),
-    timeLabel: sameDay
-      ? `${formatStageClock(startAt!)}—${formatStageClock(endAt!)}`
-      : `${formatStageClock(startAt!)}—${formatStageDate(endAt!)} ${formatStageClock(endAt!)}`
   };
 }
 
@@ -118,7 +89,7 @@ export default async function ActivitiesPage({
   const upcomingNotices = notices.filter((notice) => !isActivityRecord(notice.startAt, notice.endAt)).sort(sortByUpcomingTime);
   const recordNotices = notices.filter((notice) => isActivityRecord(notice.startAt, notice.endAt)).sort(sortByRecordTime);
   const stageActivities: ActivityEventStageItem[] = upcomingNotices.map((notice) => {
-    const schedule = formatStageSchedule(notice.startAt, notice.endAt);
+    const schedule = formatActivitySchedule(notice.startAt, notice.endAt);
     return {
       id: notice.id,
       title: notice.titleZh,
@@ -153,7 +124,7 @@ export default async function ActivitiesPage({
         <div className="shell">
           <header className="section-head" data-reveal>
             <div>
-              <h2>社团活动</h2>
+              <h1>社团活动</h1>
               <p className="muted">
                 {setting.activitiesIntroZh || "关注社团最新活动与往期记录。"}
               </p>
@@ -168,20 +139,15 @@ export default async function ActivitiesPage({
           </form>
 
           {stageActivities.length > 0 ? (
-            <section className="activity-promotion-section" aria-labelledby="upcoming-heading" data-reveal>
-              <div className="activity-editorial-heading">
-                <div>
-                  <h3 id="upcoming-heading">近期活动</h3>
-                </div>
-              </div>
-              <ActivityEventStage activities={stageActivities} />
+            <section className="activity-promotion-section" aria-label="近期活动" data-reveal>
+              <ActivityEventStage activities={stageActivities} backdrop={setting.heroImagePath} />
             </section>
           ) : null}
 
           <section className="activity-archive-section" aria-labelledby="archive-heading" data-reveal>
             <div className="activity-editorial-heading activity-archive-heading">
               <div>
-                <h3 id="archive-heading">往期活动</h3>
+                <h2 id="archive-heading">往期活动</h2>
               </div>
               <span>共 {recordNotices.length} 场</span>
             </div>

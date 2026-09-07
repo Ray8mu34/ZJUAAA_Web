@@ -15,7 +15,7 @@ coverage
 
 # uploads
 public/uploads/
-uploads/
+/uploads/
 
 # logs
 *.log
