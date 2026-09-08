@@ -69,6 +69,7 @@ export default async function AdminActivitiesPage({
                     <strong>{notice.titleZh}</strong>
                     <div className="post-meta">
                       <span>状态：{notice.status}</span>
+                      <span>归档展示：{notice.isArchived ? "是" : "否"}</span>
                       <span>地点：{notice.locationZh || "未设置"}</span>
                       <span>开始时间：{formatTime(notice.startAt)}</span>
                     </div>
@@ -88,7 +89,8 @@ export default async function AdminActivitiesPage({
                       locationZh: notice.locationZh,
                       externalUrl: notice.externalUrl,
                       startAt: notice.startAt?.toISOString(),
-                      endAt: notice.endAt?.toISOString()
+                      endAt: notice.endAt?.toISOString(),
+                      isArchived: notice.isArchived
                     }}
                   />
 

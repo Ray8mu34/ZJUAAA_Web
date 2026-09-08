@@ -112,7 +112,10 @@ const contentTableAdditions = {
     ["summaryZh", "TEXT"],
     ["categoryId", "TEXT"]
   ],
-  ActivityNotice: [["coverImagePath", "TEXT"]],
+  ActivityNotice: [
+    ["coverImagePath", "TEXT"],
+    ["isArchived", "INTEGER NOT NULL DEFAULT 0"]
+  ],
   AstroPhoto: [["imagePath", "TEXT"]]
 };
 

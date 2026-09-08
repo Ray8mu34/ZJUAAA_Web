@@ -21,6 +21,7 @@ type ActivityEditorProps = {
     externalUrl?: string | null;
     startAt?: string;
     endAt?: string;
+    isArchived?: boolean;
   };
 };
 
@@ -76,6 +77,11 @@ export function ActivityEditor({ action, submitLabel, mediaOptions = [], initial
       <label>
         <span>活动外部链接</span>
         <input name="externalUrl" type="url" defaultValue={initialValues?.externalUrl || ""} />
+      </label>
+
+      <label className="admin-checkbox-row">
+        <input name="isArchived" type="checkbox" defaultChecked={initialValues?.isArchived || false} />
+        <span>归档展示（活动结束后显示在“往期活动”中）</span>
       </label>
 
       <button className="button-link" type="submit">

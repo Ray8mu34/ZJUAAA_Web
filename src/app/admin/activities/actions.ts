@@ -26,7 +26,8 @@ export async function createActivityNotice(formData: FormData) {
       locationEn: String(formData.get("locationEn") || "").trim() || null,
       externalUrl: String(formData.get("externalUrl") || "").trim() || null,
       startAt: formData.get("startAt") ? new Date(String(formData.get("startAt"))) : null,
-      endAt: formData.get("endAt") ? new Date(String(formData.get("endAt"))) : null
+      endAt: formData.get("endAt") ? new Date(String(formData.get("endAt"))) : null,
+      isArchived: formData.has("isArchived")
     }
   });
 
@@ -59,7 +60,8 @@ export async function updateActivityNotice(formData: FormData) {
       locationEn: String(formData.get("locationEn") || "").trim() || null,
       externalUrl: String(formData.get("externalUrl") || "").trim() || null,
       startAt: formData.get("startAt") ? new Date(String(formData.get("startAt"))) : null,
-      endAt: formData.get("endAt") ? new Date(String(formData.get("endAt"))) : null
+      endAt: formData.get("endAt") ? new Date(String(formData.get("endAt"))) : null,
+      isArchived: formData.has("isArchived")
     }
   });
 

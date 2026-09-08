@@ -1,8 +1,8 @@
-import { MediaFrame } from "@/components/site/media-frame";
 import { ActivityEventStage, type ActivityEventStageItem } from "@/components/site/activity-event-stage";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { formatActivitySchedule } from "@/lib/activity-date";
+import { isActivityEnded, shouldShowInActivityArchive } from "@/lib/activity-visibility";
 import { prisma } from "@/lib/db";
 
 function formatDay(date?: Date | null) {
@@ -25,13 +25,6 @@ function formatDay(date?: Date | null) {
     weekday: date.toLocaleDateString("zh-CN", { weekday: "short" }),
     year: String(date.getFullYear())
   };
-}
-
-function isActivityRecord(startAt?: Date | null, endAt?: Date | null) {
-  const now = new Date();
-  if (endAt) return endAt < now;
-  if (startAt) return startAt < now;
-  return false;
 }
 
 function sortByUpcomingTime(a: { startAt: Date | null; createdAt: Date }, b: { startAt: Date | null; createdAt: Date }) {
@@ -78,8 +71,10 @@ export default async function ActivitiesPage({
     })
   ]);
 
-  const upcomingNotices = notices.filter((notice) => !isActivityRecord(notice.startAt, notice.endAt)).sort(sortByUpcomingTime);
-  const recordNotices = notices.filter((notice) => isActivityRecord(notice.startAt, notice.endAt)).sort(sortByRecordTime);
+  const now = new Date();
+  const upcomingNotices = notices.filter((notice) => !isActivityEnded(notice, now)).sort(sortByUpcomingTime);
+  const recordNotices = notices.filter((notice) => shouldShowInActivityArchive(notice, now)).sort(sortByRecordTime);
+  const visibleNoticeCount = upcomingNotices.length + recordNotices.length;
   const stageActivities: ActivityEventStageItem[] = upcomingNotices.map((notice) => {
     const schedule = formatActivitySchedule(notice.startAt, notice.endAt);
     return {
@@ -118,7 +113,7 @@ export default async function ActivitiesPage({
                 {setting.activitiesIntroZh || "关注社团最新活动与往期记录。"}
               </p>
             </div>
-            <p className="muted">共 {notices.length} 场活动</p>
+            <p className="muted">共 {visibleNoticeCount} 场活动</p>
           </header>
 
           <form className="search-form editorial-search activity-search" action="/activities" data-reveal>
@@ -168,11 +163,6 @@ export default async function ActivitiesPage({
                             </span>
                             <span className="activity-archive-location">{notice.locationZh || "—"}</span>
                             <span className="activity-archive-arrow" aria-hidden="true">{notice.externalUrl ? "↗" : "→"}</span>
-                            {notice.coverImagePath ? (
-                              <span className="activity-archive-preview" aria-hidden="true">
-                                <MediaFrame src={notice.coverImagePath} alt="" className="activity-archive-cover" sizes="280px" />
-                              </span>
-                            ) : null}
                           </a>
                         );
                       })}
