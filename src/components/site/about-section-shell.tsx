@@ -20,10 +20,14 @@ export function AboutSectionShell({ active, children, introduction }: AboutSecti
     <>
       <SiteHeader />
       <main className={`section about-page about-${active}-page`}>
-        <div className="about-wide-shell">
+        <div className="shell">
           <header className="about-page-header" data-reveal>
-            <h1>关于我们</h1>
-            {introduction ? <p className="muted">{introduction}</p> : null}
+            <div className="section-head about-page-title-row">
+              <div>
+                <h2>关于我们</h2>
+                {introduction ? <p className="muted">{introduction}</p> : null}
+              </div>
+            </div>
             <nav className="about-subnav" aria-label="关于我们栏目">
               {aboutSections.map((section) => (
                 <Link
