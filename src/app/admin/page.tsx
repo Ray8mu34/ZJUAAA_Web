@@ -15,16 +15,15 @@ export default async function AdminDashboardPage() {
   ]);
 
   return (
+    <div className="admin-stack">
+      <AdminPageHeader eyebrow="WORKSPACE / OVERVIEW" title="内容概览" description="快速查看内容规模并进入常用编辑任务。" />
+      <section className="admin-metric-strip">
+        <Link href="/admin/posts"><span>科普文章</span><strong>{posts}</strong></Link>
+        <Link href="/admin/manual"><span>手册章节</span><strong>{manuals}</strong></Link>
+        <Link href="/admin/activities"><span>社团活动</span><strong>{notices}</strong></Link>
+        <Link href="/admin/admins"><span>管理员</span><strong>{admins.length}</strong></Link>
+      </section>
     <section className="admin-grid">
-      <article className="admin-card">
-        <h2>后台概览</h2>
-        <ul>
-          <li>管理员账号：{admins.length}</li>
-          <li>知识科普条目：{posts}</li>
-          <li>天文手册章节：{manuals}</li>
-          <li>社团活动条目：{notices}</li>
-        </ul>
-      </article>
       <article className="admin-card">
         <h2>最近管理员</h2>
         <ul>
@@ -38,15 +37,15 @@ export default async function AdminDashboardPage() {
       <article className="admin-card">
         <h2>常用入口</h2>
         <div className="admin-actions">
-          <a className="button-link" href="/admin/site">
+          <Link className="button-link" href="/admin/site">
             首页管理
-          </a>
-          <a className="button-secondary" href="/admin/posts">
+          </Link>
+          <Link className="button-secondary" href="/admin/posts">
             知识科普
-          </a>
-          <a className="button-secondary" href="/admin/activities">
+          </Link>
+          <Link className="button-secondary" href="/admin/activities">
             社团活动
-          </a>
+          </Link>
         </div>
       </article>
       <article className="admin-card">
@@ -62,6 +61,8 @@ export default async function AdminDashboardPage() {
         <h2>内容策略</h2>
         <p className="muted">知识科普和社团活动现在以外链卡片为主，天文手册继续保留站内 Markdown 正文作为备份。</p>
       </article>
-    </section>
+    </section></div>
   );
 }
+import Link from "next/link";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";

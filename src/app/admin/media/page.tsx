@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { AdminMediaGrid } from "@/components/admin/admin-media-grid";
-import { MediaUploadForm } from "@/components/admin/media-upload-form";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
@@ -52,18 +52,8 @@ export default async function AdminMediaPage({
 
   return (
     <div className="admin-stack">
+      <AdminPageHeader eyebrow="ASSETS / MEDIA" title="媒体库" description={`共 ${totalAssets} 项资源，可按标题、分类或路径检索。`} primaryHref="/admin/media/upload" primaryLabel="上传图片" />
       <section className="admin-card">
-        <h2>上传图片</h2>
-        <p className="muted">
-          媒体库供全站复用。上传时选择用途分类，后续在首页、手册、活动、摄影等模块里会更容易筛选。单文件大小受服务器 512M
-          上传配置限制。
-        </p>
-
-        <MediaUploadForm />
-      </section>
-
-      <section className="admin-card">
-        <h2>现有图片</h2>
         <form className="media-library-toolbar" action="/admin/media">
           <input className="media-picker-search" name="q" type="search" defaultValue={keyword} placeholder="搜索标题、分类或文件路径" />
           <button className="button-ghost" type="submit">
@@ -74,9 +64,7 @@ export default async function AdminMediaPage({
               清除
             </Link>
           ) : null}
-          <span className="muted">
-            共 {totalAssets} 张，当前第 {currentPage} / {totalPages} 页
-          </span>
+          <span className="muted">第 {currentPage} / {totalPages} 页</span>
         </form>
         {assets.length === 0 ? (
           <div className="empty-state">媒体库里还没有图片。先上传后，就可以在各个内容模块里直接选图了。</div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Download, Images, ScrollText } from "lucide-react";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 
 import { requireAdminSession } from "@/lib/admin-session";
 
@@ -8,9 +9,8 @@ export default async function AdminInternalPage() {
 
   return (
     <div className="admin-stack">
+      <AdminPageHeader eyebrow="MEMBERS / INTERNAL" title="内部资料" description="管理仅面向协会成员开放的文件与内容。" />
       <section className="admin-card">
-        <h2>内部资料</h2>
-        <p className="muted">维护只面向成员开放的资料下载和宣传部作品展示内容。</p>
         <div className="admin-quick-grid">
           <Link className="admin-quick-card" href="/admin/internal/files">
             <Download size={22} />
