@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdminSession } from "@/lib/admin-session";
 import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
+import { parseKnowledgePublishedAtInput } from "@/lib/knowledge-post-date";
 
 function slugify(value: string) {
   return value
@@ -79,6 +80,7 @@ export async function createKnowledgePost(formData: FormData) {
       markdownZh: String(formData.get("markdownZh") || ""),
       markdownEn: String(formData.get("markdownEn") || "").trim() || null,
       isFeatured: getIsFeatured(formData),
+      publishedAt: parseKnowledgePublishedAtInput(String(formData.get("publishedAt") || "")),
       sortOrder: await getNextLeadingSortOrder()
     }
   });
@@ -112,7 +114,8 @@ export async function updateKnowledgePost(formData: FormData) {
       externalUrl: String(formData.get("externalUrl") || "").trim() || null,
       markdownZh: String(formData.get("markdownZh") || ""),
       markdownEn: String(formData.get("markdownEn") || "").trim() || null,
-      isFeatured: getIsFeatured(formData)
+      isFeatured: getIsFeatured(formData),
+      publishedAt: parseKnowledgePublishedAtInput(String(formData.get("publishedAt") || ""))
     }
   });
 
@@ -133,13 +136,26 @@ export async function setKnowledgePostStatus(formData: FormData) {
   const session = await requireAdminSession();
 
   const id = String(formData.get("id") || "");
-  const status = String(formData.get("status") || "DRAFT") as "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  const status = String(formData.get("status") || "DRAFT");
+
+  if (status !== "DRAFT" && status !== "PUBLISHED" && status !== "ARCHIVED") {
+    throw new Error("文章状态不正确。");
+  }
+
+  const existingPost = await prisma.knowledgePost.findUnique({
+    where: { id },
+    select: { publishedAt: true }
+  });
+
+  if (!existingPost) {
+    throw new Error("没有找到这篇文章。");
+  }
 
   const post = await prisma.knowledgePost.update({
     where: { id },
     data: {
       status,
-      publishedAt: status === "PUBLISHED" ? new Date() : null
+      ...(status === "PUBLISHED" && !existingPost.publishedAt ? { publishedAt: new Date() } : {})
     }
   });
 

@@ -21,6 +21,7 @@ type PostEditorProps = {
     coverImagePath?: string | null;
     externalUrl?: string | null;
     isFeatured?: boolean;
+    publishedAt?: string;
   };
 };
 
@@ -75,6 +76,12 @@ export function PostEditor({ action, submitLabel, mediaOptions = [], initialValu
           defaultValue={initialValues?.externalUrl || ""}
           placeholder="https://mp.weixin.qq.com/..."
         />
+      </label>
+
+      <label>
+        <span>文章原始发布时间</span>
+        <input name="publishedAt" type="datetime-local" defaultValue={initialValues?.publishedAt || ""} />
+        <small className="muted">迁移旧文章时填写原文的发布时间；留空后首次发布会使用当前时间。</small>
       </label>
 
       <button className="button-link" type="submit">

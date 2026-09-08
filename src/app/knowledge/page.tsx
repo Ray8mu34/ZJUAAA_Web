@@ -1,4 +1,5 @@
 import { MediaFrame } from "@/components/site/media-frame";
+import { KnowledgePagination } from "@/components/site/knowledge-pagination";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { prisma } from "@/lib/db";
@@ -19,13 +20,31 @@ function formatKnowledgeDate(date: Date) {
   return [year, month, day].filter(Boolean).join(".");
 }
 
+const POSTS_PER_PAGE = 8;
+
 export default async function KnowledgePage({
   searchParams
 }: {
-  searchParams?: Promise<{ q?: string }>;
+  searchParams?: Promise<{ q?: string; page?: string }>;
 }) {
   const params = (await searchParams) || {};
   const q = params.q?.trim() || "";
+  const requestedPage = Math.max(1, Number.parseInt(params.page || "1", 10) || 1);
+  const postFilter = {
+    status: "PUBLISHED" as const,
+    ...(q
+      ? {
+          OR: [
+            { titleZh: { contains: q } },
+            { summaryZh: { contains: q } },
+            { author: { contains: q } }
+          ]
+        }
+      : {})
+  };
+  const totalPosts = await prisma.knowledgePost.count({ where: postFilter });
+  const totalPages = Math.max(1, Math.ceil(totalPosts / POSTS_PER_PAGE));
+  const currentPage = Math.min(requestedPage, totalPages);
 
   const [setting, posts] = await Promise.all([
     prisma.siteSetting.upsert({
@@ -34,20 +53,10 @@ export default async function KnowledgePage({
       update: {}
     }),
     prisma.knowledgePost.findMany({
-      where: {
-        status: "PUBLISHED",
-        ...(q
-          ? {
-              OR: [
-                { titleZh: { contains: q } },
-                { summaryZh: { contains: q } },
-                { author: { contains: q } }
-              ]
-            }
-          : {})
-      },
+      where: postFilter,
       orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
-      take: 60
+      skip: (currentPage - 1) * POSTS_PER_PAGE,
+      take: POSTS_PER_PAGE
     })
   ]);
 
@@ -66,7 +75,7 @@ export default async function KnowledgePage({
               <h2>知识科普</h2>
               <p className="muted">{introduction}</p>
             </div>
-            <p className="muted">共 {posts.length} 篇内容</p>
+            <p className="muted">共 {totalPosts} 篇内容</p>
           </div>
 
           <form className="search-form editorial-search" action="/knowledge" data-reveal>
@@ -128,6 +137,8 @@ export default async function KnowledgePage({
               })
             )}
           </div>
+
+          <KnowledgePagination currentPage={currentPage} totalPages={totalPages} query={q} />
         </div>
       </main>
       <SiteFooter />

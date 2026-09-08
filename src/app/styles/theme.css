@@ -666,6 +666,65 @@ html[data-theme="light"] .knowledge-index-page {
   color: var(--knowledge-quiet);
 }
 
+.knowledge-pagination {
+  display: flex;
+  width: min(100%, 1040px);
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin: 44px auto 0;
+}
+
+.knowledge-pagination-pages {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.knowledge-pagination a,
+.knowledge-pagination-ellipsis {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--knowledge-item-border);
+  color: var(--knowledge-quiet);
+  font-size: 0.9rem;
+}
+
+.knowledge-pagination a {
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.knowledge-pagination a:hover,
+.knowledge-pagination a:focus-visible,
+.knowledge-pagination a.is-current {
+  border-color: var(--knowledge-accent);
+  color: var(--heading-color);
+}
+
+.knowledge-pagination a.is-current {
+  background: color-mix(in srgb, var(--knowledge-accent) 16%, transparent);
+  font-weight: 700;
+}
+
+.knowledge-pagination a[aria-disabled="true"] {
+  pointer-events: none;
+  opacity: 0.38;
+}
+
+.knowledge-pagination .knowledge-pagination-direction {
+  min-width: 76px;
+  padding: 0 14px;
+}
+
+.knowledge-pagination-ellipsis {
+  border-color: transparent;
+}
+
 @media (max-width: 900px) {
   .knowledge-index-row {
     grid-template-columns: 220px minmax(0, 1fr);
@@ -739,6 +798,17 @@ html[data-theme="light"] .knowledge-index-page {
 
   .knowledge-index-read {
     gap: 5px;
+  }
+
+  .knowledge-pagination {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .knowledge-pagination-pages {
+    order: -1;
+    width: 100%;
   }
 }
 

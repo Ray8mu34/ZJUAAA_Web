@@ -25,6 +25,7 @@ type PostListItem = {
   externalUrl: string | null;
   status: string;
   isFeatured: boolean;
+  publishedAt: string;
 };
 
 type PostOrderListProps = {
@@ -236,7 +237,8 @@ export function PostOrderList({
                   author: post.author,
                   coverImagePath: post.coverImagePath,
                   externalUrl: post.externalUrl,
-                  isFeatured: post.isFeatured
+                  isFeatured: post.isFeatured,
+                  publishedAt: post.publishedAt
                 }}
               />
 

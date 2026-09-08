@@ -6,6 +6,7 @@ import { PostEditor } from "@/components/admin/post-editor";
 import { PostOrderList } from "@/components/admin/post-order-list";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
+import { formatKnowledgePublishedAtInput } from "@/lib/knowledge-post-date";
 
 import {
   createKnowledgePost,
@@ -89,7 +90,8 @@ export default async function AdminPostsPage({
                 coverImagePath: post.coverImagePath,
                 externalUrl: post.externalUrl,
                 status: post.status,
-                isFeatured: post.isFeatured
+                isFeatured: post.isFeatured,
+                publishedAt: formatKnowledgePublishedAtInput(post.publishedAt)
               }))}
               mediaOptions={mediaOptions}
               updateAction={updateKnowledgePost}
@@ -126,7 +128,8 @@ export default async function AdminPostsPage({
                         author: post.author,
                         coverImagePath: post.coverImagePath,
                         externalUrl: post.externalUrl,
-                        isFeatured: post.isFeatured
+                        isFeatured: post.isFeatured,
+                        publishedAt: formatKnowledgePublishedAtInput(post.publishedAt)
                       }}
                     />
 
