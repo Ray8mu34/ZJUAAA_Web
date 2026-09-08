@@ -1,6 +1,14 @@
 import { expect, test } from "@playwright/test";
 
-const publicPages = ["/", "/knowledge", "/activities", "/astrophotography", "/manual", "/about"];
+const publicPages = [
+  "/",
+  "/knowledge",
+  "/activities",
+  "/astrophotography",
+  "/manual",
+  "/about/gallery",
+  "/about/members"
+];
 const viewports = [
   { width: 320, height: 568 },
   { width: 360, height: 800 },
@@ -51,7 +59,7 @@ test("public pages stay in normal flow at supported viewports", async ({ page })
 
 test("mobile navigation exposes every public destination and restores body scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/about", { waitUntil: "domcontentloaded" });
+  await page.goto("/about/gallery", { waitUntil: "domcontentloaded" });
   await page.locator("html.motion-ready").waitFor({ state: "attached" });
 
   const menuButton = page.getByRole("button", { name: "打开导航菜单" });
@@ -77,7 +85,9 @@ test("mobile collection layouts use the intended column counts", async ({ page }
   await page.goto("/manual", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".manual-category-grid")).toHaveCSS("grid-template-columns", /\S+\s+\S+/);
 
-  await page.goto("/about", { waitUntil: "domcontentloaded" });
+  await page.goto("/about/gallery", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".about-gallery-masonry")).toHaveCSS("column-count", "2");
+
+  await page.goto("/about/members", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".alumni-member-grid")).toHaveCSS("grid-template-columns", /\S+\s+\S+/);
 });

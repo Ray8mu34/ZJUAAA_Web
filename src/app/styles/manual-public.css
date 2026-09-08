@@ -1260,6 +1260,376 @@
   justify-content: center;
 }
 
+/* About section routes */
+.about-wide-shell {
+  width: min(1560px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.about-page-header {
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.about-page-header h1 {
+  margin: 0;
+  color: var(--heading-color, var(--text));
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1.08;
+}
+
+.about-page-header > p {
+  max-width: 760px;
+  margin: 16px 0 26px;
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.about-subnav {
+  display: flex;
+  gap: clamp(28px, 5vw, 68px);
+  border-bottom: 1px solid var(--line);
+}
+
+.about-subnav a {
+  position: relative;
+  padding: 0 0 14px;
+  color: var(--muted);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color var(--motion-fast) ease;
+}
+
+.about-subnav a::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: var(--heading-color, var(--text));
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.35);
+  transition: opacity var(--motion-fast) ease, transform var(--motion-base) var(--ease-out);
+}
+
+.about-subnav a:hover,
+.about-subnav a:focus-visible,
+.about-subnav a.is-active {
+  color: var(--heading-color, var(--text));
+}
+
+.about-subnav a.is-active {
+  font-weight: 700;
+}
+
+.about-subnav a.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.about-content-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.about-content-heading h2 {
+  margin: 0;
+  color: var(--heading-color, var(--text));
+  font-size: clamp(1.35rem, 2.2vw, 1.8rem);
+}
+
+.about-gallery-page .about-gallery-masonry {
+  column-count: 5;
+  column-gap: 8px;
+}
+
+.about-gallery-page .about-gallery-item {
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: transparent;
+}
+
+.about-gallery-page .about-gallery-item:focus-visible {
+  outline: 2px solid var(--heading-color, var(--text));
+  outline-offset: 2px;
+}
+
+.about-members-content {
+  width: 100%;
+}
+
+.about-members-page .alumni-scroll-window {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.about-members-page {
+  --about-member-accent: #2dd1e8;
+  --about-member-line: color-mix(in srgb, var(--about-member-accent) 32%, var(--line));
+}
+
+html[data-theme="light"] .about-members-page {
+  --about-member-accent: #157f96;
+}
+
+.about-members-page .alumni-browser {
+  gap: clamp(30px, 4vw, 48px);
+}
+
+.about-members-page .alumni-year-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: clamp(24px, 4vw, 64px);
+  overflow-x: auto;
+  border-bottom: 2px solid var(--about-member-line);
+  scrollbar-width: thin;
+}
+
+.about-members-page .alumni-year-button {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 0 0 13px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.35vw, 1.18rem);
+  font-weight: 650;
+  transition: color var(--motion-fast) ease;
+}
+
+.about-members-page .alumni-year-button::after {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  left: 0;
+  height: 3px;
+  background: var(--about-member-accent);
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition: opacity var(--motion-fast) ease, transform var(--motion-base) var(--ease-out);
+}
+
+.about-members-page .alumni-year-button:hover,
+.about-members-page .alumni-year-button:focus-visible,
+.about-members-page .alumni-year-button.active {
+  background: transparent;
+  color: var(--about-member-accent);
+}
+
+.about-members-page .alumni-year-button.active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.about-members-page .alumni-member-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(34px, 4vw, 58px) clamp(16px, 2vw, 30px);
+}
+
+.about-members-page .alumni-member-card {
+  gap: 7px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.about-members-page .alumni-member-photo,
+.about-members-page .alumni-member-portrait {
+  width: 100%;
+  height: auto;
+  margin: 0 0 10px;
+  border-radius: 7px;
+  aspect-ratio: 4 / 5;
+}
+
+.about-members-page .alumni-member-card strong {
+  color: var(--heading-color, var(--text));
+  font-size: clamp(1rem, 1.25vw, 1.16rem);
+  line-height: 1.4;
+}
+
+.about-members-page .alumni-member-card p {
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.about-lightbox-panel {
+  width: min(1400px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #141414;
+}
+
+.about-lightbox-close,
+.about-lightbox-step {
+  position: absolute;
+  z-index: 2;
+  display: inline-grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  background: rgba(10, 10, 10, 0.72);
+  color: #ffffff;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.about-lightbox-close {
+  top: 22px;
+  right: 22px;
+}
+
+.about-lightbox-step {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.about-lightbox-step.is-previous {
+  left: 22px;
+}
+
+.about-lightbox-step.is-next {
+  right: 22px;
+}
+
+.about-lightbox-image {
+  max-height: calc(100vh - 106px);
+  border-radius: 7px;
+  background: #0b0b0b;
+}
+
+.about-lightbox-image img {
+  max-height: calc(100vh - 106px);
+}
+
+.about-lightbox-footer {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 4px 0 10px;
+  color: rgba(255, 255, 255, 0.68);
+  font-variant-numeric: tabular-nums;
+}
+
+.about-lightbox-footer .button-secondary {
+  min-height: 38px;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+@media (max-width: 1280px) {
+  .about-gallery-page .about-gallery-masonry {
+    column-count: 4;
+  }
+
+  .about-members-page .alumni-member-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .about-gallery-page .about-gallery-masonry {
+    column-count: 3;
+  }
+
+  .about-members-page .alumni-member-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .about-wide-shell {
+    width: min(100% - 28px, 1560px);
+  }
+
+  .about-page-header {
+    margin-bottom: 30px;
+  }
+
+  .about-page-header > p {
+    margin: 12px 0 22px;
+  }
+
+  .about-subnav {
+    gap: 32px;
+  }
+
+  .about-subnav a {
+    min-height: 44px;
+    padding-bottom: 12px;
+  }
+
+  .about-gallery-page .about-gallery-masonry {
+    column-count: 2;
+    column-gap: 6px;
+  }
+
+  .about-gallery-page .about-gallery-item {
+    margin-bottom: 6px;
+    border-radius: 5px;
+  }
+
+  .about-members-page .alumni-year-tabs {
+    gap: 28px;
+    margin-inline: 0;
+    padding: 0;
+  }
+
+  .about-members-page .alumni-member-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px 14px;
+  }
+
+  .about-members-page .alumni-member-card {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .about-lightbox-modal {
+    padding: 8px;
+  }
+
+  .about-lightbox-panel {
+    width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    padding: 8px;
+  }
+
+  .about-lightbox-close {
+    top: 16px;
+    right: 16px;
+  }
+
+  .about-lightbox-step.is-previous {
+    left: 14px;
+  }
+
+  .about-lightbox-step.is-next {
+    right: 14px;
+  }
+
+  .about-lightbox-image,
+  .about-lightbox-image img {
+    max-height: calc(100vh - 92px);
+  }
+}
+
 .admin-actions {
   display: flex;
   gap: 12px;
