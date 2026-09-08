@@ -108,7 +108,7 @@ export default async function ActivitiesPage({
         <div className="shell">
           <header className="section-head" data-reveal>
             <div>
-              <h1>社团活动</h1>
+              <h2>社团活动</h2>
               <p className="muted">
                 {setting.activitiesIntroZh || "关注社团最新活动与往期记录。"}
               </p>

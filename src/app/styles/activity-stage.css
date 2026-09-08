@@ -1,12 +1,3 @@
-.activity-page > .shell > .section-head h1 {
-  margin: 0;
-  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
-  font-size: clamp(3.2rem, 6vw, 5.6rem);
-  font-weight: 500;
-  letter-spacing: -.04em;
-  line-height: 1.2;
-}
-
 .activity-archive-heading h2 {
   margin: 0;
   font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
