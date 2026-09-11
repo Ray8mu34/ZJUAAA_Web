@@ -34,33 +34,34 @@ export default async function ContactPage() {
           </figure>
 
           <section className="contact-intro" aria-labelledby="contact-intro-title">
-            <h1 id="contact-intro-title">如果你也对宇宙充满好奇，欢迎与我们取得联系。</h1>
-            <p>
-              {setting?.contactIntroZh || "无论是活动咨询、加入社团，还是合作交流，我们都很乐意收到你的消息。"}
-            </p>
+            <h1 id="contact-intro-title">
+              <span>如果你也对宇宙</span>
+              <span>充满好奇，欢迎</span>
+              <span>与我们取得联系。</span>
+            </h1>
           </section>
 
           <section className="contact-details" aria-label="联系方式">
             <dl className="contact-list">
-              <div>
+              <div className="contact-item-wechat">
                 <dt>微信公众号</dt>
                 <dd>{setting?.wechatLabel || "ZJUAAA_"}</dd>
               </div>
-              <div>
+              <div className="contact-item-qq">
                 <dt>QQ 交流群</dt>
                 <dd>{setting?.qqLabel || "3389651066"}</dd>
               </div>
-              <div>
+              <div className="contact-item-email">
                 <dt>联系邮箱</dt>
                 <dd>
                   <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
                 </dd>
               </div>
-              <div>
+              <div className="contact-item-address">
                 <dt>社团地址</dt>
                 <dd>{setting?.addressZh || "浙江大学紫金港校区"}</dd>
               </div>
-              <div>
+              <div className="contact-item-join">
                 <dt>纳新报名</dt>
                 <dd>
                   <a href={joinFormUrl} rel="noreferrer" target="_blank">

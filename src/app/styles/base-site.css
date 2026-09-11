@@ -983,7 +983,7 @@ html.motion-ready [data-reveal].is-revealed .home-ending-line {
 }
 
 .contact-image-secondary {
-  grid-column: 5 / -1;
+  grid-column: 6 / -1;
 }
 
 .contact-intro {
@@ -996,34 +996,30 @@ html.motion-ready [data-reveal].is-revealed .home-ending-line {
 }
 
 .contact-intro h1 {
-  max-width: 15em;
+  max-width: none;
   margin: 0;
   font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
-  font-size: clamp(1.85rem, 3.1vw, 2.8rem);
+  font-size: clamp(2rem, 2.75vw, 2.55rem);
   font-weight: 600;
-  letter-spacing: 0.01em;
-  line-height: 1.45;
-  text-wrap: balance;
+  letter-spacing: 0;
+  line-height: 1.5;
 }
 
-.contact-intro > p {
-  max-width: 34em;
-  margin: 24px 0 0;
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.9;
+.contact-intro h1 span {
+  display: block;
+  white-space: nowrap;
 }
 
 .contact-details {
-  grid-column: 1 / span 4;
+  grid-column: 1 / span 5;
   align-self: start;
   padding: clamp(4px, 1vw, 16px) 0;
 }
 
 .contact-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(28px, 3vw, 46px) 24px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
   margin: 0;
 }
 
@@ -1031,13 +1027,31 @@ html.motion-ready [data-reveal].is-revealed .home-ending-line {
   min-width: 0;
 }
 
-.contact-list > div:nth-child(3),
-.contact-list > div:nth-child(4) {
+.contact-item-wechat {
+  grid-column: 1 / span 2;
+}
+
+.contact-item-qq {
+  grid-column: 3 / -1;
+}
+
+.contact-item-email {
   grid-column: 1 / -1;
+  margin-top: clamp(40px, 5vw, 68px);
+}
+
+.contact-item-address {
+  grid-column: 2 / -1;
+  margin-top: clamp(50px, 6vw, 84px);
+}
+
+.contact-item-join {
+  grid-column: 1 / span 2;
+  margin-top: clamp(44px, 5vw, 72px);
 }
 
 .contact-list dt {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: var(--muted);
   font-size: 0.82rem;
   line-height: 1.5;
@@ -1047,9 +1061,24 @@ html.motion-ready [data-reveal].is-revealed .home-ending-line {
   min-width: 0;
   margin: 0;
   color: var(--body-color);
-  font-size: clamp(1rem, 1.35vw, 1.18rem);
-  line-height: 1.55;
+  font-size: clamp(1.05rem, 1.5vw, 1.28rem);
+  line-height: 1.5;
   overflow-wrap: anywhere;
+}
+
+.contact-item-email dd {
+  font-size: clamp(1.35rem, 2.3vw, 2rem);
+  letter-spacing: -0.025em;
+}
+
+.contact-item-address dd {
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
+  font-size: clamp(1.18rem, 1.85vw, 1.55rem);
+  line-height: 1.65;
+}
+
+.contact-item-join dd {
+  font-size: clamp(1.18rem, 1.7vw, 1.45rem);
 }
 
 .contact-list a {

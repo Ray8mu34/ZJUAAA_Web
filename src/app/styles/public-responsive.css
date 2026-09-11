@@ -178,7 +178,7 @@
 
   .contact-intro h1 {
     max-width: none;
-    font-size: clamp(1.72rem, 7.4vw, 2.35rem);
+    font-size: clamp(1.7rem, 7.2vw, 2.15rem);
   }
 
   .contact-details {
@@ -195,11 +195,26 @@
   }
 
   .contact-list {
-    gap: 28px 20px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .contact-list > div {
     display: block;
+  }
+
+  .contact-item-email {
+    margin-top: 38px;
+  }
+
+  .contact-item-address {
+    grid-column: 1 / -1;
+    margin-top: 44px;
+    padding-left: 12vw;
+  }
+
+  .contact-item-join {
+    grid-column: 3 / -1;
+    margin-top: 42px;
   }
 
   .section-head {
