@@ -160,7 +160,8 @@
 
   .contact-editorial {
     grid-template-columns: 1fr;
-    gap: 34px;
+    row-gap: 40px;
+    column-gap: 0;
   }
 
   .contact-image-primary,
@@ -170,6 +171,7 @@
 
   .contact-intro,
   .contact-details {
+    grid-column: 1;
     min-height: 0;
     padding: 0;
   }
@@ -179,22 +181,25 @@
     font-size: clamp(1.72rem, 7.4vw, 2.35rem);
   }
 
-  .contact-intro-note {
-    margin-top: 34px;
-  }
-
   .contact-details {
     order: 4;
   }
 
   .contact-image-secondary {
+    grid-column: 1;
     order: 3;
   }
 
+  .contact-image-primary {
+    grid-column: 1;
+  }
+
+  .contact-list {
+    gap: 28px 20px;
+  }
+
   .contact-list > div {
-    grid-template-columns: 100px minmax(0, 1fr);
-    gap: 16px;
-    padding: 16px 0;
+    display: block;
   }
 
   .section-head {

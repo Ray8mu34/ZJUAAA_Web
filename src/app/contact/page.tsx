@@ -38,15 +38,9 @@ export default async function ContactPage() {
             <p>
               {setting?.contactIntroZh || "无论是活动咨询、加入社团，还是合作交流，我们都很乐意收到你的消息。"}
             </p>
-            <div className="contact-intro-note" aria-hidden="true">
-              <span>仰望同一片星空</span>
-            </div>
           </section>
 
           <section className="contact-details" aria-label="联系方式">
-            <div className="contact-details-heading">
-              <span>与我们聊聊</span>
-            </div>
             <dl className="contact-list">
               <div>
                 <dt>微信公众号</dt>
@@ -85,10 +79,6 @@ export default async function ContactPage() {
               priority
               sizes="(max-width: 760px) calc(100vw - 40px), 58vw"
             />
-            <figcaption>
-              <span>在更广阔的天空下</span>
-              <small>遇见更多热爱天文的人</small>
-            </figcaption>
           </figure>
         </div>
       </main>
