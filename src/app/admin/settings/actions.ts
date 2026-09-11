@@ -25,8 +25,7 @@ export async function updateSecondaryContent(formData: FormData) {
       internalIntroZh: String(formData.get("internalIntroZh") || ""),
       manualStartMd: String(formData.get("manualStartMd") || ""),
       contactIntroZh: String(formData.get("contactIntroZh") || ""),
-      aboutGalleryImagePaths: String(formData.get("aboutGalleryImagePaths") || ""),
-      alumniGroupsJson: String(formData.get("alumniGroupsJson") || "")
+      aboutGalleryImagePaths: String(formData.get("aboutGalleryImagePaths") || "")
     }
   });
 
@@ -52,4 +51,26 @@ export async function updateSecondaryContent(formData: FormData) {
   revalidatePath("/manual/start");
   revalidatePath("/internal");
   revalidatePath("/admin/settings");
+}
+
+export async function updateAlumniGroups(formData: FormData) {
+  const session = await requireAdminSession();
+  const alumniGroupsJson = String(formData.get("alumniGroupsJson") || "[]");
+  let parsed: unknown;
+  try { parsed = JSON.parse(alumniGroupsJson); } catch { throw new Error("成员名单数据格式无效。"); }
+  if (!Array.isArray(parsed)) throw new Error("成员名单数据格式无效。");
+
+  const setting = await prisma.siteSetting.upsert({
+    where: { id: "site" },
+    create: { id: "site", alumniGroupsJson },
+    update: { alumniGroupsJson }
+  });
+  await logAdminAction({
+    action: "alumni-groups.update",
+    actor: session.user,
+    target: setting.id,
+    metadata: { groupCount: parsed.length }
+  });
+  revalidatePath("/about/members");
+  revalidatePath("/admin/alumni");
 }

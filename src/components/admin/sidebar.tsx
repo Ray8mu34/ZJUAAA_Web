@@ -14,6 +14,7 @@ const menuGroups = [
     { href: "/admin/manual", label: "天文手册", icon: NotebookTabs },
     { href: "/admin/activities", label: "社团活动", icon: CalendarRange },
     { href: "/admin/gallery", label: "摄影作品", icon: Sparkles },
+    { href: "/admin/alumni", label: "历届成员", icon: Users },
     { href: "/admin/internal", label: "内部资料", icon: Download }
   ]},
   { label: "资源与系统", items: [

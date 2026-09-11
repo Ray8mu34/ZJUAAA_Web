@@ -972,6 +972,56 @@ html[data-theme="light"] .admin-shell .button-link { color: #fff; }
 .admin-status-published::before { background: #55c995; }
 .admin-status-archived::before { background: #d9a94b; }
 
+.admin-shell .admin-alumni-page { padding-bottom: 72px; }
+.admin-shell .admin-alumni-workbench { display: grid; gap: 16px; }
+.admin-shell .admin-alumni-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--admin-line-strong);
+}
+.admin-shell .admin-alumni-year-tabs { display: flex; min-width: 0; gap: 0; overflow-x: auto; }
+.admin-shell .admin-alumni-year-tabs button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--admin-muted);
+  cursor: pointer;
+  font-size: .82rem;
+}
+.admin-shell .admin-alumni-year-tabs button:hover,
+.admin-shell .admin-alumni-year-tabs button.active { border-bottom-color: var(--admin-accent); color: var(--admin-accent); }
+.admin-shell .admin-alumni-year-tabs small { display: inline-grid; min-width: 18px; height: 18px; place-items: center; border-radius: 50%; background: rgba(98,212,223,.1); font-size: .65rem; }
+.admin-shell .admin-alumni-toolbar-actions { display: flex; gap: 6px; padding-bottom: 7px; }
+.admin-shell .admin-alumni-toolbar-actions button,
+.admin-shell .admin-alumni-group-bar button { gap: 6px; }
+.admin-shell .admin-alumni-bulk-panel { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 10px; padding: 14px; border: 1px solid var(--admin-line); background: var(--admin-surface); }
+.admin-shell .admin-alumni-bulk-panel label { display: grid; gap: 5px; font-size: .8rem; }
+.admin-shell .admin-alumni-bulk-panel textarea { min-height: 96px; padding: 8px 10px; border: 1px solid var(--admin-line-strong); border-radius: 3px; background: var(--admin-surface-raised); color: var(--admin-ink); resize: vertical; }
+.admin-shell .admin-alumni-group-bar { display: grid; grid-template-columns: 220px minmax(0,1fr) auto auto; align-items: end; gap: 8px; }
+.admin-shell .admin-alumni-group-bar label { display: grid; gap: 5px; color: var(--admin-muted); font-size: .72rem; }
+.admin-shell .admin-alumni-group-bar input { min-height: 36px; padding: 7px 9px; border: 1px solid var(--admin-line-strong); border-radius: 3px; background: var(--admin-surface-raised); color: var(--admin-ink); }
+.admin-shell .admin-alumni-group-bar > span { align-self: center; color: var(--admin-muted); font-size: .75rem; }
+.admin-shell .admin-alumni-wall { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 10px; }
+.admin-shell .admin-alumni-tile { position: relative; min-width: 0; border: 1px solid var(--admin-line); background: var(--admin-surface); }
+.admin-shell .admin-alumni-tile-photo { position: relative; display: grid; aspect-ratio: 4/3; place-items: center; overflow: hidden; background: linear-gradient(145deg, rgba(98,212,223,.2), rgba(98,212,223,.035)); color: var(--admin-accent); font-size: 2rem; font-weight: 650; }
+.admin-shell .admin-alumni-tile-photo img { object-fit: cover; }
+.admin-shell .admin-alumni-tile-fields { display: grid; gap: 6px; padding: 9px; }
+.admin-shell .admin-alumni-tile-fields input,
+.admin-shell .admin-alumni-tile-fields select { width: 100%; min-width: 0; min-height: 32px; padding: 6px 7px; border: 1px solid var(--admin-line); border-radius: 2px; background: var(--admin-surface-raised); color: var(--admin-ink); font-size: .75rem; }
+.admin-shell .admin-alumni-tile-fields input:first-child { font-weight: 650; }
+.admin-shell .admin-alumni-remove { position: absolute; top: 6px; right: 6px; display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid rgba(255,255,255,.22); border-radius: 2px; background: rgba(12,18,21,.76); color: #ffb0b0; cursor: pointer; opacity: 0; transition: opacity .15s ease; }
+.admin-shell .admin-alumni-tile:hover .admin-alumni-remove,
+.admin-shell .admin-alumni-remove:focus-visible { opacity: 1; }
+.admin-shell .admin-alumni-savebar { position: sticky; bottom: 0; z-index: 4; display: flex; align-items: center; justify-content: flex-end; gap: 14px; margin-top: 4px; padding: 10px 0; border-top: 1px solid var(--admin-line-strong); background: color-mix(in srgb, var(--admin-surface) 94%, transparent); backdrop-filter: blur(10px); }
+.admin-shell .admin-alumni-savebar span { color: var(--admin-muted); font-size: .72rem; }
+
 .admin-editor-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 28px; padding-top: 22px; }
 .admin-editor-main { min-width: 0; }
 .admin-editor-aside { border-left: 1px solid var(--admin-line); padding-left: 20px; }
@@ -1007,6 +1057,7 @@ html[data-theme="light"] .admin-shell .button-link { color: #fff; }
   .admin-editor-aside { border-top: 1px solid var(--admin-line); border-left: 0; padding: 18px 0 0; }
   .admin-sticky-actions { position: static; display: flex; }
   .media-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .admin-shell .admin-alumni-wall { grid-template-columns: repeat(3,minmax(0,1fr)); }
 }
 
 @media (max-width: 720px) {
@@ -1028,5 +1079,11 @@ html[data-theme="light"] .admin-shell .button-link { color: #fff; }
   .admin-data-row-header { display: none; }
   .media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-shell .admin-alumni-toolbar { align-items: stretch; flex-direction: column; }
+  .admin-shell .admin-alumni-toolbar-actions { padding-bottom: 0; }
+  .admin-shell .admin-alumni-group-bar { grid-template-columns: 1fr auto; }
+  .admin-shell .admin-alumni-group-bar > span { display: none; }
+  .admin-shell .admin-alumni-wall { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .admin-shell .admin-alumni-remove { opacity: 1; }
 }
 

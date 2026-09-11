@@ -1,6 +1,5 @@
 import { AboutGalleryEditor } from "@/components/admin/about-gallery-editor";
 import { AdminActionForm } from "@/components/admin/admin-action-form";
-import { AlumniGroupsEditor } from "@/components/admin/alumni-groups-editor";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
@@ -36,7 +35,7 @@ export default async function AdminSettingsPage() {
   return (
     <section className="admin-card">
       <h2>页面内容设置</h2>
-      <p className="muted">这里维护各页面说明文案、“关于我们”照片墙，以及历届成员名单。</p>
+      <p className="muted">这里维护各页面说明文案与“关于我们”照片墙。历届成员请前往独立的成员管理界面。</p>
 
       <AdminActionForm action={updateSecondaryContent} successMessage="页面内容已保存。">
         <label>
@@ -104,8 +103,6 @@ export default async function AdminSettingsPage() {
         </label>
 
         <AboutGalleryEditor initialValue={setting.aboutGalleryImagePaths} options={mediaOptions} />
-
-        <AlumniGroupsEditor initialValue={setting.alumniGroupsJson} options={mediaOptions} />
 
         <button className="button-link" type="submit">
           保存页面内容设置
