@@ -1053,6 +1053,7 @@ html.motion-ready [data-reveal].is-revealed .home-ending-line {
 .contact-list dt {
   margin-bottom: 10px;
   color: var(--muted);
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif;
   font-size: 0.82rem;
   line-height: 1.5;
 }
