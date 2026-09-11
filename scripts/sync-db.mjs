@@ -71,6 +71,8 @@ const columns = new Set(
 const additions = [
   ["heroImagePath", "TEXT"],
   ["logoImagePath", "TEXT"],
+  ["contactImagePrimaryPath", "TEXT"],
+  ["contactImageSecondaryPath", "TEXT"],
   ["cardTheme", "TEXT NOT NULL DEFAULT 'dark'"],
   ["contactEmail", "TEXT NOT NULL DEFAULT 'contact@example.com'"],
   [

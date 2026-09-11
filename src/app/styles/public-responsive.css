@@ -154,6 +154,49 @@
     padding: var(--mobile-section-space) 0 12px;
   }
 
+  .contact-page {
+    padding: 30px 0 72px;
+  }
+
+  .contact-editorial {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .contact-image-primary,
+  .contact-image-secondary {
+    aspect-ratio: 4 / 3;
+  }
+
+  .contact-intro,
+  .contact-details {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .contact-intro h1 {
+    max-width: none;
+    font-size: clamp(1.72rem, 7.4vw, 2.35rem);
+  }
+
+  .contact-intro-note {
+    margin-top: 34px;
+  }
+
+  .contact-details {
+    order: 4;
+  }
+
+  .contact-image-secondary {
+    order: 3;
+  }
+
+  .contact-list > div {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px 0;
+  }
+
   .section-head {
     align-items: flex-start;
     flex-direction: column;

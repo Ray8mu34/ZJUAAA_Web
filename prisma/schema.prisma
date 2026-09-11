@@ -39,6 +39,8 @@ model SiteSetting {
   bilibiliUrl           String   @default("https://space.bilibili.com/")
   heroImagePath         String?
   logoImagePath         String?
+  contactImagePrimaryPath String?
+  contactImageSecondaryPath String?
   cardTheme             String   @default("dark")
   wechatLabel           String   @default("ZJUAAA_")
   qqLabel               String   @default("3389651066")

@@ -25,6 +25,8 @@ export async function updateSiteSettings(formData: FormData) {
       manifestoEn: String(formData.get("manifestoEn") || ""),
       heroImagePath: String(formData.get("heroImagePath") || "").trim() || null,
       logoImagePath: String(formData.get("logoImagePath") || "").trim() || null,
+      contactImagePrimaryPath: String(formData.get("contactImagePrimaryPath") || "").trim() || null,
+      contactImageSecondaryPath: String(formData.get("contactImageSecondaryPath") || "").trim() || null,
       cardTheme: String(formData.get("cardTheme") || "dark"),
       primaryButtonZh: String(formData.get("primaryButtonZh") || ""),
       primaryButtonEn: String(formData.get("primaryButtonEn") || ""),
@@ -49,7 +51,9 @@ export async function updateSiteSettings(formData: FormData) {
     metadata: {
       siteNameZh: setting.siteNameZh,
       heroImagePath: setting.heroImagePath,
-      logoImagePath: setting.logoImagePath
+      logoImagePath: setting.logoImagePath,
+      contactImagePrimaryPath: setting.contactImagePrimaryPath,
+      contactImageSecondaryPath: setting.contactImageSecondaryPath
     }
   });
 

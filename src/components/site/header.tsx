@@ -15,7 +15,8 @@ const navItems = [
   { href: "/astrophotography", zh: "天文摄影" },
   { href: "/manual", zh: "天文手册" },
   { href: "/internal", zh: "内部资料" },
-  { href: "/about", zh: "关于我们" }
+  { href: "/about", zh: "关于我们" },
+  { href: "/contact", zh: "联系我们" }
 ];
 
 export function SiteHeader() {
@@ -77,17 +78,10 @@ export function SiteHeader() {
             );
           })}
 
-          <Link className={`mobile-nav-contact${pathname.startsWith("/contact") ? " active" : ""}`} href="/contact">
-            <span>联系我们</span>
-          </Link>
         </nav>
 
         <div className="nav-actions">
           <ThemeToggle />
-
-          <Link className="nav-contact-button" href="/contact">
-            联系我们
-          </Link>
 
           <button
             className="mobile-menu-button"

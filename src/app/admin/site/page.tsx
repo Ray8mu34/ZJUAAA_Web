@@ -29,10 +29,10 @@ export default async function AdminSitePage() {
 
   return (
     <section className="admin-card">
-      <h2>首页管理</h2>
-      <p className="muted">这里维护首页主标题、按钮、视觉图、协会 Logo，以及全站卡片样式。</p>
+      <h2>站点管理</h2>
+      <p className="muted">这里维护首页内容、联系页视觉图、协会 Logo，以及全站卡片样式。</p>
 
-      <AdminActionForm action={updateSiteSettings} successMessage="首页设置已保存。">
+      <AdminActionForm action={updateSiteSettings} successMessage="站点设置已保存。">
         <div className="admin-form-grid">
           <label>
             <span>站点中文名</span>
@@ -91,6 +91,27 @@ export default async function AdminSitePage() {
           value={setting.logoImagePath}
           options={mediaOptions}
           categories={["site", "shared"]}
+        />
+
+        <div className="admin-section-heading">
+          <strong>联系页双图</strong>
+          <p className="muted">分别选择联系页上方主图和下方副图；未选择时会展示默认天文摄影。</p>
+        </div>
+
+        <MediaPathField
+          name="contactImagePrimaryPath"
+          label="联系页主图"
+          value={setting.contactImagePrimaryPath}
+          options={mediaOptions}
+          categories={["site", "shared", "astro"]}
+        />
+
+        <MediaPathField
+          name="contactImageSecondaryPath"
+          label="联系页副图"
+          value={setting.contactImageSecondaryPath}
+          options={mediaOptions}
+          categories={["site", "shared", "astro"]}
         />
 
         <label>
@@ -173,7 +194,7 @@ export default async function AdminSitePage() {
         </label>
 
         <button className="button-link" type="submit">
-          保存首页设置
+          保存站点设置
         </button>
       </AdminActionForm>
     </section>
