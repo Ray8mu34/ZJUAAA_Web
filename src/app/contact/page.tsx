@@ -34,21 +34,18 @@ export default async function ContactPage() {
           </figure>
 
           <section className="contact-intro" aria-labelledby="contact-intro-title">
-            <span className="contact-kicker">CONTACT · ZJUAAA</span>
             <h1 id="contact-intro-title">如果你也对宇宙充满好奇，欢迎与我们取得联系。</h1>
             <p>
               {setting?.contactIntroZh || "无论是活动咨询、加入社团，还是合作交流，我们都很乐意收到你的消息。"}
             </p>
             <div className="contact-intro-note" aria-hidden="true">
               <span>仰望同一片星空</span>
-              <small>ASTRONOMY CONNECTS US</small>
             </div>
           </section>
 
           <section className="contact-details" aria-label="联系方式">
             <div className="contact-details-heading">
               <span>与我们聊聊</span>
-              <small>FIND US</small>
             </div>
             <dl className="contact-list">
               <div>

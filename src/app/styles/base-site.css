@@ -994,15 +994,6 @@ html.motion-ready [data-reveal].is-revealed .home-ending-line {
   background: var(--text);
 }
 
-.contact-kicker,
-.contact-details-heading small,
-.contact-intro-note small {
-  color: var(--muted);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-}
-
 .contact-intro h1 {
   max-width: 15em;
   margin: 22px 0 0;
