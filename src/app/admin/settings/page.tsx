@@ -38,7 +38,7 @@ export default async function AdminSettingsPage() {
     <AdminPageHeader title="站点设置" description="管理各内容页面的说明与关于页面素材。" />
     <section className="admin-card">
       <h2>页面内容设置</h2>
-      <p className="muted">页面说明与“关于我们”照片墙。历届成员在独立页面维护。</p>
+      <p className="muted">以下说明会直接显示在对应前台页面。历届成员在独立页面维护。</p>
 
       <AdminActionForm action={updateSecondaryContent} successMessage="页面内容已保存。">
         <label>
@@ -79,30 +79,8 @@ export default async function AdminSettingsPage() {
         </label>
 
         <label>
-          <span>天文手册顶部内容（Markdown）</span>
-          <small className="muted">在栏目卡片上方显示的内容，支持 Markdown 格式。留空则显示默认的“第一次来到这里？”引导区。</small>
-          <textarea name="manualStartMd" rows={12} defaultValue={setting.manualStartMd} placeholder="# 天协知识手册 · 内容清单&#10;&#10;在这里粘贴 Markdown 内容..." />
-        </label>
-
-        <label>
           <span>联系我们页面说明</span>
           <textarea name="contactIntroZh" rows={3} defaultValue={setting.contactIntroZh} />
-        </label>
-
-        <div className="admin-form-grid">
-          <label>
-            <span>学术部门介绍</span>
-            <textarea name="academicDeptZh" rows={3} defaultValue={setting.academicDeptZh} />
-          </label>
-          <label>
-            <span>科普部门介绍</span>
-            <textarea name="publicDeptZh" rows={3} defaultValue={setting.publicDeptZh} />
-          </label>
-        </div>
-
-        <label>
-          <span>摄影 / 宣传部门介绍</span>
-          <textarea name="mediaDeptZh" rows={3} defaultValue={setting.mediaDeptZh} />
         </label>
 
         <AboutGalleryEditor initialValue={setting.aboutGalleryImagePaths} options={mediaOptions} />

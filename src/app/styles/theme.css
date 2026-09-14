@@ -1514,6 +1514,30 @@ html[data-theme="light"] .knowledge-index-page {
   box-shadow: var(--shadow);
 }
 
+.admin-shell .admin-theme-toggle {
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  border-color: var(--admin-line);
+  background: transparent;
+  color: var(--admin-muted);
+  box-shadow: none;
+}
+
+html[data-theme="light"] .admin-shell {
+  --admin-bg: #f1f4f4;
+}
+
+html[data-theme="light"] .admin-shell .admin-topbar {
+  background: var(--admin-bg);
+  color: var(--admin-ink);
+}
+
+html[data-theme="light"] .admin-shell .admin-theme-toggle {
+  border-color: var(--admin-line-strong);
+  color: var(--admin-ink);
+}
+
 .theme-toggle svg {
   grid-area: 1 / 1;
   transition:

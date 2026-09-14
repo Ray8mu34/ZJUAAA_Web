@@ -17,6 +17,7 @@ export default async function ContactPage() {
   const secondaryImage = setting?.contactImageSecondaryPath || DEFAULT_SECONDARY_IMAGE;
   const contactEmail = setting?.contactEmail || "contact@example.com";
   const joinFormUrl = setting?.joinFormUrl || "https://example.com/join";
+  const contactIntroduction = setting?.contactIntroZh?.trim() || "欢迎通过微信、QQ、邮箱或报名表单与我们取得联系。";
 
   return (
     <>
@@ -39,6 +40,7 @@ export default async function ContactPage() {
               <span>充满好奇，欢迎</span>
               <span>与我们取得联系。</span>
             </h1>
+            <p className="contact-intro-description">{contactIntroduction}</p>
           </section>
 
           <section className="contact-details" aria-label="联系方式">

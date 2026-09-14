@@ -13,7 +13,7 @@ export default async function AboutMembersPage() {
   const alumniGroups = sortAlumniGroups(parseAlumniGroups(setting?.alumniGroupsJson));
 
   return (
-    <AboutSectionShell active="members" introduction={setting?.aboutIntroZh}>
+    <AboutSectionShell active="members" introduction={setting?.aboutIntroZh?.trim()}>
       <section className="about-members-content" aria-labelledby="about-members-title" data-reveal>
         <div className="about-content-heading">
           <h2 id="about-members-title">历届成员</h2>

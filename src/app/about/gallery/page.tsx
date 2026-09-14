@@ -14,7 +14,7 @@ export default async function AboutGalleryPage() {
   const galleryPaths = shuffleItems(parseAboutGalleryPaths(setting?.aboutGalleryImagePaths));
 
   return (
-    <AboutSectionShell active="gallery" introduction={setting?.aboutIntroZh}>
+    <AboutSectionShell active="gallery" introduction={setting?.aboutIntroZh?.trim()}>
       <section className="about-gallery-content" aria-labelledby="about-gallery-title" data-reveal>
         <div className="about-content-heading">
           <h2 id="about-gallery-title">社团照片</h2>

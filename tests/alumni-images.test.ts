@@ -27,7 +27,7 @@ describe("alumni image rendering", () => {
       renderToStaticMarkup(createElement(AlumniGroupsEditor, { initialValue: JSON.stringify(groups), options: [] }));
       expect(mocks.image.mock.calls[0]?.[0]).toMatchObject({
         src: gif ? photoPath : getImageVariantUrl(photoPath, "thumb"),
-        unoptimized: gif, fill: true, sizes: "120px"
+        unoptimized: true, fill: true, sizes: "120px"
       });
     }
   );

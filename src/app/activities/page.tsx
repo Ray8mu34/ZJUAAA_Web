@@ -110,7 +110,7 @@ export default async function ActivitiesPage({
             <div>
               <h2>社团活动</h2>
               <p className="muted">
-                {setting.activitiesIntroZh || "关注社团最新活动与往期记录。"}
+                {setting.activitiesIntroZh?.trim() || "关注社团最新活动与往期记录。"}
               </p>
             </div>
             <p className="muted">共 {visibleNoticeCount} 场活动</p>

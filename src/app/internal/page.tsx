@@ -83,7 +83,7 @@ export default async function InternalPage({ searchParams }: InternalPageProps) 
               <div className="internal-portal-head">
                 <div>
                   <h1>内部资料</h1>
-                  <p>{setting.internalIntroZh || "社团文件、宣传作品与共同记忆。"}</p>
+                  <p>{setting.internalIntroZh?.trim() || "社团文件、宣传作品与共同记忆。"}</p>
                 </div>
                 <form action={internalSignOut}>
                   <button className="button-ghost internal-logout" type="submit">

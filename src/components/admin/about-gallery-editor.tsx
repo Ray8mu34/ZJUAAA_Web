@@ -79,7 +79,7 @@ export function AboutGalleryEditor({
           {selectedOptions.map((option) => (
             <article className="admin-gallery-selected-item" key={option.id}>
               <div className="admin-gallery-selected-thumb">
-                <Image alt={option.title} fill sizes="160px" src={getImageVariantUrl(option.filePath, "thumb")} />
+                <Image alt={option.title} fill sizes="160px" src={getImageVariantUrl(option.filePath, "thumb")} unoptimized />
               </div>
               <strong>{option.title}</strong>
               <p className="muted">{option.filePath}</p>
@@ -116,7 +116,7 @@ export function AboutGalleryEditor({
                     onClick={() => (active ? removeImage(option.filePath) : addImage(option.filePath))}
                   >
                     <div className="media-picker-thumb">
-                      <Image alt={option.title} fill sizes="96px" src={getImageVariantUrl(option.filePath, "thumb")} />
+                      <Image alt={option.title} fill sizes="96px" src={getImageVariantUrl(option.filePath, "thumb")} loading="lazy" unoptimized />
                     </div>
                     <strong>{option.title}</strong>
                     <span>{option.filePath}</span>

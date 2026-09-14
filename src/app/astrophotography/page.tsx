@@ -39,10 +39,7 @@ export default async function AstroPhotographyPage({
     })
   ]);
   const randomizedPhotos = shuffleItems(photos);
-  const savedIntroduction = setting.galleryIntroZh?.trim();
-  const introduction = !savedIntroduction || savedIntroduction.replace(/[。\s]/g, "") === "社团成员的摄影作品"
-    ? "我们成员的摄影作品"
-    : savedIntroduction;
+  const introduction = setting.galleryIntroZh?.trim() || "我们成员的摄影作品";
 
   return (
     <>

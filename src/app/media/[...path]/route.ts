@@ -1,4 +1,6 @@
-import { readFile, stat } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 
 import sharp from "sharp";
@@ -19,8 +21,14 @@ const MIME_TYPES: Record<string, string> = {
 };
 
 const PROCESSABLE_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif"]);
-const THUMB_WIDTH = 960;
+const THUMB_WIDTH = 480;
 const WATERMARK_TEXT = "浙江大学学生天文爱好者协会 ZJUAAA";
+
+const globalForMediaCache = globalThis as unknown as {
+  mediaThumbnailJobs?: Map<string, Promise<Buffer>>;
+};
+const thumbnailJobs = globalForMediaCache.mediaThumbnailJobs ?? new Map<string, Promise<Buffer>>();
+globalForMediaCache.mediaThumbnailJobs = thumbnailJobs;
 
 function getMimeType(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
@@ -73,7 +81,38 @@ function buildWatermarkSvg(width: number, height: number) {
   `);
 }
 
-async function buildVariantBuffer(filePath: string, fileBuffer: Buffer, variant: string) {
+async function getCachedThumbnail(filePath: string, fileBuffer: Buffer, size: number, modifiedAt: number) {
+  const cacheKey = createHash("sha256").update(`${filePath}:${size}:${modifiedAt}:${THUMB_WIDTH}`).digest("hex");
+  const cacheDir = path.join(os.tmpdir(), "zjuaaa-media-thumbnails");
+  const cachePath = path.join(cacheDir, `${cacheKey}.webp`);
+
+  try {
+    return await readFile(cachePath);
+  } catch {}
+
+  const existingJob = thumbnailJobs.get(cacheKey);
+  if (existingJob) return existingJob;
+
+  const job = (async () => {
+    const buffer = await sharp(fileBuffer, { animated: false })
+      .rotate()
+      .resize({ width: THUMB_WIDTH, withoutEnlargement: true })
+      .webp({ quality: 76 })
+      .toBuffer();
+    await mkdir(cacheDir, { recursive: true });
+    await writeFile(cachePath, buffer);
+    return buffer;
+  })();
+
+  thumbnailJobs.set(cacheKey, job);
+  try {
+    return await job;
+  } finally {
+    thumbnailJobs.delete(cacheKey);
+  }
+}
+
+async function buildVariantBuffer(filePath: string, fileBuffer: Buffer, variant: string, size: number, modifiedAt: number) {
   const ext = path.extname(filePath).toLowerCase();
 
   if (!PROCESSABLE_EXTENSIONS.has(ext)) {
@@ -86,13 +125,7 @@ async function buildVariantBuffer(filePath: string, fileBuffer: Buffer, variant:
   const image = sharp(fileBuffer, { animated: false }).rotate();
 
   if (variant === "thumb") {
-    const buffer = await image
-      .resize({
-        width: THUMB_WIDTH,
-        withoutEnlargement: true
-      })
-      .webp({ quality: 78 })
-      .toBuffer();
+    const buffer = await getCachedThumbnail(filePath, fileBuffer, size, modifiedAt);
 
     return {
       buffer,
@@ -150,7 +183,13 @@ export async function GET(req: NextRequest, context: { params: Promise<{ path: s
       });
     }
 
-    const { buffer, contentType } = await buildVariantBuffer(fileResult.requestedPath, fileResult.fileBuffer, variant);
+    const { buffer, contentType } = await buildVariantBuffer(
+      fileResult.requestedPath,
+      fileResult.fileBuffer,
+      variant,
+      fileResult.fileStat.size,
+      fileResult.fileStat.mtimeMs
+    );
 
     return new Response(new Uint8Array(buffer), {
       status: 200,

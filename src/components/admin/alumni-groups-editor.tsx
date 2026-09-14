@@ -80,7 +80,7 @@ export function AlumniGroupsEditor({ initialValue, options }: { initialValue?: s
       </div>
       {activeGroup.members.length === 0 ? <div className="empty-state">本届暂无成员，点击“添加成员”开始录入。</div> : <div className="admin-alumni-wall">
         {activeGroup.members.map((member, memberIndex) => <article className="admin-alumni-tile" key={`${activeIndex}-${memberIndex}`}>
-          <div className="admin-alumni-tile-photo">{member.photoPath ? <Image alt={member.name || "成员照片"} fill sizes="120px" src={isGifImagePath(member.photoPath) ? member.photoPath : getImageVariantUrl(member.photoPath, "thumb")} unoptimized={isGifImagePath(member.photoPath)}/> : <span>{member.name?.slice(0, 1) || "·"}</span>}</div>
+          <div className="admin-alumni-tile-photo">{member.photoPath ? <Image alt={member.name || "成员照片"} fill sizes="120px" src={isGifImagePath(member.photoPath) ? member.photoPath : getImageVariantUrl(member.photoPath, "thumb")} unoptimized /> : <span>{member.name?.slice(0, 1) || "·"}</span>}</div>
           <div className="admin-alumni-tile-fields">
             <input aria-label="成员姓名" value={member.name} onChange={(event) => updateMember(memberIndex, { ...member, name: event.target.value })} placeholder="姓名"/>
             <input aria-label="成员职务" value={member.role} onChange={(event) => updateMember(memberIndex, { ...member, role: event.target.value })} placeholder="职务"/>

@@ -34,7 +34,7 @@ export default async function ManualIndexPage() {
             <div>
               <h2>天文手册</h2>
               <p className="muted">
-                {setting.manualIntroZh || "这里收录社团整理的天文学习资料，按栏目分类，适合系统学习与查阅。"}
+                {setting.manualIntroZh?.trim() || "这里收录社团整理的天文学习资料，按栏目分类，适合系统学习与查阅。"}
               </p>
             </div>
           </div>

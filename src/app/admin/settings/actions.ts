@@ -13,18 +13,14 @@ export async function updateSecondaryContent(formData: FormData) {
     where: { id: "site" },
     create: { id: "site" },
     update: {
-      contactEmail: String(formData.get("contactEmail") || ""),
-      aboutIntroZh: String(formData.get("aboutIntroZh") || ""),
-      academicDeptZh: String(formData.get("academicDeptZh") || ""),
-      publicDeptZh: String(formData.get("publicDeptZh") || ""),
-      mediaDeptZh: String(formData.get("mediaDeptZh") || ""),
-      knowledgeIntroZh: String(formData.get("knowledgeIntroZh") || ""),
-      activitiesIntroZh: String(formData.get("activitiesIntroZh") || ""),
-      galleryIntroZh: String(formData.get("galleryIntroZh") || ""),
-      manualIntroZh: String(formData.get("manualIntroZh") || ""),
-      internalIntroZh: String(formData.get("internalIntroZh") || ""),
-      manualStartMd: String(formData.get("manualStartMd") || ""),
-      contactIntroZh: String(formData.get("contactIntroZh") || ""),
+      contactEmail: String(formData.get("contactEmail") || "").trim(),
+      aboutIntroZh: String(formData.get("aboutIntroZh") || "").trim(),
+      knowledgeIntroZh: String(formData.get("knowledgeIntroZh") || "").trim(),
+      activitiesIntroZh: String(formData.get("activitiesIntroZh") || "").trim(),
+      galleryIntroZh: String(formData.get("galleryIntroZh") || "").trim(),
+      manualIntroZh: String(formData.get("manualIntroZh") || "").trim(),
+      internalIntroZh: String(formData.get("internalIntroZh") || "").trim(),
+      contactIntroZh: String(formData.get("contactIntroZh") || "").trim(),
       aboutGalleryImagePaths: String(formData.get("aboutGalleryImagePaths") || "")
     }
   });
@@ -48,7 +44,6 @@ export async function updateSecondaryContent(formData: FormData) {
   revalidatePath("/activities");
   revalidatePath("/astrophotography");
   revalidatePath("/manual");
-  revalidatePath("/manual/start");
   revalidatePath("/internal");
   revalidatePath("/admin/settings");
 }

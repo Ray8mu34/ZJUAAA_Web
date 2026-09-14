@@ -60,10 +60,7 @@ export default async function KnowledgePage({
     })
   ]);
 
-  const savedIntroduction = setting.knowledgeIntroZh?.trim();
-  const introduction = !savedIntroduction || savedIntroduction.replace(/[，,。\s]/g, "") === "天协的科普文章点击卡片跳转公众号文章"
-    ? "部分问题的答案"
-    : savedIntroduction;
+  const introduction = setting.knowledgeIntroZh?.trim() || "部分问题的答案";
 
   return (
     <>

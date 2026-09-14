@@ -43,7 +43,8 @@ export default async function AdminMediaPage({
       where,
       orderBy: { createdAt: "desc" },
       skip: (currentPage - 1) * PAGE_SIZE,
-      take: PAGE_SIZE
+      take: PAGE_SIZE,
+      select: { id: true, title: true, filePath: true, mimeType: true, category: true }
     }),
     prisma.mediaAsset.count({ where })
   ]);

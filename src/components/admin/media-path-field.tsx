@@ -157,7 +157,7 @@ export function MediaPathField({
         {selectedPath ? (
           <div className="media-inline-card">
             <div className="media-inline-image">
-              <Image src={getImageVariantUrl(selectedPath, "thumb")} alt={selectedOption?.title || label} fill sizes="120px" />
+              <Image src={getImageVariantUrl(selectedPath, "thumb")} alt={selectedOption?.title || label} fill sizes="120px" unoptimized />
             </div>
             <div>
               <strong>{selectedOption?.title || "已选择图片"}</strong>
@@ -199,7 +199,7 @@ export function MediaPathField({
                       onClick={() => handleSelect(option.filePath)}
                     >
                       <div className="media-picker-thumb">
-                        <Image src={getImageVariantUrl(option.filePath, "thumb")} alt={option.title} fill sizes="96px" />
+                        <Image src={getImageVariantUrl(option.filePath, "thumb")} alt={option.title} fill sizes="96px" loading="lazy" unoptimized />
                       </div>
                       <strong>{option.title}</strong>
                       <span>{option.filePath}</span>

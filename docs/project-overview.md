@@ -114,7 +114,6 @@ npm run db:seed-categories      # 初始化手册栏目
 | `/astrophotography` | 天文摄影作品列表 |
 | `/astrophotography/[slug]` | 天文摄影详情 |
 | `/manual` | 天文手册栏目总览 |
-| `/manual/start` | 手册内容清单 |
 | `/manual/[category]` | 某个手册栏目的文章列表 |
 | `/manual/[category]/[chapter]` | 手册文章详情 |
 | `/internal` | 内部资料入口，需内部账号密码 |

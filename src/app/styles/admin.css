@@ -1183,6 +1183,15 @@ html[data-theme="light"] .admin-shell .button-link { color: #fff; }
 .admin-text-action:hover { color: var(--admin-ink); }
 .admin-toast { position: fixed; top: 78px; right: 24px; z-index: 70; max-width: 360px; border-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
 
+.admin-loading-line, .admin-loading-block { display: block; overflow: hidden; background: rgba(255,255,255,.065); }
+.admin-loading-line { width: 180px; height: 11px; }
+.admin-loading-title { width: 150px; height: 28px; margin-bottom: 10px; }
+.admin-loading-copy { width: 110px; opacity: .6; }
+.admin-loading-toolbar { display: flex; min-height: 52px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--admin-line); }
+.admin-loading-media-grid .media-card { display: grid; gap: 9px; }
+.admin-loading-media-grid .media-preview { margin: 0; }
+.admin-loading-media-grid .admin-loading-line { width: 68%; }
+
 .admin-quick-grid { grid-template-columns: 1fr; gap: 0; margin-top: 0; border-top: 1px solid var(--admin-line-strong); }
 .admin-quick-card { grid-template-columns: 28px 180px minmax(0,1fr) 18px; min-height: 62px; align-items: center; gap: 16px; padding: 12px 8px; border: 0; border-bottom: 1px solid var(--admin-line); border-radius: 0; background: transparent; }
 .admin-quick-card::after { color: var(--admin-accent); content: "→"; }
