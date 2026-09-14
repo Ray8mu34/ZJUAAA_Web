@@ -79,7 +79,8 @@ export default async function AdminSettingsPage() {
         </label>
 
         <label>
-          <span>联系我们页面说明</span>
+          <span>联系我们主文案</span>
+          <small>直接显示为“联系我们”页面的大标题；支持换行，每行会独立显示。</small>
           <textarea name="contactIntroZh" rows={3} defaultValue={setting.contactIntroZh} />
         </label>
 

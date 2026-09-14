@@ -1,0 +1,1 @@
+export const MAX_MEDIA_UPLOAD_BYTES = 512 * 1024 * 1024;

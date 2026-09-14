@@ -1029,6 +1029,11 @@ html[data-theme="light"] .admin-shell .button-link { color: #fff; }
 .admin-editor-aside p { color: var(--admin-muted); font-size: .76rem; line-height: 1.55; }
 .admin-sticky-actions { position: sticky; top: 88px; display: grid; gap: 8px; }
 .admin-sticky-actions .button-link, .admin-sticky-actions .button-ghost { width: 100%; }
+.media-upload-form { gap: 18px; }
+.media-upload-form .admin-form-grid { align-items: start; }
+.media-upload-form .button-link { width: 100%; margin-top: 2px; }
+.admin-help-list { display: grid; gap: 9px; margin: 0; padding-left: 18px; color: var(--admin-muted); font-size: .76rem; line-height: 1.55; }
+.admin-help-list li::marker { color: var(--admin-accent); }
 
 .post-item { border-radius: 3px; background: transparent; }
 .post-item-summary { padding: 12px; }

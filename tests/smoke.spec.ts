@@ -75,6 +75,13 @@ test("logged-in admin can see the media upload form", async ({ page }) => {
   await page.goto("/admin/media/upload");
   await expect(page.getByRole("heading", { name: "上传图片" })).toBeVisible();
   await expect(page.getByLabel("图片文件")).toBeVisible();
+  await expect(page.getByText(/服务器请求上限为 512 MB/)).toBeVisible();
+
+  const fileInputBox = await page.getByLabel("图片文件").boundingBox();
+  const categoryBox = await page.getByLabel("用途分类").boundingBox();
+  expect(fileInputBox).not.toBeNull();
+  expect(categoryBox).not.toBeNull();
+  expect(categoryBox!.y).toBeGreaterThan(fileInputBox!.y + fileInputBox!.height);
 });
 
 test("logged-in admin upload API rejects SVG images", async ({ page }) => {

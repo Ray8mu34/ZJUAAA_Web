@@ -292,14 +292,6 @@ textarea {
     filter var(--motion-fast) ease;
 }
 
-.contact-intro-description {
-  max-width: 42rem;
-  margin: 26px 0 0;
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.75;
-}
-
 .button-primary:hover,
 .button-secondary:hover,
 .button-link:hover {

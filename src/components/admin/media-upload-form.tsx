@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { FormEvent, useRef, useState } from "react";
 
+import { MAX_MEDIA_UPLOAD_BYTES } from "@/lib/media-upload-limits";
+
 type MediaUploadState = {
   status: "idle" | "success" | "error";
   message: string;
@@ -25,6 +27,17 @@ export function MediaUploadForm() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const files = formData.getAll("files").filter((value): value is File => value instanceof File);
+    const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+
+    if (totalBytes > MAX_MEDIA_UPLOAD_BYTES) {
+      setState({
+        status: "error",
+        message: "单次上传的文件总大小不能超过 512 MB，请分批上传。"
+      });
+      return;
+    }
+
     const request = new XMLHttpRequest();
 
     setIsUploading(true);
@@ -77,7 +90,7 @@ export function MediaUploadForm() {
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="admin-form">
+    <form ref={formRef} onSubmit={handleSubmit} className="admin-form media-upload-form">
       <div className="admin-form-grid">
         <label>
           <span>图片标题</span>
@@ -85,11 +98,16 @@ export function MediaUploadForm() {
         </label>
         <label>
           <span>图片文件</span>
-          <input className="file-input" name="files" type="file" accept="image/png,image/jpeg,image/gif,image/webp" multiple required />
+          <input
+            aria-describedby="media-upload-limit"
+            className="file-input"
+            name="files"
+            type="file"
+            accept="image/png,image/jpeg,image/gif,image/webp"
+            multiple
+            required
+          />
         </label>
-      </div>
-
-      <div className="admin-form-grid">
         <label>
           <span>用途分类</span>
           <select className="admin-select" name="category" defaultValue="shared">

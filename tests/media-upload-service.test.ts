@@ -13,6 +13,7 @@ vi.mock("@/lib/astro-photo", () => ({
   createUniqueAstroPhotoSlug: vi.fn(), generateDefaultAstroPhotoTitle: vi.fn()
 }));
 
+import { MAX_MEDIA_UPLOAD_BYTES } from "@/lib/media-upload-limits";
 import { saveMediaUpload } from "@/lib/media-upload-service";
 
 describe("GIF media uploads", () => {
@@ -39,4 +40,15 @@ describe("GIF media uploads", () => {
       });
     }
   );
+
+  it("rejects a media batch larger than 512 MB before processing files", async () => {
+    const oversizedFile = { size: MAX_MEDIA_UPLOAD_BYTES + 1 } as File;
+
+    await expect(
+      saveMediaUpload({ files: [oversizedFile], title: "", category: "shared" })
+    ).rejects.toThrow("单次上传的文件总大小不能超过 512 MB");
+
+    expect(mocks.writeFile).not.toHaveBeenCalled();
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
 });

@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { createUniqueAstroPhotoSlug, generateDefaultAstroPhotoTitle } from "@/lib/astro-photo";
 import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
+import { MAX_MEDIA_UPLOAD_BYTES } from "@/lib/media-upload-limits";
 import { createStoredFilename } from "@/lib/upload-names";
 import { getUploadDir, getUploadPublicPath } from "@/lib/uploads";
 import { validateImageFile } from "@/lib/upload-validation";
@@ -62,6 +63,11 @@ export async function saveMediaUpload({
 }): Promise<MediaUploadResult> {
   if (files.length === 0) {
     throw new Error("请先选择要上传的图片文件。");
+  }
+
+  const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+  if (totalBytes > MAX_MEDIA_UPLOAD_BYTES) {
+    throw new Error("单次上传的文件总大小不能超过 512 MB，请分批上传。");
   }
 
   const validatedFiles = await Promise.all(files.map((file) => validateImageFile(file)));
