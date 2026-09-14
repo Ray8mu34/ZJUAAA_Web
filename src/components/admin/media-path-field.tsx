@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { getImageVariantUrl } from "@/lib/image-variants";
 
@@ -33,6 +33,7 @@ export function MediaPathField({
   categories,
   emptyMessage = "当前分类下还没有可选图片，请先去媒体库上传。"
 }: MediaPathFieldProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [selectedPath, setSelectedPath] = useState(value || "");
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
@@ -120,6 +121,7 @@ export function MediaPathField({
 
   const handleClear = () => {
     setSelectedPath("");
+    inputRef.current?.dispatchEvent(new Event("change", { bubbles: true }));
   };
 
   const handleKeywordChange = (nextValue: string) => {
@@ -129,22 +131,23 @@ export function MediaPathField({
 
   const handleSelect = (filePath: string) => {
     setSelectedPath(filePath);
+    inputRef.current?.dispatchEvent(new Event("change", { bubbles: true }));
     setIsPickerOpen(false);
   };
 
   return (
     <div className="media-path-field">
-      <input name={name} type="hidden" value={selectedPath} />
+      <input ref={inputRef} name={name} type="hidden" value={selectedPath} />
 
       <div className="media-field-head">
         <span>{label}</span>
         <div className="media-field-actions">
           <button className="button-ghost" type="button" onClick={handleOpenPicker}>
-            打开选图弹窗
+            {selectedPath ? "更换" : "选择媒体"}
           </button>
           {selectedPath ? (
             <button className="button-ghost" type="button" onClick={handleClear}>
-              清空图片
+              移除
             </button>
           ) : null}
         </div>
@@ -162,7 +165,9 @@ export function MediaPathField({
             </div>
           </div>
         ) : (
-          <div className="empty-state">当前还没有选择图片。</div>
+          <button className="media-field-empty" type="button" onClick={handleOpenPicker}>
+            <strong>尚未选择图片</strong><span>从媒体库选择</span>
+          </button>
         )}
       </div>
 

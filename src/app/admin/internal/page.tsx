@@ -9,7 +9,7 @@ export default async function AdminInternalPage() {
 
   return (
     <div className="admin-stack">
-      <AdminPageHeader eyebrow="MEMBERS / INTERNAL" title="内部资料" description="管理仅面向协会成员开放的文件与内容。" />
+      <AdminPageHeader title="内部资料" description="管理仅面向协会成员开放的文件与内容。" />
       <section className="admin-card">
         <div className="admin-quick-grid">
           <Link className="admin-quick-card" href="/admin/internal/files">

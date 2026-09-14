@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AdminPaginationLinks } from "@/components/admin/admin-pagination-links";
 import { AdminActionForm } from "@/components/admin/admin-action-form";
 import { requireAdminSession } from "@/lib/admin-session";
@@ -48,9 +49,9 @@ export default async function AdminManualCategoriesPage({
             <h2>新增栏目</h2>
             <p className="muted">创建手册栏目，每个栏目下可以包含多篇文章。</p>
           </div>
-          <a className="button-ghost" href="/admin/manual">
+          <Link className="button-ghost" href="/admin/manual">
             返回文章管理
-          </a>
+          </Link>
         </div>
         <CategoryEditor action={createManualCategory} submitLabel="新增栏目" mediaOptions={mediaOptions} />
       </section>

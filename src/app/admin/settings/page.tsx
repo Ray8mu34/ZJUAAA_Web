@@ -1,5 +1,6 @@
 import { AboutGalleryEditor } from "@/components/admin/about-gallery-editor";
 import { AdminActionForm } from "@/components/admin/admin-action-form";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
@@ -33,9 +34,11 @@ export default async function AdminSettingsPage() {
   }));
 
   return (
+    <div className="admin-stack">
+    <AdminPageHeader title="站点设置" description="管理各内容页面的说明与关于页面素材。" />
     <section className="admin-card">
       <h2>页面内容设置</h2>
-      <p className="muted">这里维护各页面说明文案与“关于我们”照片墙。历届成员请前往独立的成员管理界面。</p>
+      <p className="muted">页面说明与“关于我们”照片墙。历届成员在独立页面维护。</p>
 
       <AdminActionForm action={updateSecondaryContent} successMessage="页面内容已保存。">
         <label>
@@ -108,6 +111,6 @@ export default async function AdminSettingsPage() {
           保存页面内容设置
         </button>
       </AdminActionForm>
-    </section>
+    </section></div>
   );
 }

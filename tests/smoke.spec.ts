@@ -72,7 +72,7 @@ test("logged-in admin can see the media upload form", async ({ page }) => {
   await page.getByRole("button", { name: "登录后台" }).click();
   await page.waitForURL("**/admin");
 
-  await page.goto("/admin/media?q=__smoke_no_results__");
+  await page.goto("/admin/media/upload");
   await expect(page.getByRole("heading", { name: "上传图片" })).toBeVisible();
   await expect(page.getByLabel("图片文件")).toBeVisible();
 });

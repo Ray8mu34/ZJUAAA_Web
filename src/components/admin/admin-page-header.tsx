@@ -28,7 +28,7 @@ export function AdminPageHeader({
             <ArrowLeft size={15} /> 返回列表
           </Link>
         ) : null}
-        {eyebrow ? <p className="admin-eyebrow">{eyebrow}</p> : null}
+        {eyebrow && !eyebrow.includes("/") ? <p className="admin-eyebrow">{eyebrow}</p> : null}
         <h2>{title}</h2>
         {description ? <p>{description}</p> : null}
       </div>

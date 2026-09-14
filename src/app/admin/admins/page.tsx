@@ -1,4 +1,5 @@
 import { AdminActionForm } from "@/components/admin/admin-action-form";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
 
@@ -13,9 +14,10 @@ export default async function AdminAdminsPage() {
 
   return (
     <div className="admin-stack">
+      <AdminPageHeader title="管理员" description="管理内容工作台的账号与访问状态。" />
       <section className="admin-card">
         <h2>新增管理员</h2>
-        <p className="muted">第一阶段先支持新增账号、修改显示名、重置密码和停用账号。</p>
+        <p className="muted">创建可访问内容工作台的新账号。</p>
         <AdminActionForm action={createAdminUser} successMessage="管理员已创建。" resetOnSuccess>
           <div className="admin-form-grid">
             <label>
