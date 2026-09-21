@@ -1034,6 +1034,9 @@ html[data-theme="light"] .admin-shell .button-link { color: #fff; }
 .media-upload-form .button-link { width: 100%; margin-top: 2px; }
 .admin-help-list { display: grid; gap: 9px; margin: 0; padding-left: 18px; color: var(--admin-muted); font-size: .76rem; line-height: 1.55; }
 .admin-help-list li::marker { color: var(--admin-accent); }
+.admin-current-user { display: flex; align-items: baseline; gap: 7px; margin: -8px 0 0; color: var(--admin-muted); font-size: .78rem; }
+.admin-current-user strong { color: var(--admin-ink); font-weight: 620; }
+.admin-current-user span { color: var(--admin-tertiary); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
 
 .post-item { border-radius: 3px; background: transparent; }
 .post-item-summary { padding: 12px; }

@@ -12,34 +12,45 @@ import { logAdminAction } from "@/lib/audit-log";
 export async function createAdminUser(formData: FormData) {
   const session = await requireAdminSession();
 
-  const username = String(formData.get("username") || "").trim();
+  const username = String(formData.get("username") || "").trim().toLowerCase();
   const displayName = String(formData.get("displayName") || "").trim();
   const password = String(formData.get("password") || "");
 
   if (!username || !displayName || !password) {
-    throw new Error("用户名、显示名和密码不能为空。");
+    return { error: "用户名、显示名和密码不能为空。" };
   }
 
-  assertAdminPasswordLength(password);
+  try {
+    assertAdminPasswordLength(password);
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "密码不符合安全要求。" };
+  }
 
-  const existing = await prisma.adminUser.findUnique({
-    where: { username }
+  const existingAdmins = await prisma.adminUser.findMany({
+    select: { username: true }
   });
+  const existing = existingAdmins.some((admin) => admin.username.toLowerCase() === username);
 
   if (existing) {
-    throw new Error("该用户名已经存在。");
+    return { error: "该用户名已经存在，请直接在下方修改该账号。" };
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
 
-  const admin = await prisma.adminUser.create({
-    data: {
-      username,
-      displayName,
-      passwordHash,
-      status: "ACTIVE"
-    }
-  });
+  let admin;
+  try {
+    admin = await prisma.adminUser.create({
+      data: {
+        username,
+        displayName,
+        passwordHash,
+        status: "ACTIVE"
+      }
+    });
+  } catch (error) {
+    console.error("Failed to create admin user", error);
+    return { error: "创建管理员失败，请确认用户名未被占用后重试。" };
+  }
 
   await logAdminAction({
     action: "admin.create",

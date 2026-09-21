@@ -21,10 +21,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isLoggedIn && isLoginPage) {
-    return NextResponse.redirect(new URL("/admin", req.url));
-  }
-
   return NextResponse.next({
     request: {
       headers: requestHeaders

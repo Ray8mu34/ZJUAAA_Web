@@ -4,7 +4,7 @@ import { FormEvent, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 type AdminActionFormProps = {
-  action: (formData: FormData) => Promise<void>;
+  action: (formData: FormData) => Promise<void | { error?: string }>;
   children: React.ReactNode;
   className?: string;
   successMessage?: string;
@@ -49,7 +49,11 @@ export function AdminActionForm({
     startTransition(() => {
       void (async () => {
         try {
-          await action(formData);
+          const result = await action(formData);
+          if (result?.error) {
+            setToast({ status: "error", message: result.error });
+            return;
+          }
           setToast({ status: "success", message: successMessage });
           if (resetOnSuccess) {
             form.reset();

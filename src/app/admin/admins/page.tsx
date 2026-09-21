@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db";
 import { createAdminUser, resetAdminPassword, setAdminStatus, updateAdminProfile } from "./actions";
 
 export default async function AdminAdminsPage() {
-  await requireAdminSession();
+  const session = await requireAdminSession();
 
   const admins = await prisma.adminUser.findMany({
     orderBy: { createdAt: "asc" }
@@ -15,6 +15,10 @@ export default async function AdminAdminsPage() {
   return (
     <div className="admin-stack">
       <AdminPageHeader title="管理员" description="管理内容工作台的账号与访问状态。" />
+      <p className="admin-current-user">
+        当前登录：<strong>{session.user.name || session.user.username}</strong>
+        <span>@{session.user.username}</span>
+      </p>
       <section className="admin-card">
         <h2>新增管理员</h2>
         <p className="muted">创建可访问内容工作台的新账号。</p>
@@ -22,7 +26,7 @@ export default async function AdminAdminsPage() {
           <div className="admin-form-grid">
             <label>
               <span>用户名</span>
-              <input name="username" type="text" placeholder="editor01" required />
+              <input name="username" type="text" placeholder="editor01" autoCapitalize="none" required />
             </label>
             <label>
               <span>显示名</span>
@@ -48,7 +52,10 @@ export default async function AdminAdminsPage() {
                 <div>
                   <h3>{admin.displayName}</h3>
                   <div className="post-meta">
-                    <span>用户名: {admin.username}</span>
+                    <span>
+                      用户名: {admin.username}
+                      {admin.id === session.user.id ? "（当前账号）" : ""}
+                    </span>
                     <span>状态: {admin.status}</span>
                     <span>
                       最近登录:

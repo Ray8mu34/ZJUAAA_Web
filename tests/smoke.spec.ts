@@ -115,6 +115,33 @@ test("logged-in admin upload API rejects SVG images", async ({ page }) => {
   expect(String(result.body.error)).toContain("格式不支持");
 });
 
+test("current admin is listed and duplicate creation shows a readable error", async ({ page }) => {
+  const env = readLocalEnv();
+  const username = env.ADMIN_USERNAME;
+  const password = env.ADMIN_PASSWORD;
+
+  test.skip(!username || !password, "ADMIN_USERNAME and ADMIN_PASSWORD are required for authenticated smoke tests.");
+
+  await page.goto("/admin/login");
+  await page.getByLabel("用户名").fill(username);
+  await page.getByLabel("密码").fill(password);
+  await page.getByRole("button", { name: "登录后台" }).click();
+  await page.waitForURL("**/admin");
+
+  await page.goto("/admin/admins");
+  await expect(page.getByText(`@${username}`)).toBeVisible();
+  await expect(page.getByText(new RegExp(`用户名: ${username}.*当前账号`))).toBeVisible();
+
+  const createAdminSection = page.getByRole("heading", { name: "新增管理员" }).locator("..");
+  await createAdminSection.getByLabel("用户名", { exact: true }).fill(username.toUpperCase());
+  await createAdminSection.getByLabel("显示名", { exact: true }).fill("重复账号测试");
+  await createAdminSection.getByLabel("初始密码").fill("duplicate-test-password");
+  await createAdminSection.getByRole("button", { name: "创建管理员" }).click();
+
+  await expect(createAdminSection.locator(".admin-toast.error")).toContainText("该用户名已经存在");
+  await expect(page.getByText(/An error occurred in the Server Components render/)).toHaveCount(0);
+});
+
 test("admin paginated pages render with explicit page params", async ({ page }) => {
   const env = readLocalEnv();
   const username = env.ADMIN_USERNAME;
