@@ -11,9 +11,6 @@ html[data-theme="light"] .site-header { background: #f6f6f2; }
 .site-header a:focus-visible { outline: 2px solid var(--public-accent); outline-offset: 5px; }
 
 /* Retain accent colors without changing the original layout or container styles. */
-.hero-title .gradient, .home-ending-copy .gradient { background: none; color: var(--public-accent); }
-.hero-actions .button-primary { background: var(--public-accent); color: #142a2a; }
-html[data-theme="light"] .hero-actions .button-primary { color: #fff; }
 .manual-article-layout a,
 .manual-blog-sidebar .manual-category-back,
 .manual-blog-sidebar .manual-toc-link.active,
