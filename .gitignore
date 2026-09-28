@@ -33,12 +33,9 @@ tsconfig.tsbuildinfo
 .DS_Store
 Thumbs.db
 
-# Isolated design QA runtime and browser reports
+# Local visual QA artifacts never belong in deployment commits.
 .design-qa/
+docs/design-qa/
+tests/fixtures/design-qa/
 test-results/
 playwright-report/
-
-# Visual evidence and downloaded fixture media stay local.
-docs/design-qa/*
-!docs/design-qa/README.md
-tests/fixtures/design-qa/media/

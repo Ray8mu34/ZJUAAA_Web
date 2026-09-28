@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 import fs from "node:fs";
 
 function readLocalEnv() {
-  if (process.env.DESIGN_QA === "1") return { ADMIN_USERNAME: process.env.ADMIN_USERNAME || "", ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || "" };
   try {
     return Object.fromEntries(
       fs

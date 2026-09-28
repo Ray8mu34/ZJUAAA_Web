@@ -3,12 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "design:qa": "node scripts/design-qa.mjs start",
-    "design:qa:seed": "node scripts/design-qa.mjs seed",
-    "design:qa:serve": "node scripts/design-qa.mjs serve",
-    "design:qa:capture": "node scripts/design-qa-capture.mjs",
-    "design:qa:test": "node scripts/design-qa.mjs test",
-    "design:qa:build": "node scripts/design-qa.mjs build",
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import "@/app/globals.css";
 import "katex/dist/katex.min.css";
-// Direct import keeps this frequently edited layer in Next's CSS dependency graph.
 import "@/app/styles/public-refinement.css";
 
 export const metadata: Metadata = {

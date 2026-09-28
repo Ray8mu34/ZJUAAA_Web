@@ -84,7 +84,7 @@ export default async function KnowledgePage({
           <div className="knowledge-index-list" data-reveal>
             {posts.length === 0 ? (
               <div className="knowledge-index-empty">
-                <strong>{q ? "没有找到相关科普文章" : "还没有已发布的科普文章"}</strong>
+                <strong>还没有已发布的科普文章</strong>
                 {q ? <p>没有找到与“{q}”相关的内容。</p> : null}
               </div>
             ) : (

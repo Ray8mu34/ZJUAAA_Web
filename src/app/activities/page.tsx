@@ -71,7 +71,7 @@ export default async function ActivitiesPage({
     })
   ]);
 
-  const now = new Date(process.env.NODE_ENV === "development" && process.env.DESIGN_QA === "1" ? "2026-09-28T12:00:00+08:00" : Date.now());
+  const now = new Date();
   const upcomingNotices = notices.filter((notice) => !isActivityEnded(notice, now)).sort(sortByUpcomingTime);
   const recordNotices = notices.filter((notice) => shouldShowInActivityArchive(notice, now)).sort(sortByRecordTime);
   const visibleNoticeCount = upcomingNotices.length + recordNotices.length;

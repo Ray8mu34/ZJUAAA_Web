@@ -57,10 +57,9 @@ export default async function ManualIndexPage() {
                     ) : (
                       <div className="manual-category-placeholder" />
                     )}
-                  </div>
-                  <div className="manual-category-caption">
-                    <strong>{category.titleZh}</strong>
-                    <span>{category._count.chapters} 篇章节</span>
+                    <div className="manual-category-overlay">
+                      <strong className="manual-category-title">{category.titleZh}</strong>
+                    </div>
                   </div>
                 </Link>
               ))
