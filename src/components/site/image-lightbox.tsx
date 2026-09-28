@@ -25,6 +25,7 @@ export function ImageLightbox({
 }: ImageLightboxProps) {
   const [closing, setClosing] = useState(false);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const requestClose = useCallback(() => {
     if (closing) return;
@@ -41,10 +42,23 @@ export function ImageLightbox({
     }
 
     const { overflow } = document.body.style;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
+    dialogRef.current?.querySelector<HTMLElement>("button")?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") requestClose();
+      if (event.key === "Tab") {
+        const controls = dialogRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]');
+        if (!controls?.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first.focus();
+        }
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -52,6 +66,7 @@ export function ImageLightbox({
     return () => {
       document.body.style.overflow = overflow;
       window.removeEventListener("keydown", handleKeyDown);
+      previousFocus?.focus();
     };
   }, [open, requestClose]);
 
@@ -66,7 +81,7 @@ export function ImageLightbox({
   }
 
   return (
-    <div className={`astro-detail-modal${closing ? " is-closing" : ""}`} role="dialog" aria-modal="true">
+    <div ref={dialogRef} className={`astro-detail-modal${closing ? " is-closing" : ""}`} role="dialog" aria-modal="true" aria-label={title || imageAlt}>
       <div className="astro-detail-backdrop" aria-hidden="true" onClick={requestClose} />
       <div className="astro-detail-panel content-card">
         <div className="astro-detail-head">

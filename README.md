@@ -40,3 +40,9 @@ npm run ops:summarize-downloads
 ```
 
 完整部署说明见 `docs/deployment-guide.md`。
+
+## Design QA
+
+`npm run design:qa` 会重建独立的开发验收数据库并在 `http://127.0.0.1:3200` 启动。
+数据、上传文件、日志与构建缓存均位于 `.design-qa/`，不使用 `.env` 的数据库地址。
+完整数据、空状态、少量数据、截图和测试方法见 [设计验收记录](docs/design-qa/README.md)。
