@@ -69,7 +69,7 @@ export default async function HomePage() {
     }),
     prisma.knowledgePost.findMany({
       where: { status: "PUBLISHED", isFeatured: true },
-      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }]
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }]
     }),
     prisma.activityNotice.findMany({
       where: { status: "PUBLISHED" },

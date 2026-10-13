@@ -54,7 +54,7 @@ export default async function KnowledgePage({
     }),
     prisma.knowledgePost.findMany({
       where: postFilter,
-      orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }, { id: "desc" }],
       skip: (currentPage - 1) * POSTS_PER_PAGE,
       take: POSTS_PER_PAGE
     })
