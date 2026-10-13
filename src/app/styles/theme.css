@@ -288,7 +288,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 }
 
 .home-knowledge-carousel.has-controls {
-  padding: 0 34px;
+  padding: 0 46px;
 }
 
 .home-knowledge-carousel.has-controls .home-knowledge-track {
@@ -360,23 +360,30 @@ html[data-theme="light"] .content-list-link:hover strong {
   width: 46px;
   height: 46px;
   padding: 0;
-  border: 3px solid rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: #242424;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
   cursor: pointer;
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.22);
+  box-shadow: none;
   transform: translateY(-50%);
   transition:
-    background 0.18s ease,
-    color 0.18s ease,
     opacity 0.18s ease,
     transform 0.18s ease;
 }
 
 .home-knowledge-arrow:hover:not(:disabled) {
-  background: #ffffff;
+  background: transparent;
   transform: translateY(-50%) scale(1.05);
+}
+
+.home-knowledge-arrow:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.home-knowledge-arrow:active:not(:disabled) {
+  transform: translateY(-50%) scale(0.95);
 }
 
 .home-knowledge-arrow:disabled {

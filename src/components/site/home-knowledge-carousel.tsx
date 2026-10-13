@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { MediaFrame } from "@/components/site/media-frame";
 
@@ -77,7 +77,7 @@ export function HomeKnowledgeCarousel({ posts }: { posts: HomeKnowledgePost[] })
           disabled={!canScrollPrev}
           onClick={() => scrollByPage(-1)}
         >
-          <ArrowLeft aria-hidden="true" size={22} strokeWidth={2.4} />
+          <ChevronLeft aria-hidden="true" size={40} strokeWidth={4.5} />
         </button>
       ) : null}
 
@@ -105,7 +105,7 @@ export function HomeKnowledgeCarousel({ posts }: { posts: HomeKnowledgePost[] })
           disabled={!canScrollNext}
           onClick={() => scrollByPage(1)}
         >
-          <ArrowRight aria-hidden="true" size={22} strokeWidth={2.4} />
+          <ChevronRight aria-hidden="true" size={40} strokeWidth={4.5} />
         </button>
       ) : null}
     </div>
