@@ -39,6 +39,8 @@ async function pathExists(target) {
 
 async function main() {
   const env = { ...(await parseEnvFile()), ...process.env };
+  // Match the fallback used by the authentication configuration.
+  env.AUTH_SECRET = env.AUTH_SECRET ?? env.NEXTAUTH_SECRET;
   const requiredEnv = ["DATABASE_URL", "AUTH_SECRET"];
   const recommendedEnv = ["INTERNAL_AUTH_SECRET", "INTERNAL_USERNAME", "INTERNAL_PASSWORD", "AUDIT_LOG_DIR"];
   const missingRequiredEnv = requiredEnv.filter((key) => !env[key]);
