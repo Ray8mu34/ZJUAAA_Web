@@ -418,8 +418,8 @@ html[data-theme="light"] .home-knowledge-card .home-knowledge-cover {
   --activity-paper-strong: #202224;
   --activity-line: rgba(255, 255, 255, 0.18);
   --activity-line-soft: rgba(255, 255, 255, 0.1);
-  --activity-quiet: rgba(247, 247, 247, 0.58);
-  --activity-archive-muted: rgba(247, 247, 247, 0.72);
+  --activity-quiet: var(--muted-text);
+  --activity-archive-muted: var(--muted);
 }
 
 html[data-theme="light"] .activity-page {

@@ -10,6 +10,20 @@ html[data-theme="light"] .site-header { background: #f6f6f2; }
 .site-header .brand-square { background: var(--public-accent); box-shadow: none; border-radius: 3px; }
 .site-header a:focus-visible { outline: 2px solid var(--public-accent); outline-offset: 5px; }
 
+/* Slide the sticky offset, so fixed mobile menus retain the viewport as their containing block. */
+.site-header { transition: top 220ms var(--ease-out); }
+.site-header.is-scroll-hidden { top: calc(-1 * var(--site-header-height, 89px) - 1px); }
+.site-header.mobile-menu-open,
+.site-header:has(:focus-visible) { top: 0; transition: none; }
+@media (max-width: 768px) {
+  /* Body scroll locking creates a new sticky ancestor. Pin the open menu and retain its flow space. */
+  .site-header.mobile-menu-open { position: fixed; inset: 0 0 auto; }
+  body:has(.site-header.mobile-menu-open) { padding-top: 60px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-header { transition: none; }
+}
+
 /* Retain accent colors without changing the original layout or container styles. */
 .manual-article-layout a,
 .manual-blog-sidebar .manual-category-back,

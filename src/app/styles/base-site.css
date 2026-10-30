@@ -589,17 +589,6 @@ textarea {
   color: #10212c;
 }
 
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto auto 0;
-  width: min(48vw, 640px);
-  height: min(48vw, 640px);
-  background: radial-gradient(circle, rgba(125, 240, 191, 0.12), transparent 62%);
-  filter: blur(24px);
-  pointer-events: none;
-}
-
 .hero {
   position: relative;
   overflow: clip;
@@ -872,10 +861,6 @@ html.motion-ready [data-reveal].is-revealed [data-reveal-item]:nth-child(n + 4) 
   animation-delay: 270ms;
 }
 
-.hero::before {
-  animation: hero-aurora-drift 9s ease-in-out infinite alternate;
-}
-
 .home-ending-line {
   transform-origin: left center;
 }
@@ -892,17 +877,6 @@ html.motion-ready [data-reveal].is-revealed .home-ending-line {
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes hero-aurora-drift {
-  from {
-    transform: translate3d(-4%, -3%, 0) scale(0.96);
-    opacity: 0.72;
-  }
-  to {
-    transform: translate3d(7%, 4%, 0) scale(1.08);
-    opacity: 1;
   }
 }
 

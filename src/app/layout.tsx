@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { StarfieldBackground } from "@/components/site/starfield-background";
 
 import "@/app/globals.css";
 import "katex/dist/katex.min.css";
 import "@/app/styles/public-refinement.css";
+import "@/app/styles/public-starfield.css";
 
 export const metadata: Metadata = {
   title: "ZJUAAA",
@@ -36,6 +38,7 @@ export default function RootLayout({
     <html lang="zh-CN" suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <StarfieldBackground />
         {children}
       </body>
     </html>

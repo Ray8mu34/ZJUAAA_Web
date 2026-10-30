@@ -39,3 +39,6 @@ docs/design-qa/
 tests/fixtures/design-qa/
 test-results/
 playwright-report/
+
+# Local WeChat migration data and downloaded source snapshots.
+migration/local/

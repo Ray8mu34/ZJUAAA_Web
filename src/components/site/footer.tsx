@@ -28,12 +28,6 @@ export async function SiteFooter() {
                 浙江大学学生天文爱好者协会成立于 2002 年，是一个由学生自发组织、以学术性为基础，
                 集科普教育与志愿活动于一身的学生社团。
               </p>
-              <div className="footer-cn-socials">
-                <span>微信</span>
-                <span>QQ</span>
-                <span>哔哩哔哩</span>
-                <span>抖音</span>
-              </div>
             </div>
           </div>
 
@@ -50,12 +44,9 @@ export async function SiteFooter() {
             </div>
             <div>
               <h3>社团活动</h3>
-              <Link href="/knowledge">科普推文</Link>
               <Link href="/activities">上山观星</Link>
               <Link href="/activities">路边天文</Link>
-              <Link href="/manual">天文手册</Link>
               <Link href="/activities">天文讲座</Link>
-              <Link href="/activities">品牌联动</Link>
             </div>
             <div>
               <h3>关于我们</h3>

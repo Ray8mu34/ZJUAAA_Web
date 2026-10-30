@@ -1,0 +1,85 @@
+/* Static public-site palette; the animated layer is mounted only on the homepage. */
+body:has(.site-starfield) {
+  isolation: isolate;
+}
+
+html:not([data-theme="light"]) body:has(.site-header) {
+  --page-bg: #080e1a;
+  --footer-bg: #0d1725;
+  --body-color: #dce4ee;
+  --muted: #bdc9d9;
+  --muted-text: #aebdd0;
+  --placeholder-color: var(--muted-text);
+  --manual-list-text: var(--muted);
+  --manual-list-muted: var(--muted-text);
+  --manual-article-text: var(--body-color);
+  --manual-article-muted: var(--muted-text);
+  --starfield-control-bg: rgba(8, 14, 26, 0.92);
+  --starfield-control-text: #bac7d8;
+  --starfield-control-line: rgba(165, 184, 206, 0.3);
+  background: var(--page-bg);
+}
+
+html:not([data-theme="light"]) body:has(.site-header) :is(input, textarea)::placeholder {
+  color: var(--placeholder-color);
+  opacity: 1;
+}
+
+html:not([data-theme="light"]) .site-header {
+  --header-bg: #0d1725;
+  --header-line: rgba(165, 184, 206, 0.18);
+  background: var(--header-bg);
+  border-bottom-color: var(--header-line);
+}
+
+.site-starfield {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.starfield-toggle {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 8px 13px;
+  border: 1px solid var(--starfield-control-line);
+  border-radius: 24px;
+  background: var(--starfield-control-bg);
+  color: var(--starfield-control-text);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.starfield-toggle:hover {
+  border-color: var(--public-accent);
+  color: var(--heading-color);
+}
+
+.starfield-toggle:focus-visible {
+  outline: 2px solid var(--public-accent);
+  outline-offset: 4px;
+}
+
+html[data-theme="light"] .site-starfield,
+html[data-theme="light"] .starfield-toggle {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starfield-toggle { display: none; }
+}
+
+@media print {
+  .site-starfield,
+  .starfield-toggle { display: none; }
+}
