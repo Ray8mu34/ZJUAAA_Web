@@ -18,6 +18,8 @@
 
 ## 2. 环境要求
 
+项目保留 Prisma 6 的 SQLite 连接方式。`package.json` 对 Prisma 配置加载器使用的 `deepmerge-ts` 指定了安全版本；这是跨主版本的依赖覆盖，更新 Prisma 或该覆盖时应检查配置加载、客户端生成和数据库访问。此覆盖不需要数据库结构迁移。
+
 - Ubuntu 22.04 LTS
 - Node.js 22.x
 - npm

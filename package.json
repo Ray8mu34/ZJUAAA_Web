@@ -55,6 +55,9 @@
     "vitest": "^4.1.10"
   },
   "overrides": {
+    "@prisma/config": {
+      "deepmerge-ts": "^8.0.0"
+    },
     "rehype-katex": {
       "katex": "^0.19.1"
     },
