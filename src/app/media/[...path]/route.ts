@@ -26,9 +26,26 @@ const WATERMARK_TEXT = "浙江大学学生天文爱好者协会 ZJUAAA";
 
 const globalForMediaCache = globalThis as unknown as {
   mediaThumbnailJobs?: Map<string, Promise<Buffer>>;
+  mediaThumbnailQueue?: { active: number; waiting: Array<() => void> };
 };
 const thumbnailJobs = globalForMediaCache.mediaThumbnailJobs ?? new Map<string, Promise<Buffer>>();
 globalForMediaCache.mediaThumbnailJobs = thumbnailJobs;
+const thumbnailQueue = globalForMediaCache.mediaThumbnailQueue ?? { active: 0, waiting: [] };
+globalForMediaCache.mediaThumbnailQueue = thumbnailQueue;
+
+async function acquireThumbnailSlot() {
+  if (thumbnailQueue.active < 2) {
+    thumbnailQueue.active += 1;
+    return;
+  }
+  await new Promise<void>(resolve => thumbnailQueue.waiting.push(resolve));
+}
+
+function releaseThumbnailSlot() {
+  const next = thumbnailQueue.waiting.shift();
+  if (next) next();
+  else thumbnailQueue.active -= 1;
+}
 
 function getMimeType(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
@@ -39,7 +56,7 @@ function getPublicUploadDir() {
   return path.join(process.cwd(), "public", "uploads");
 }
 
-async function tryReadFileFromRoots(parts: string[]) {
+async function findFileFromRoots(parts: string[]) {
   const normalizedParts = parts[0] === "uploads" ? parts.slice(1) : parts;
   const roots = [getUploadDir(), getPublicUploadDir()];
 
@@ -47,14 +64,14 @@ async function tryReadFileFromRoots(parts: string[]) {
     const baseDir = path.resolve(root);
     const requestedPath = path.resolve(root, ...normalizedParts);
 
-    if (!requestedPath.startsWith(baseDir)) {
+    if (!requestedPath.startsWith(`${baseDir}${path.sep}`)) {
       continue;
     }
 
     try {
-      const fileBuffer = await readFile(requestedPath);
       const fileStat = await stat(requestedPath);
-      return { fileBuffer, fileStat, requestedPath };
+      if (!fileStat.isFile()) continue;
+      return { fileStat, requestedPath };
     } catch {}
   }
 
@@ -81,7 +98,7 @@ function buildWatermarkSvg(width: number, height: number) {
   `);
 }
 
-async function getCachedThumbnail(filePath: string, fileBuffer: Buffer, size: number, modifiedAt: number) {
+async function getCachedThumbnail(filePath: string, size: number, modifiedAt: number) {
   const cacheKey = createHash("sha256").update(`${filePath}:${size}:${modifiedAt}:${THUMB_WIDTH}`).digest("hex");
   const cacheDir = path.join(os.tmpdir(), "zjuaaa-media-thumbnails");
   const cachePath = path.join(cacheDir, `${cacheKey}.webp`);
@@ -94,14 +111,21 @@ async function getCachedThumbnail(filePath: string, fileBuffer: Buffer, size: nu
   if (existingJob) return existingJob;
 
   const job = (async () => {
-    const buffer = await sharp(fileBuffer, { animated: false })
-      .rotate()
-      .resize({ width: THUMB_WIDTH, withoutEnlargement: true })
-      .webp({ quality: 76 })
-      .toBuffer();
-    await mkdir(cacheDir, { recursive: true });
-    await writeFile(cachePath, buffer);
-    return buffer;
+    // Large posters must not all decode simultaneously on a small server.
+    await acquireThumbnailSlot();
+    try {
+      const fileBuffer = await readFile(filePath);
+      const buffer = await sharp(fileBuffer, { animated: false })
+        .rotate()
+        .resize({ width: THUMB_WIDTH, withoutEnlargement: true })
+        .webp({ quality: 76 })
+        .toBuffer();
+      await mkdir(cacheDir, { recursive: true });
+      await writeFile(cachePath, buffer);
+      return buffer;
+    } finally {
+      releaseThumbnailSlot();
+    }
   })();
 
   thumbnailJobs.set(cacheKey, job);
@@ -112,8 +136,14 @@ async function getCachedThumbnail(filePath: string, fileBuffer: Buffer, size: nu
   }
 }
 
-async function buildVariantBuffer(filePath: string, fileBuffer: Buffer, variant: string, size: number, modifiedAt: number) {
+async function buildVariantBuffer(filePath: string, variant: string, size: number, modifiedAt: number) {
   const ext = path.extname(filePath).toLowerCase();
+
+  if (PROCESSABLE_EXTENSIONS.has(ext) && variant === "thumb") {
+    return { buffer: await getCachedThumbnail(filePath, size, modifiedAt), contentType: "image/webp" };
+  }
+
+  const fileBuffer = await readFile(filePath);
 
   if (!PROCESSABLE_EXTENSIONS.has(ext)) {
     return {
@@ -123,15 +153,6 @@ async function buildVariantBuffer(filePath: string, fileBuffer: Buffer, variant:
   }
 
   const image = sharp(fileBuffer, { animated: false }).rotate();
-
-  if (variant === "thumb") {
-    const buffer = await getCachedThumbnail(filePath, fileBuffer, size, modifiedAt);
-
-    return {
-      buffer,
-      contentType: "image/webp"
-    };
-  }
 
   if (variant === "original") {
     const metadata = await image.metadata();
@@ -163,7 +184,7 @@ async function buildVariantBuffer(filePath: string, fileBuffer: Buffer, variant:
 
 export async function GET(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   const { path: parts } = await context.params;
-  const fileResult = await tryReadFileFromRoots(parts);
+  const fileResult = await findFileFromRoots(parts);
 
   if (!fileResult) {
     return new Response("Not Found", { status: 404 });
@@ -171,7 +192,9 @@ export async function GET(req: NextRequest, context: { params: Promise<{ path: s
 
   try {
     const variant = req.nextUrl.searchParams.get("variant") || "raw";
-    const etag = `"${Buffer.from(`${fileResult.requestedPath}:${fileResult.fileStat.size}:${fileResult.fileStat.mtimeMs}:${variant}`).toString("base64url")}"`;
+    // Next's optimizer also uses this tag in cache filenames: keep it bounded
+    // even when uploaded filenames contain long Chinese titles.
+    const etag = `"${createHash("sha256").update(`${fileResult.requestedPath}:${fileResult.fileStat.size}:${fileResult.fileStat.mtimeMs}:${variant}`).digest("hex")}"`;
 
     if (req.headers.get("if-none-match") === etag) {
       return new Response(null, {
@@ -185,7 +208,6 @@ export async function GET(req: NextRequest, context: { params: Promise<{ path: s
 
     const { buffer, contentType } = await buildVariantBuffer(
       fileResult.requestedPath,
-      fileResult.fileBuffer,
       variant,
       fileResult.fileStat.size,
       fileResult.fileStat.mtimeMs

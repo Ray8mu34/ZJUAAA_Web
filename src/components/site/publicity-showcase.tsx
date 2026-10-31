@@ -2,7 +2,6 @@
 
 "use client";
 
-import Image from "next/image";
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { X } from "lucide-react";
@@ -71,7 +70,7 @@ function PublicityTimelineCard({ work, index, onSelect }: TimelineCardProps) {
       }
     >
       <button ref={imageButtonRef} type="button" onClick={() => onSelect(work.id)}>
-        <img src={getImageVariantUrl(work.imagePath, "original")} alt={work.title} />
+        <img src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} loading="lazy" decoding="async" />
       </button>
       <div>
         <time>{formatDate(work.workDate)}</time>
@@ -128,6 +127,7 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
                   key={work.id}
                   className={work.id === selected?.id ? "publicity-space-card active" : "publicity-space-card"}
                   type="button"
+                  onClick={() => setSelectedId(work.id)}
                   style={
                     {
                       "--i": index,
@@ -141,8 +141,8 @@ export function PublicityShowcase({ works }: PublicityShowcaseProps) {
                   }
                   aria-label={`查看 ${work.title}`}
                 >
-                  <span className="publicity-space-card-inner" onClick={() => setSelectedId(work.id)}>
-                    <Image src={getImageVariantUrl(work.imagePath, "original")} alt={work.title} fill sizes="220px" />
+                  <span className="publicity-space-card-inner">
+                    <img src={getImageVariantUrl(work.imagePath, "thumb")} alt={work.title} loading="lazy" decoding="async" />
                   </span>
                 </button>
               );

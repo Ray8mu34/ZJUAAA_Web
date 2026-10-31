@@ -77,7 +77,6 @@ export function HomePhotoShowcase({
       if (request !== requestRef.current) return;
       setSeed(nextSeed);
       setSelection({ source: photos, items: nextPhotos });
-      setFeedback("已更换一组照片");
     } catch {
       if (request !== requestRef.current) return;
       setFeedback("图片未能加载，请重试。当前照片已保留。");

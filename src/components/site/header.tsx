@@ -14,6 +14,7 @@ export function SiteHeader({ afterHero = false }: { afterHero?: boolean }) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrollHidden, setIsScrollHidden] = useState(false);
+  const [isPastHero, setIsPastHero] = useState(!afterHero);
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -44,7 +45,9 @@ export function SiteHeader({ afterHero = false }: { afterHero?: boolean }) {
       const delta = y - lastY;
       lastY = y;
 
-      const heroHeight = afterHero ? document.querySelector(".home-artwork")?.getBoundingClientRect().height || 0 : 0;
+      const hero = afterHero ? document.querySelector(".hero-join") : null;
+      const heroHeight = hero ? hero.getBoundingClientRect().bottom + window.scrollY : 0;
+      setIsPastHero(!afterHero || y >= heroHeight);
       if (isMenuOpen || y <= heroHeight + headerHeight + 24 || header.querySelector(":focus-visible")) {
         travel = 0;
         setIsScrollHidden(false);
@@ -60,8 +63,15 @@ export function SiteHeader({ afterHero = false }: { afterHero?: boolean }) {
       if (!frameId) frameId = window.requestAnimationFrame(update);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    const heroObserver = new ResizeObserver(onScroll);
+    const hero = document.querySelector(".hero-join");
+    if (afterHero && hero) heroObserver.observe(hero);
+    update();
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      heroObserver.disconnect();
       window.cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
     };
@@ -96,7 +106,7 @@ export function SiteHeader({ afterHero = false }: { afterHero?: boolean }) {
   return (
     <header
       ref={headerRef}
-      className={`site-header${isMenuOpen ? " mobile-menu-open" : ""}${isScrollHidden ? " is-scroll-hidden" : ""}`}
+      className={`site-header${afterHero ? " after-artwork-header" : ""}${afterHero && !isPastHero ? " is-before-artwork-end" : ""}${isMenuOpen ? " mobile-menu-open" : ""}${isScrollHidden ? " is-scroll-hidden" : ""}`}
       onFocusCapture={(event) => {
         if (event.target.matches(":focus-visible")) setIsScrollHidden(false);
       }}

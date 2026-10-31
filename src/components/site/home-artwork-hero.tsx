@@ -8,7 +8,6 @@ import presets from "@/lib/home-navigation-presets.json";
 import { SITE_NAV_ITEMS } from "@/lib/site-navigation";
 import { buildEdgePaint, type EdgeLayer } from "@/lib/home-artwork-edge";
 import { ThemeToggle } from "./theme-toggle";
-import { PublicMotion } from "./public-motion";
 
 type Artwork = (typeof HOME_ARTWORKS)[number];
 // Mobile positions are checked against the existing cover crops, not the desktop thumbnail.
@@ -32,15 +31,9 @@ export function HomeArtworkHero({ artwork, edgeLayers }: { artwork: Artwork; edg
   useLayoutEffect(() => {
     const root = rootRef.current!;
     const hero = root.querySelector<HTMLElement>(".home-artwork")!;
-    const header = root.querySelector<HTMLElement>(".scene-header")!;
     const title = root.querySelector<HTMLElement>(".scene-title")!;
     const groups = Array.from(root.querySelectorAll<HTMLElement>(".scene-nav-group"));
     let anchor = 0;
-    let frame = 0;
-    const pin = () => {
-      frame = 0;
-      header.classList.toggle("is-pinned", hero.getBoundingClientRect().top + anchor <= 0);
-    };
     const measure = () => {
       const { width: w, height: h } = hero.getBoundingClientRect();
       const scale = Math.max(w / 1672, h / 941);
@@ -103,14 +96,11 @@ export function HomeArtworkHero({ artwork, edgeLayers }: { artwork: Artwork; edg
         root.dataset.edgeReady = "true";
         if (!isPaperEdge) root.dataset.feather = "off";
       }
-      pin();
     };
-    const scroll = () => { if (!frame) frame = requestAnimationFrame(pin); };
     const observer = new ResizeObserver(measure);
     observer.observe(hero);
     measure();
-    window.addEventListener("scroll", scroll, { passive: true });
-    return () => { observer.disconnect(); window.removeEventListener("scroll", scroll); cancelAnimationFrame(frame); };
+    return () => observer.disconnect();
   }, [artwork, preset, edgeLayers]);
 
   return (
@@ -126,9 +116,8 @@ export function HomeArtworkHero({ artwork, edgeLayers }: { artwork: Artwork; edg
           <img src={`/images/home/${artwork.value}.svg`} alt={`${artwork.label}：天文主题矢量插画。`} width={1672} height={941} fetchPriority="high" />
         </div>
         <h1 className="scene-title" aria-label="浙江大学学生天文爱好者协会"><span>浙江大学学生</span><span>天文爱好者协会</span></h1>
-        <header className="site-header scene-header">
-          <PublicMotion />
-          <nav className="scene-navigation" aria-label="主导航">
+        <header className="scene-header">
+          <nav className="scene-navigation" aria-label="首页画内导航">
             {preset.groups.map((group, index) => (
               <div key={index} className="scene-nav-group" style={{
                 "--group-x": `${group.x * 100}%`, "--group-top": `${group.y * 100}%`,

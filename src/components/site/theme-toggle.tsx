@@ -21,6 +21,13 @@ export function ThemeToggle() {
   useEffect(() => {
     setTheme(getInitialTheme());
     setIsReady(true);
+    // Artwork links and the shared site header use the same persisted theme.
+    const observer = new MutationObserver(() => {
+      const active = document.documentElement.dataset.theme;
+      if (active === "light" || active === "dark") setTheme(active);
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {

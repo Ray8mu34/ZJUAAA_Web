@@ -96,8 +96,8 @@ html[data-theme="light"] body:has(.hero-join) { --page-bg: #f6f8fb; --home-body-
   mask-image: linear-gradient(#000 0%, rgb(0 0 0 / .96) 15%, rgb(0 0 0 / .78) 32%, rgb(0 0 0 / .38) 50%, rgb(0 0 0 / .08) 68%, transparent 86%); mask-mode: alpha; }
 html[data-theme="light"] .hero-join-tail { background: linear-gradient(var(--join-canvas), var(--home-body-bg)); }
 html[data-theme="light"] .hero-join-tail::before { display: none; }
-/* Override the shared header only inside this explicit artwork variant. No empty header shell. */
-html .site-header.scene-header { position: absolute; inset: 0; height: 100%; z-index: 40; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; backdrop-filter: none; transition: none; pointer-events: none; }
+/* Artwork links stay in the artwork; the regular SiteHeader owns scrolling navigation. */
+.scene-header { position: absolute; inset: 0; height: 100%; z-index: 40; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; backdrop-filter: none; transition: none; pointer-events: none; }
 .scene-navigation { width: 100%; height: 100%; }
 .scene-nav-group { position: absolute; left: var(--group-x); top: var(--group-top); transform: translateX(-50%); width: var(--group-width); display: grid; grid-template-columns: repeat(var(--group-columns), minmax(0, 1fr)); color: var(--group-ink); }
 .scene-navigation a, .scene-theme { display: flex; align-items: center; justify-content: center; min-width: 0; height: 44px; pointer-events: auto; }
@@ -107,22 +107,14 @@ html .site-header.scene-header { position: absolute; inset: 0; height: 100%; z-i
 .scene-header .theme-toggle { width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; color: inherit; cursor: pointer; }
 .scene-header .theme-toggle:hover { background: transparent; opacity: .7; transform: none; }
 .scene-header :is(a,button):focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-html .site-header.scene-header.is-pinned { position: fixed; inset: 0 0 auto; height: 52px; background: var(--home-body-bg); color: var(--text); }
-.scene-header.is-pinned .scene-navigation { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)) 44px; align-items: center; width: min(730px, calc(100% - 32px)); margin: auto; }
-.scene-header.is-pinned .scene-nav-group { display: contents; color: inherit; }
-.scene-header.is-pinned a[aria-current="page"] { color: var(--public-accent); }
-body:has(.hero-join) #home-content { scroll-margin-top: 76px; }
+body:has(.hero-join) #home-content { scroll-margin-top: 112px; padding-top: 112px; }
 @media (max-width:800px) {
   .hero-join { --join-tail: 96px; }
   .scene-navigation { position: absolute; left: 50%; top: var(--mobile-nav-top, calc(72svh - 66px)); transform: translateX(-50%); width: min(480px, calc(100% - 32px)); height: 132px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); color: var(--mobile-nav-ink, #142c42); }
   .scene-nav-group { display: contents; color: inherit; }
   .scene-navigation a { font-size: 14px; padding: 0 1px; }
   .scene-theme { grid-column: 1 / -1; }
-  html .site-header.scene-header.is-pinned { height: 88px; }
-  .scene-header.is-pinned .scene-navigation { position: relative; top: 0; left: auto; transform: none; width: min(620px, calc(100% - 16px)); height: 88px; grid-template-columns: repeat(4, minmax(0, 1fr)); padding-right: 36px; color: inherit; }
-  .scene-header.is-pinned .scene-theme { position: absolute; right: -4px; top: 22px; width: 44px; }
-  .scene-header.is-pinned a { font-size: 13px; }
-  body:has(.hero-join) #home-content { scroll-margin-top: 108px; }
+  body:has(.hero-join) #home-content { scroll-margin-top: 84px; padding-top: 84px; }
 }
 @supports not (mask-image: linear-gradient(#000, transparent)) { .hero-join-tail { display: none !important; } }
 /* Actual SVG background bands follow the same cover crop as the untouched art above. */
@@ -134,10 +126,15 @@ html[data-theme="light"] .hero-join-tail::before { display: block; }
 @media(max-width:800px) { .scene-title { font-size: 18px; letter-spacing: .02em; } }
 /* Crop-specific mobile clear spaces: do not place navigation across the moon or settlement. */
 @media(max-width:800px) {
-  .hero-join[data-style="07"] .scene-header:not(.is-pinned) .scene-navigation { left: 16px; transform: none; width: min(280px, calc(100% - 32px)); }
-  .hero-join[data-style="11"] .scene-header:not(.is-pinned) .scene-navigation { left: 8px; transform: none; width: 132px; height: 220px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-join[data-style="07"] .scene-header .scene-navigation { left: 16px; transform: none; width: min(280px, calc(100% - 32px)); }
+  .hero-join[data-style="11"] .scene-header .scene-navigation { left: 8px; transform: none; width: 132px; height: 220px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-join[data-style="11"] .scene-title { width: 132px; font-size: 17px; }
-  .hero-join[data-style="12"] .scene-header:not(.is-pinned) .scene-navigation a:nth-child(n+5),
-  .hero-join[data-style="12"] .scene-header:not(.is-pinned) .scene-theme { color: #142c42; }
+  .hero-join[data-style="12"] .scene-header .scene-navigation a:nth-child(n+5),
+  .hero-join[data-style="12"] .scene-header .scene-theme { color: #142c42; }
 }
 @media(max-width:800px) { .hero-join[data-style="11"] .scene-title span { display: block; } }
+
+/* Reuse the shared header unchanged after the complete artwork and its transition leave view. */
+.site-header.after-artwork-header { position: fixed; left: 0; right: 0; }
+.site-header.after-artwork-header.is-before-artwork-end { visibility: hidden; pointer-events: none; }
+body:has(.hero-join):has(.site-header.mobile-menu-open) { padding-top: 0; }

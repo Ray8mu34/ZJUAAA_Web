@@ -12,11 +12,11 @@ Existing runtime CSS is authoritative (token ownership model B). Public colors a
 
 ## Typography
 
-Retain the existing Microsoft YaHei / PingFang SC / sans-serif stack. The visible H1 reads “浙江大学学生天文爱好者协会”, 22px desktop / 18px mobile, above the navigation. Navigation is 16px desktop, 14px mobile, and 13px in the mobile pinned state. The settlement crop uses a narrow two-column navigation group and a two-line 17px title to avoid celestial bodies.
+Retain the existing Microsoft YaHei / PingFang SC / sans-serif stack. The visible H1 reads “浙江大学学生天文爱好者协会”, 22px desktop / 18px mobile, above the navigation. Navigation is 16px desktop, 14px mobile, and the shared header uses its existing type scale after the hero. The settlement crop uses a narrow two-column navigation group and a two-line 17px title to avoid celestial bodies.
 
 ## Layout
 
-The artwork is outside `.shell`, starts at document origin, spans 100% of available viewport width and 100svh in height. Use cover, not contain; never stretch its aspect ratio. Center the desktop crop; place the mobile crop at 76% to retain the telescope. Normal document scrolling continues through an additional 128px transition (96px at ≤800px) into the existing content. Navigation is part of the hero, outside the masked artwork layer. The same nav DOM becomes fixed when its anchor leaves the top of the viewport and returns on upward scrolling; no duplicate header shell is added. Keep `.shell` constrained for content below. No body scroll locking or forced paging for the hero.
+The artwork is outside `.shell`, starts at document origin, spans 100% of available viewport width and 100svh in height. Use cover, not contain; never stretch its aspect ratio. Center the desktop crop; place the mobile crop at 76% to retain the telescope. Normal document scrolling continues through an additional 128px transition (96px at ≤800px) into the existing content. Artwork navigation stays in the hero, outside the masked layer. After the full hero and transition have left the viewport, the existing `SiteHeader` appears with the same appearance, down-scroll hiding, up-scroll reappearance and mobile menu as every other page. There is no separately styled homepage sticky navigation or header-height placeholder. This user revision supersedes the v2 brief’s pinned artwork-navigation design. Keep `.shell` constrained for content below. No body scroll locking or forced paging for the hero.
 
 ## Elevation & Depth
 
@@ -34,12 +34,12 @@ Artwork reconstruction follows `AGENTS.md`: authored layer silhouettes, sampled 
 
 Reuse `AdminActionForm` for pending/error/success feedback and its existing unsaved-change bar. Style choices are native radios with visible labels and keyboard focus. `disableWhilePending` blocks editing and submit while saving this form. The original theme control and shared `SITE_NAV_ITEMS` are reused in the artwork navigation. Eight links remain directly visible on mobile. Classic and inner-page headers retain their existing mobile menu and scroll-hide behavior. The classic style alone mounts `StarfieldBackground`.
 
-Runtime mapping: artwork/crop/style-radio rules → `src/app/styles/home-style.css`; artwork navigation/scroll behavior → `src/components/site/home-artwork-hero.tsx`; classic navigation → `src/components/site/header.tsx`; settings feedback → `src/components/admin/admin-action-form.tsx`. No global palette or typography redesign is included.
+Runtime mapping: artwork/crop/style-radio rules → `src/app/styles/home-style.css`; artwork navigation placement → `src/components/site/home-artwork-hero.tsx`; shared navigation/scroll behavior → `src/components/site/header.tsx`; settings feedback → `src/components/admin/admin-action-form.tsx`. No global palette or typography redesign is included.
 
 ## Do's and Don'ts
 
 - Preserve old titles, buttons, links and media when changing styles.
-- Keep all downstream homepage sections shared between styles.
+- Share downstream homepage content between styles; artwork styles omit the closing “这很天协 ↗” and its decorative line, while classic retains them.
 - Keep the first viewport at 100svh with its original SVG; add only the requested association title, eight links and theme button. Keyboard users retain the focus-only skip link.
 - Ship this trusted SVG as a bundled asset. Do not loosen media-upload SVG restrictions.
 - Never substitute a simplified illustration or raster image for the approved SVG without a new request.
@@ -54,3 +54,8 @@ Only 02 enables the 8px original-art feather, and only when the cropped ground p
 The tail's space is reserved in server-rendered HTML. Edge metadata is supplied with the selected artwork to avoid late network-driven layout shifts. No settings or content records change when a visitor renders a style.
 
 Runtime QA scripts use an explicitly supplied isolated SQLite database on local port 3101 and restore the test selection. `NEXT_BUILD_DIR` isolates QA/build output from the existing dev server. Broader premium static-audit findings in unrelated admin forms, search and existing scrollbars are baseline debt; this homepage task does not migrate those workflows.
+
+
+Homepage photo refresh changes the images directly without a visible success message; errors retain their inline retry feedback. The photography gallery load-more action uses a 4px rectangular outline button.
+
+Publicity list previews use the canonical `getImageVariantUrl(..., "thumb")` 480px WebP cache directly. Timeline images load lazily; originals are requested only when a work is expanded. Cached and conditional media requests stat the source without reading its bytes; cold thumbnail conversions are deduplicated and limited to two concurrent decodes. Existing media permissions and original-image watermark behavior are preserved.

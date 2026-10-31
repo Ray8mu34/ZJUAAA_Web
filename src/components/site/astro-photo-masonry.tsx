@@ -70,7 +70,7 @@ export function AstroPhotoMasonry({
 
         {visibleCount < photos.length ? (
           <div className="astro-masonry-footer">
-            <button className="button-ghost" type="button" onClick={() => setVisibleCount((count) => count + LOAD_STEP)}>
+            <button className="button-ghost astro-load-more" type="button" onClick={() => setVisibleCount((count) => count + LOAD_STEP)}>
               加载更多作品
             </button>
           </div>

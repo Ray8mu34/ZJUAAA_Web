@@ -36,6 +36,8 @@ html[data-theme="light"] .site-header { background: #f6f6f2; }
 
 /* Restore the original cards; only reduce their corner radius. */
 .internal-module-card, .internal-file-card, .internal-empty { border-radius: 6px; }
+.astro-load-more { border-radius: 4px; min-height: 44px; padding: 10px 24px; }
+.astro-load-more:focus-visible { outline: 2px solid var(--public-accent); outline-offset: 4px; }
 
 /* A text action belongs to the photographic section heading. */
 .home-photo-showcase { position: relative; gap: 24px; }

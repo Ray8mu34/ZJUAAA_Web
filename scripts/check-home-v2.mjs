@@ -19,7 +19,7 @@ try{
    await page.locator('.home-artwork img').evaluate(im=>im.decode());
    const r=await page.evaluate(()=>{
     const rect=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,b:r.bottom,right:r.right}};
-    const nav=document.querySelector('nav');nav.dataset.identity='same';
+    const nav=document.querySelector('.scene-navigation');document.querySelector('.site-header').dataset.identity='same';
     return {hero:rect('.home-artwork'),tail:rect('.hero-join-tail'),title:rect('.scene-title'),main:rect('main'),overflow:document.documentElement.scrollWidth>innerWidth, links:[...nav.querySelectorAll('a')].map(a=>{const r=a.getBoundingClientRect();return {href:a.getAttribute('href'),x:r.x,y:r.y,right:r.right,b:r.bottom}})};
    });
    assert.equal(r.hero.h,h);assert.equal(r.tail.y,h);assert.equal(r.tail.h,w<=800?96:128);assert.equal(r.main.y,h+r.tail.h);assert.equal(r.links.length,8);assert.equal(r.overflow,false);
@@ -28,12 +28,14 @@ try{
    if(n===2) await page.screenshot({path:`.design-qa/v2/main-${w}.png`});
    if(w===1440||w===390) await page.screenshot({path:`.design-qa/v2/${id}-${w===1440?'desktop':'mobile'}.png`});
    await page.evaluate(()=>window.scrollTo({top:innerHeight-80,behavior:'instant'}));
-   await page.waitForFunction(()=>document.querySelector('.scene-header').classList.contains('is-pinned'));
-   assert.equal(await page.locator('nav').getAttribute('data-identity'),'same');
-   assert.equal(await page.locator('.scene-header').evaluate(e=>e.getBoundingClientRect().top),0);
+   await page.waitForFunction(()=>document.querySelector('.site-header').classList.contains('is-before-artwork-end'));
    if(w===1440||w===390)await page.screenshot({path:`.design-qa/v2/seam-${id}-${w}.png`,clip:{x:0,y:0,width:w,height:Math.min(h,340)}});
+   await page.evaluate(()=>window.scrollTo({top:document.querySelector('.hero-join').getBoundingClientRect().height+1,behavior:'instant'}));
+   await page.waitForFunction(()=>!document.querySelector('.site-header').classList.contains('is-before-artwork-end'));
+   assert.equal(await page.locator('.site-header').getAttribute('data-identity'),'same');
+   assert.equal(await page.locator('.site-header').evaluate(e=>e.getBoundingClientRect().top),0);
    await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
-   await page.waitForFunction(()=>!document.querySelector('.scene-header').classList.contains('is-pinned'));
+   await page.waitForFunction(()=>document.querySelector('.site-header').classList.contains('is-before-artwork-end'));
    if(n===2){
     await page.getByRole('button',{name:'切换到白天模式'}).click();
     await page.waitForFunction(()=>document.documentElement.dataset.theme==='light');

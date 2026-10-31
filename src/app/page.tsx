@@ -101,7 +101,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {artwork ? <HomeArtworkHero artwork={artwork} edgeLayers={edgeLayers} /> : <><StarfieldBackground /><SiteHeader /></>}
+      {artwork ? <HomeArtworkHero artwork={artwork} edgeLayers={edgeLayers} /> : <StarfieldBackground />}
+      <SiteHeader afterHero={isImageHome} />
       <main>
         {!isImageHome && <section className="hero">
           <div className="shell hero-grid">
@@ -212,14 +213,14 @@ export default async function HomePage() {
             <div className="home-ending-copy">
               <p>我们是</p>
               <p>黑夜中的神秘追光者</p>
-              <p className="gradient home-ending-highlight">
+              {!isImageHome && <p className="gradient home-ending-highlight">
                 <span>这很天协</span>
                 <span aria-hidden="true" className="home-ending-arrow">
                   ↗
                 </span>
-              </p>
+              </p>}
             </div>
-            <div className="home-ending-line" aria-hidden="true" />
+            {!isImageHome && <div className="home-ending-line" aria-hidden="true" />}
           </div>
         </section>
       </main>
