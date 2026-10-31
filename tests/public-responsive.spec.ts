@@ -1,4 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { loadEnvConfig } from "@next/env";
+import { PrismaClient } from "@prisma/client";
+
+loadEnvConfig(process.cwd());
 
 const publicPages = [
   "/",
@@ -77,17 +81,37 @@ test("mobile navigation exposes every public destination and restores body scrol
 });
 
 test("mobile collection layouts use the intended column counts", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+  // CI starts empty. Layout assertions must create their own content instead of
+  // accidentally depending on photos and members in a developer's database.
+  const db = new PrismaClient();
+  const original = await db.siteSetting.findUniqueOrThrow({ where: { id: "site" } });
+  const slug = `responsive-fixture-${crypto.randomUUID()}`;
+  try {
+    await db.astroPhoto.create({ data: { slug, titleZh: "布局测试作品", photographer: "测试", status: "PUBLISHED" } });
+    await db.siteSetting.update({ where: { id: "site" }, data: {
+      aboutGalleryImagePaths: "/images/home/thumbs/study-02.webp\n/images/home/thumbs/study-03.webp",
+      alumniGroupsJson: JSON.stringify([{ year: "2026", members: [{ name: "测试甲", role: "成员" }, { name: "测试乙", role: "成员" }] }])
+    } });
+    await page.setViewportSize({ width: 390, height: 844 });
 
-  await page.goto("/astrophotography", { waitUntil: "domcontentloaded" });
-  await expect(page.locator(".astro-gallery-masonry")).toHaveCSS("column-count", "2");
+    await page.goto("/astrophotography", { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".astro-gallery-masonry")).toHaveCSS("column-count", "2");
 
-  await page.goto("/manual", { waitUntil: "domcontentloaded" });
-  await expect(page.locator(".manual-category-grid")).toHaveCSS("grid-template-columns", /\S+\s+\S+/);
+    await page.goto("/manual", { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".manual-category-grid")).toHaveCSS("grid-template-columns", /\S+\s+\S+/);
 
-  await page.goto("/about/gallery", { waitUntil: "domcontentloaded" });
-  await expect(page.locator(".about-gallery-masonry")).toHaveCSS("column-count", "2");
+    await page.goto("/about/gallery", { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".about-gallery-masonry")).toHaveCSS("column-count", "2");
 
-  await page.goto("/about/members", { waitUntil: "domcontentloaded" });
-  await expect(page.locator(".alumni-member-grid")).toHaveCSS("grid-template-columns", /\S+\s+\S+/);
+    await page.goto("/about/members", { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".alumni-member-grid")).toHaveCSS("grid-template-columns", /\S+\s+\S+/);
+  } finally {
+    await db.astroPhoto.deleteMany({ where: { slug } });
+    await db.siteSetting.update({ where: { id: "site" }, data: {
+      aboutGalleryImagePaths: original.aboutGalleryImagePaths,
+      alumniGroupsJson: original.alumniGroupsJson,
+      updatedAt: original.updatedAt
+    } });
+    await db.$disconnect();
+  }
 });
