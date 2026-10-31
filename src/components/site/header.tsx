@@ -8,16 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { PublicMotion } from "@/components/site/public-motion";
 
-const navItems = [
-  { href: "/", zh: "主页", exact: true },
-  { href: "/knowledge", zh: "知识科普" },
-  { href: "/activities", zh: "社团活动" },
-  { href: "/astrophotography", zh: "天文摄影" },
-  { href: "/manual", zh: "天文手册" },
-  { href: "/internal", zh: "内部资料" },
-  { href: "/about", zh: "关于我们" },
-  { href: "/contact", zh: "联系我们" }
-];
+import { SITE_NAV_ITEMS as navItems } from "@/lib/site-navigation";
 
 export function SiteHeader({ afterHero = false }: { afterHero?: boolean }) {
   const pathname = usePathname();

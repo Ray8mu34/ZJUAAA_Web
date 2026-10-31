@@ -54,7 +54,7 @@ export function HomeKnowledgeCarousel({ posts }: { posts: HomeKnowledgePost[] })
 
     track.scrollBy({
       left: direction * track.clientWidth,
-      behavior: "smooth"
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth"
     });
   };
 
@@ -81,7 +81,7 @@ export function HomeKnowledgeCarousel({ posts }: { posts: HomeKnowledgePost[] })
         </button>
       ) : null}
 
-      <div className="home-knowledge-track" ref={trackRef}>
+      <div className="home-knowledge-track" ref={trackRef} tabIndex={0} aria-label="科普推荐文章">
         {posts.map((post) => (
           <a
             className="home-knowledge-card"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ImageLightbox } from "@/components/site/image-lightbox";
 import { getImageVariantUrl } from "@/lib/image-variants";
@@ -45,12 +45,51 @@ export function HomePhotoShowcase({
 }) {
   const [seed, setSeed] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const featured = useMemo(() => shuffle(photos, seed).slice(0, 6), [photos, seed]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [selection, setSelection] = useState<{ source: HomePhoto[]; items: HomePhoto[] } | null>(null);
+  const requestRef = useRef(0);
+  useEffect(() => () => { requestRef.current += 1; }, []);
+  const featured = useMemo(() => selection?.source === photos ? selection.items : shuffle(photos, 0).slice(0, 6), [photos, selection]);
   const activePhoto = useMemo(() => featured.find((photo) => photo.id === activeId) || null, [activeId, featured]);
+
+  async function refreshPhotos() {
+    if (isLoading) return;
+    const request = ++requestRef.current;
+    const nextSeed = seed + 1;
+    const nextPhotos = shuffle(photos, nextSeed).slice(0, 6);
+    if (nextPhotos.length > 1 && nextPhotos.every((photo, index) => photo.id === featured[index]?.id)) {
+      nextPhotos.push(nextPhotos.shift()!);
+    }
+    setIsLoading(true);
+    setFeedback("");
+    try {
+      await Promise.all(nextPhotos.map((photo) => {
+        if (!photo.imagePath) return Promise.resolve();
+        return new Promise<void>((resolve, reject) => {
+          const image = new Image();
+          const timer = window.setTimeout(() => { image.src = ""; reject(new Error("timeout")); }, 12000);
+          image.onload = () => { clearTimeout(timer); resolve(); };
+          image.onerror = () => { clearTimeout(timer); reject(new Error("image")); };
+          image.src = getImageVariantUrl(photo.imagePath, "thumb")!;
+        });
+      }));
+      if (request !== requestRef.current) return;
+      setSeed(nextSeed);
+      setSelection({ source: photos, items: nextPhotos });
+      setFeedback("已更换一组照片");
+    } catch {
+      if (request !== requestRef.current) return;
+      setFeedback("图片未能加载，请重试。当前照片已保留。");
+    } finally {
+      if (request === requestRef.current) setIsLoading(false);
+    }
+  }
 
   if (photos.length === 0) {
     return (
       <div className="content-card">
+        <h2>摄影精选</h2>
         <strong>还没有可展示的摄影作品</strong>
         <p>发布摄影作品后，这里会自动随机展示精选照片。</p>
       </div>
@@ -60,12 +99,14 @@ export function HomePhotoShowcase({
   return (
     <div className="home-photo-showcase">
       <div className="home-photo-showcase-head">
-        <button className="button-ghost" type="button" onClick={() => setSeed((value) => value + 1)}>
-          刷新图片
-        </button>
+        <h2>摄影精选</h2>
+        {photos.length > 1 ? <button className="home-photo-refresh" type="button" onClick={refreshPhotos} disabled={isLoading} aria-controls="home-photo-grid">
+          {isLoading ? "加载中…" : "换一组"}
+        </button> : null}
+        <p className="home-photo-feedback" role="status">{feedback}</p>
       </div>
 
-      <div className="home-photo-showcase-window">
+      <div className="home-photo-showcase-window" id="home-photo-grid" aria-busy={isLoading}>
         <div className="about-gallery-masonry home-photo-showcase-masonry" key={seed}>
           {featured.map((photo, index) => (
             <button

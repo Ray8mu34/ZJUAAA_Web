@@ -41,15 +41,16 @@ test("admin can switch full-screen artwork and restore the classic homepage", as
       expect(layout.viewportWidth - layout.width).toBeLessThanOrEqual(20); // Native scrollbar gutter.
       expect(layout.height).toBe(layout.viewportHeight);
       expect(layout.scrollWidth).toBeLessThanOrEqual(layout.viewportWidth);
-      expect(layout.headerTop).toBe(layout.viewportHeight);
+      expect(layout.headerTop).toBe(0);
+      await expect(page.getByRole("heading", { name: "浙江大学学生天文爱好者协会" })).toBeVisible();
+      await expect(page.getByRole("navigation", { name: "主导航" }).getByRole("link")).toHaveCount(8);
       await expect(page.locator(".hero-copy, .starfield-toggle, .site-starfield")).toHaveCount(0);
       await page.screenshot({ path: `.design-qa/home-style-${viewport.width}.png` });
       await page.evaluate(() => window.scrollTo({ top: innerHeight, behavior: "instant" }));
       await expect.poll(() => page.locator(".site-header").evaluate((el) => el.getBoundingClientRect().top)).toBe(0);
       if (viewport.width < 768) {
-        await page.getByRole("button", { name: "打开导航菜单", exact: true }).click();
         await expect(page.getByRole("navigation", { name: "主导航" })).toBeVisible();
-        await page.keyboard.press("Escape");
+        await expect(page.getByRole("button", { name: "打开导航菜单", exact: true })).toHaveCount(0);
         await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
       }
     }

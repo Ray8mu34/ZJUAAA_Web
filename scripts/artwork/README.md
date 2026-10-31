@@ -30,3 +30,13 @@ node scripts/artwork/render-collection.mjs 'C:/Users/30674/Desktop/天文首页�
 可用 `--only 3 10` 重绘指定编号。渲染脚本可在路径后追加编号，只更新对应预览。SVG 放在 `public/images/home/study-XX.svg`；后台缩略图放在 `public/images/home/thumbs/`；原图对照和整组总览放在本地忽略目录 `.design-qa/collection/`。渲染脚本会把已生成的 20 幅预览组合成总览，所以首次应完整运行。
 
 后台注册表为 `src/lib/home-artworks.ts`，不要变更已保存样式的 ID。新增素材不应修改数据库当前选择。
+
+## Homepage v2 edge bands
+
+`node scripts/artwork/build-edge-metadata.mjs` reads the bundled SVG paths in a local Edge browser and regenerates `public/images/home/edges/*.json`. These are background-only vector intersections plus the independent source color fields. Original SVG files are never rewritten. Exact source canvas corners are retained; remaining curves use 0.35px simplification. Subject layers (observers, instruments, bridges, buildings, trees and celestial objects) are excluded. Do not replace this with raster scanline stretching.
+
+The runtime calculates intersections at the visible edge after the existing cover crop. Color-band rectangles are newly drawn vector geometry; source texture is not extended. The 02 paper edge uses the verified source token and a safety-limited 8px feather. Other source silhouettes remain opaque.
+
+For repeatable local QA, copy the local SQLite database into `.design-qa/v2/test.db`, run a separate development server on port 3101 with `DATABASE_URL` pointing at that absolute file and `NEXT_BUILD_DIR=.design-qa/v2/next`, and run `scripts/check-home-v2.mjs` with `HOME_QA_DATABASE_URL` pointing to the same test file. The script refuses to run without an explicit test database, checks all 20 artworks at 1440×900, 1920×1080, 390×844, 844×390 and 320×568, saves screenshots and a JSON report, and restores the test selection in `finally`. Never use the live database for the matrix.
+
+Validation for the 2026-11-01 v2 integration: 94 unit tests passed; the 20×5 viewport matrix passed; real navigation/back, photo refresh, theme switching and classic mobile menu passed. `npx next build` passed with the existing generated Prisma client. `npm run build` could not replace the Prisma Windows DLL while dev servers had it loaded; no schema change required regeneration. Changed-file ESLint and typecheck passed. Whole-repository ESLint reported 84 pre-existing warnings and zero errors. The premium static audit reported 40 pre-existing findings in unrelated admin/search/scrollbar code; it is not a clean whole-site accessibility certification. `DESIGN.md` lint reported zero errors and one warning for the existing prose-only format.

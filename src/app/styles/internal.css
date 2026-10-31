@@ -10,10 +10,7 @@
 .internal-page {
   min-height: 72vh;
   padding: 70px 0 96px;
-  background:
-    radial-gradient(circle at 14% 18%, rgba(72, 214, 224, 0.16), transparent 30%),
-    radial-gradient(circle at 78% 8%, rgba(255, 215, 132, 0.12), transparent 26%),
-    var(--page-bg);
+  background: var(--page-bg);
 }
 
 .internal-portal-page {
@@ -46,7 +43,7 @@
   min-height: 72vh;
   align-items: center;
   padding: clamp(64px, 10vh, 104px) 0;
-  background: var(--bg);
+  background: var(--page-bg);
 }
 
 .internal-login-page > .shell {
@@ -1139,14 +1136,11 @@ html[data-theme="light"] .publicity-timeline-card .publicity-author {
 }
 
 html[data-theme="light"] .internal-page {
-  background:
-    radial-gradient(circle at 14% 18%, rgba(62, 209, 226, 0.18), transparent 30%),
-    radial-gradient(circle at 78% 8%, rgba(247, 188, 96, 0.18), transparent 26%),
-    #f5f9fc;
+  background: var(--page-bg);
 }
 
 html[data-theme="light"] .internal-page.internal-login-page {
-  background: #f5f9fc;
+  background: var(--page-bg);
 }
 
 html[data-theme="light"] .internal-module-card,
@@ -1367,7 +1361,7 @@ html[data-theme="light"] .internal-empty {
   }
 
   .home-knowledge-carousel.has-controls {
-    padding: 0 30px;
+    padding: 0;
   }
 
   .home-knowledge-track {

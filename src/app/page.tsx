@@ -6,9 +6,12 @@ import { SiteHeader } from "@/components/site/header";
 import { StarfieldBackground } from "@/components/site/starfield-background";
 import { resolveHomeStyle } from "@/lib/home-style";
 import { getHomeArtwork } from "@/lib/home-artworks";
-import type { CSSProperties } from "react";
+import { HomeArtworkHero } from "@/components/site/home-artwork-hero";
 import { prisma } from "@/lib/db";
 import { shuffleItems } from "@/lib/random-order";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import type { EdgeLayer } from "@/lib/home-artwork-edge";
 
 export const dynamic = "force-dynamic";
 
@@ -92,22 +95,15 @@ export default async function HomePage() {
   const homePhotos = shuffleItems(featuredPhotos).slice(0, 15);
   const artwork = getHomeArtwork(resolveHomeStyle(setting.homeStyle));
   const isImageHome = Boolean(artwork);
+  const edgeLayers: EdgeLayer[] = artwork
+    ? JSON.parse(await readFile(path.join(process.cwd(), "public/images/home/edges", `${artwork.value}.json`), "utf8"))
+    : [];
 
   return (
     <>
-      {artwork ? (
-        <>
-          <a className="home-skip-link" href="#home-content">跳过图片，查看首页内容</a>
-          <section className="home-artwork" aria-label={artwork.label} style={{ "--home-artwork-mobile-position": artwork.mobilePosition } as CSSProperties}>
-            {/* Trusted bundled SVG: keep the vector asset intact, without raster optimization. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={`/images/home/${artwork.value}.svg`} alt={`${artwork.label}：天文主题矢量插画。`} width={1672} height={941} fetchPriority="high" />
-          </section>
-        </>
-      ) : <StarfieldBackground />}
-      <SiteHeader afterHero={isImageHome} />
+      {artwork ? <HomeArtworkHero artwork={artwork} edgeLayers={edgeLayers} /> : <><StarfieldBackground /><SiteHeader /></>}
       <main>
-        {isImageHome ? <h1 className="home-visually-hidden">{setting.siteNameZh}</h1> : <section className="hero">
+        {!isImageHome && <section className="hero">
           <div className="shell hero-grid">
             <div className="hero-copy" data-hero-motion>
               <h1 className="hero-title">
@@ -137,11 +133,6 @@ export default async function HomePage() {
 
         <section className="section home-feature-section" id="home-content" tabIndex={-1} data-reveal>
           <div className="shell home-feature-shell">
-            <div className="section-head">
-              <div>
-                <h2>摄影精选</h2>
-              </div>
-            </div>
             <HomePhotoShowcase
               photos={homePhotos.map((photo) => ({
                 id: photo.id,

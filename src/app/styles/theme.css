@@ -288,7 +288,7 @@ html[data-theme="light"] .content-list-link:hover strong {
 }
 
 .home-knowledge-carousel.has-controls {
-  padding: 0 46px;
+  padding: 0;
 }
 
 .home-knowledge-carousel.has-controls .home-knowledge-track {
@@ -392,11 +392,11 @@ html[data-theme="light"] .content-list-link:hover strong {
 }
 
 .home-knowledge-arrow-prev {
-  left: 0;
+  left: -58px;
 }
 
 .home-knowledge-arrow-next {
-  right: 0;
+  right: -58px;
 }
 
 html[data-theme="light"] .home-knowledge-card strong {

@@ -37,7 +37,33 @@ html[data-theme="light"] .site-header { background: #f6f6f2; }
 /* Restore the original cards; only reduce their corner radius. */
 .internal-module-card, .internal-file-card, .internal-empty { border-radius: 6px; }
 
+/* A text action belongs to the photographic section heading. */
+.home-photo-showcase { position: relative; gap: 24px; }
+.home-photo-showcase-head { position: relative; justify-content: space-between; align-items: baseline; }
+.home-photo-showcase-head h2 { margin: 0; font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "SimSun", serif; font-size: 48pt; line-height: 1.05; letter-spacing: .02em; }
+.home-photo-refresh { min-height: 44px; padding: 8px 0 8px 16px; border: 0; background: transparent; color: var(--muted-text); font-size: .92rem; cursor: pointer; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.home-photo-refresh:hover { color: var(--heading-color); }
+.home-photo-refresh:disabled { opacity: .6; cursor: wait; }
+.home-photo-refresh:focus-visible, .home-knowledge-track:focus-visible { outline: 2px solid var(--public-accent); outline-offset: 4px; }
+.home-photo-feedback { position: absolute; top: 100%; right: 0; margin: 0; color: var(--muted-text); font-size: .8rem; line-height: 1.5; }
+.home-photo-feedback:empty { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+
+/* Full-width cards; controls move below when the outer gutters cannot hold them. */
+.home-feature-shell > *, .home-knowledge-carousel { min-width: 0; }
+@media (max-width: 1320px) {
+  .home-knowledge-carousel.has-controls { padding-bottom: 54px; }
+  .home-knowledge-carousel .home-knowledge-arrow { display: inline-flex; top: auto; bottom: 0; width: 44px; height: 44px; transform: none; }
+  .home-knowledge-carousel .home-knowledge-arrow-prev { left: auto; right: 56px; }
+  .home-knowledge-carousel .home-knowledge-arrow-next { right: 0; }
+  .home-knowledge-carousel .home-knowledge-arrow:hover:not(:disabled),
+  .home-knowledge-carousel .home-knowledge-arrow:active:not(:disabled) { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-knowledge-carousel .home-knowledge-track { scroll-behavior: auto; }
+}
+
 @media (max-width: 768px) {
+  .home-photo-showcase-head h2 { font-size: clamp(2.25rem, 10.5vw, 3rem); }
   .activity-stage-facts { margin-top: 18px; gap: 12px; }
   .activity-archive-section { margin-top: 40px; }
 }

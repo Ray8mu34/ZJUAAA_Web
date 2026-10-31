@@ -1,0 +1,756 @@
+{
+  "version": "2.0",
+  "purpose": "二十款现有插画中的原栏目落位；没有新增导航文案。",
+  "coordinateSystem": {
+    "origin": "原图左上角",
+    "xY": "groups.x/y 为文字组中心，占实际图宽/图高的比例，不是占外部容器的比例。",
+    "maxWidth": "允许占据的图宽比例；widthPx 是1440px宽原图下的目标文字组宽。",
+    "referenceWidthPx": 1440,
+    "fontSizePx": 16,
+    "fontFamily": "沿用原站无衬线导航字体",
+    "ink": {
+      "dark": "#142C42",
+      "light": "#FFFFFF"
+    },
+    "groupLayout": "row单行；compact固定列数网格；split由多个row/compact组组成。每组items严格使用原八栏目索引与原主题按钮。",
+    "scale": "展示落位图时图与文字共同等比缩放；实际网页不把16px文字随窗口无限缩小，空间不足时依实际留白改成紧凑排布。",
+    "rowHeightPx": 44,
+    "rowHeightMeaning": "透明点击区的行高；不绘制背景或边框。"
+  },
+  "linkOrder": [
+    "主页",
+    "知识科普",
+    "社团活动",
+    "天文摄影",
+    "天文手册",
+    "内部资料",
+    "关于我们",
+    "联系我们"
+  ],
+  "theme": "theme表示原主题切换按钮，只画既有图标，不新增文字。",
+  "sourceBoundary": "本表依据用户截图及其无重排裁切图，属于设计落点初值；不能等同原SVG精标，也不能保证未知的手机SVG裁切自动保留这些位置。",
+  "globalRules": [
+    "八个原栏目和主题按钮直接可见。",
+    "不加副标题、序号、英文、圆点、边框、背景条或装饰线。",
+    "不移动、放大、重排或重画插画来迁就导航。",
+    "人物、望远镜、日月、桥、建筑、主要路径和树的关键轮廓不被覆盖。",
+    "对比度依据文字实际落点及底部蒙版合成结果检查；同一词不跨越明暗色边。",
+    "02是主原型；其他19款是落位图与原稿接入依据。"
+  ],
+  "presets": [
+    {
+      "id": "01",
+      "name": "昼夜交界",
+      "image": "../原型/assets/hero-01.jpg",
+      "layout": "split",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.22,
+          "y": 0.23,
+          "maxWidth": 0.34,
+          "widthPx": 284,
+          "columns": 4,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "layout": "row",
+          "x": 0.76,
+          "y": 0.23,
+          "maxWidth": 0.35,
+          "widthPx": 372,
+          "columns": 5,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "左右天空各一组，分别落在橙色与深蓝区域；文字不跨昼夜弧线。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "02",
+      "name": "倒悬的地平线",
+      "image": "../原型/assets/hero-02.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.5,
+          "y": 0.71,
+          "maxWidth": 0.9,
+          "widthPx": 730,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ],
+          "contentWidthPx": 720
+        }
+      ],
+      "placement": "倒悬尖端以下、人物以上的暖白留白；保留一条完整横向阅读序列。",
+      "review": "main",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。",
+      "mobile": {
+        "layout": "compact",
+        "columns": 4,
+        "rows": 2,
+        "x": 0.5,
+        "y": 0.72,
+        "fontSizePx": 14,
+        "rowHeightPx": 44,
+        "totalHeightPx": 132,
+        "items": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "themePlacement": {
+          "row": 3,
+          "heightPx": 44,
+          "align": "center"
+        },
+        "theme": "原主题按钮在八项链接下方独立一行直接可见。",
+        "coordinateReference": "随包手机主原型的首屏场景；不机械继承桌面裁切坐标。"
+      },
+      "transition": {
+        "position": "完整图像之后",
+        "desktopHeightPx": 128,
+        "mobileHeightPx": 96,
+        "imageFeatherPx": 8,
+        "featherColor": "同纸色",
+        "note": "不对图内导航或人物施加长距离渐隐。"
+      }
+    },
+    {
+      "id": "03",
+      "name": "横越光带的长桥",
+      "image": "../原型/assets/hero-03.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.8,
+          "y": 0.74,
+          "maxWidth": 0.27,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "桥下偏右的深蓝空白，三列三行；避开桥墩与左侧红色前景。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "04",
+      "name": "一半天空一半倒影",
+      "image": "../原型/assets/hero-04.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.5,
+          "y": 0.13,
+          "maxWidth": 0.82,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "蓝色天空上方；日轮、山线和水面全部留在导航以下。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "05",
+      "name": "光与暗的裂谷",
+      "image": "../原型/assets/hero-05.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.56,
+          "y": 0.21,
+          "maxWidth": 0.52,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "两侧崖壁之间的深蓝天空；两端不能越入红崖或浅色崖缘。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "06",
+      "name": "沉静的单一路径",
+      "image": "../原型/assets/hero-06.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.5,
+          "y": 0.1,
+          "maxWidth": 0.86,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "顶部浅色天空；红日和山坡位于下方，不沿蜿蜒路径写字。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "07",
+      "name": "几何月光留白",
+      "image": "../原型/assets/hero-07.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.36,
+          "y": 0.15,
+          "maxWidth": 0.62,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "左上深蓝天空，右侧月亮留空；整行偏左而非跨满全宽。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "08",
+      "name": "反常色彩的天顶走廊",
+      "image": "../原型/assets/hero-08.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.5,
+          "y": 0.76,
+          "maxWidth": 0.22,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "下方黄色通道中较宽的一段；三列三行，不盖中央天体，不跨两侧崖面。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "09",
+      "name": "无重力的运行路径",
+      "image": "../原型/assets/hero-09.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.66,
+          "y": 0.12,
+          "maxWidth": 0.6,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "右上暖白天空，避开左侧圆形天体与下方轨道；单行偏右。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "10",
+      "name": "展开成世界的一页",
+      "image": "../原型/assets/hero-10.jpg",
+      "layout": "split",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.18,
+          "y": 0.075,
+          "maxWidth": 0.23,
+          "widthPx": 200,
+          "columns": 2,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "layout": "compact",
+          "x": 0.81,
+          "y": 0.075,
+          "maxWidth": 0.22,
+          "widthPx": 280,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "顶部左浅右深两片天空分别安放；上部空间薄，避开太阳、月亮、折页。",
+      "review": "high",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。",
+      "constraint": "高风险：顶部留白高度有限。原SVG与截图色边略有差异就可能压到色边；需按原稿逐项核对。不能缩小字号、改画、垫底板或隐藏链接来掩盖冲突。"
+    },
+    {
+      "id": "11",
+      "name": "不属于地球的彩色聚落",
+      "image": "../原型/assets/hero-11.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.25,
+          "y": 0.25,
+          "maxWidth": 0.42,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "左上紫灰天空；避开右侧天体，组底保持在建筑群上方。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "12",
+      "name": "圆形开口后的另一个天空",
+      "image": "../原型/assets/hero-12.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.28,
+          "y": 0.28,
+          "maxWidth": 0.34,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "左侧蓝色平面，圆形开口左边；不压阶梯和小人物。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "13",
+      "name": "非具象的星空色块",
+      "image": "../原型/assets/hero-13.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.16,
+          "y": 0.17,
+          "maxWidth": 0.29,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "左上蓝色色块内部；组右缘不能跨入中间暖白区域。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "14",
+      "name": "柔软的陌生地貌",
+      "image": "../原型/assets/hero-14.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.65,
+          "y": 0.12,
+          "maxWidth": 0.6,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "上方深蓝天空偏右；红日和左侧蓝紫山体留出。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "15",
+      "name": "负空间里的两重宇宙",
+      "image": "../原型/assets/hero-15.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.76,
+          "y": 0.61,
+          "maxWidth": 0.29,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "右侧红日下方、海平线上方的暖色留白；避开左侧轮廓。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "16",
+      "name": "一整个形状就是夜空",
+      "image": "../原型/assets/hero-16.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.84,
+          "y": 0.19,
+          "maxWidth": 0.24,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "右上深蓝空白；青色主形与橙点不进入文字区。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "17",
+      "name": "被剪开的天空",
+      "image": "../原型/assets/hero-17.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.33,
+          "y": 0.18,
+          "maxWidth": 0.6,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "light",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "左上深蓝大面；整行结束在白色剪口之前。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "18",
+      "name": "透明色域的天体穿行",
+      "image": "../原型/assets/hero-18.jpg",
+      "layout": "split",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.085,
+          "y": 0.07,
+          "maxWidth": 0.16,
+          "widthPx": 192,
+          "columns": 2,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        {
+          "layout": "compact",
+          "x": 0.85,
+          "y": 0.07,
+          "maxWidth": 0.23,
+          "widthPx": 276,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "只用顶部左右未叠色的暖白窄区；不把复杂叠色中部当作导航底。",
+      "review": "high",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。",
+      "constraint": "高风险：顶部留白高度有限。原SVG与截图色边略有差异就可能压到色边；需按原稿逐项核对。不能缩小字号、改画、垫底板或隐藏链接来掩盖冲突。"
+    },
+    {
+      "id": "19",
+      "name": "会呼吸的几何形态",
+      "image": "../原型/assets/hero-19.jpg",
+      "layout": "compact",
+      "groups": [
+        {
+          "layout": "compact",
+          "x": 0.115,
+          "y": 0.14,
+          "maxWidth": 0.21,
+          "widthPx": 270,
+          "columns": 3,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "左上暖白负空间；避开红圆、青绿胶囊以及下方深蓝边界。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    },
+    {
+      "id": "20",
+      "name": "几何自然与静谧星野",
+      "image": "../原型/assets/hero-20.jpg",
+      "layout": "row",
+      "groups": [
+        {
+          "layout": "row",
+          "x": 0.31,
+          "y": 0.55,
+          "maxWidth": 0.58,
+          "widthPx": 700,
+          "columns": 9,
+          "rowHeightPx": 44,
+          "ink": "dark",
+          "items": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            "theme"
+          ]
+        }
+      ],
+      "placement": "树冠下面、地平线上面的左侧暖白留白；不沿树枝排列。",
+      "review": "standard",
+      "originalSvgCheck": "将同一组投影到原SVG的实际色面，确认文本不跨色边或主体；本坐标来自截图初值。"
+    }
+  ]
+}
