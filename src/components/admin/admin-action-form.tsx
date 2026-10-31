@@ -12,6 +12,7 @@ type AdminActionFormProps = {
   confirmMessage?: string;
   resetOnSuccess?: boolean;
   trackChanges?: boolean;
+  disableWhilePending?: boolean;
 };
 
 type ToastState = {
@@ -27,7 +28,8 @@ export function AdminActionForm({
   pendingMessage = "正在保存...",
   confirmMessage,
   resetOnSuccess = false,
-  trackChanges = className === "admin-form"
+  trackChanges = className === "admin-form",
+  disableWhilePending = false
 }: AdminActionFormProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -37,6 +39,7 @@ export function AdminActionForm({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isPending) return;
 
     if (confirmMessage && !window.confirm(confirmMessage)) {
       return;
@@ -46,33 +49,31 @@ export function AdminActionForm({
     const formData = new FormData(form);
     setToast(null);
 
-    startTransition(() => {
-      void (async () => {
-        try {
-          const result = await action(formData);
-          if (result?.error) {
-            setToast({ status: "error", message: result.error });
-            return;
-          }
-          setToast({ status: "success", message: successMessage });
-          if (resetOnSuccess) {
-            form.reset();
-          }
-          setIsDirty(false);
-          router.refresh();
-        } catch (error) {
-          setToast({
-            status: "error",
-            message: error instanceof Error ? error.message : "操作失败，请稍后重试。"
-          });
+    startTransition(async () => {
+      try {
+        const result = await action(formData);
+        if (result?.error) {
+          setToast({ status: "error", message: result.error });
+          return;
         }
-      })();
+        setToast({ status: "success", message: successMessage });
+        if (resetOnSuccess) {
+          form.reset();
+        }
+        setIsDirty(false);
+        router.refresh();
+      } catch (error) {
+        setToast({
+          status: "error",
+          message: error instanceof Error ? error.message : "操作失败，请稍后重试。"
+        });
+      }
     });
   }
 
   return (
-    <form ref={formRef} className={className} onSubmit={handleSubmit} onChange={() => trackChanges && setIsDirty(true)} aria-busy={isPending}>
-      {children}
+    <form ref={formRef} className={className} onSubmit={handleSubmit} onChange={() => trackChanges && setIsDirty(true)} aria-busy={isPending} noValidate={disableWhilePending}>
+      {disableWhilePending ? <fieldset className="admin-pending-fields" disabled={isPending}>{children}</fieldset> : children}
       {isPending ? <p className="muted">{pendingMessage}</p> : null}
       {toast ? (
         <div className={`admin-toast ${toast.status}`} role="status">

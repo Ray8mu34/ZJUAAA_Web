@@ -5,6 +5,27 @@ import { revalidatePath } from "next/cache";
 import { requireAdminSession } from "@/lib/admin-session";
 import { logAdminAction } from "@/lib/audit-log";
 import { prisma } from "@/lib/db";
+import { isHomeStyle } from "@/lib/home-style";
+
+export async function updateHomeStyle(formData: FormData) {
+  const session = await requireAdminSession();
+  const homeStyle = formData.get("homeStyle");
+  if (!isHomeStyle(homeStyle)) return { error: "请选择有效的首页样式。" };
+
+  await prisma.siteSetting.upsert({
+    where: { id: "site" },
+    create: { id: "site", homeStyle },
+    update: { homeStyle }
+  });
+  await logAdminAction({
+    action: "home-style.update",
+    actor: session.user,
+    target: "site",
+    metadata: { homeStyle }
+  });
+  revalidatePath("/");
+  revalidatePath("/admin/site");
+}
 
 export async function updateSiteSettings(formData: FormData) {
   const session = await requireAdminSession();

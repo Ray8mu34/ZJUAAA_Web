@@ -46,6 +46,7 @@ db.exec(`
     contactFormUrl TEXT NOT NULL DEFAULT 'https://example.com/contact',
     bilibiliUrl TEXT NOT NULL DEFAULT 'https://space.bilibili.com/',
     heroImagePath TEXT,
+    homeStyle TEXT NOT NULL DEFAULT 'classic',
     logoImagePath TEXT,
     wechatLabel TEXT NOT NULL DEFAULT 'ZJUAAA_',
     qqLabel TEXT NOT NULL DEFAULT '3389651066',

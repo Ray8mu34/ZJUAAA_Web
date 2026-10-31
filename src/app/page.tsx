@@ -3,6 +3,10 @@ import { HomeKnowledgeCarousel } from "@/components/site/home-knowledge-carousel
 import { MediaFrame } from "@/components/site/media-frame";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { StarfieldBackground } from "@/components/site/starfield-background";
+import { resolveHomeStyle } from "@/lib/home-style";
+import { getHomeArtwork } from "@/lib/home-artworks";
+import type { CSSProperties } from "react";
 import { prisma } from "@/lib/db";
 import { shuffleItems } from "@/lib/random-order";
 
@@ -86,12 +90,24 @@ export default async function HomePage() {
   const heroSubtitle = spreadText(setting.heroSubtitleZh);
   const manifesto = setting.manifestoZh?.trim() || "由此，上达群星";
   const homePhotos = shuffleItems(featuredPhotos).slice(0, 15);
+  const artwork = getHomeArtwork(resolveHomeStyle(setting.homeStyle));
+  const isImageHome = Boolean(artwork);
 
   return (
     <>
-      <SiteHeader />
+      {artwork ? (
+        <>
+          <a className="home-skip-link" href="#home-content">跳过图片，查看首页内容</a>
+          <section className="home-artwork" aria-label={artwork.label} style={{ "--home-artwork-mobile-position": artwork.mobilePosition } as CSSProperties}>
+            {/* Trusted bundled SVG: keep the vector asset intact, without raster optimization. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={`/images/home/${artwork.value}.svg`} alt={`${artwork.label}：天文主题矢量插画。`} width={1672} height={941} fetchPriority="high" />
+          </section>
+        </>
+      ) : <StarfieldBackground />}
+      <SiteHeader afterHero={isImageHome} />
       <main>
-        <section className="hero">
+        {isImageHome ? <h1 className="home-visually-hidden">{setting.siteNameZh}</h1> : <section className="hero">
           <div className="shell hero-grid">
             <div className="hero-copy" data-hero-motion>
               <h1 className="hero-title">
@@ -117,9 +133,9 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-        </section>
+        </section>}
 
-        <section className="section home-feature-section" data-reveal>
+        <section className="section home-feature-section" id="home-content" tabIndex={-1} data-reveal>
           <div className="shell home-feature-shell">
             <div className="section-head">
               <div>

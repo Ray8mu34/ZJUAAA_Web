@@ -19,7 +19,7 @@ const navItems = [
   { href: "/contact", zh: "联系我们" }
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ afterHero = false }: { afterHero?: boolean }) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrollHidden, setIsScrollHidden] = useState(false);
@@ -53,7 +53,8 @@ export function SiteHeader() {
       const delta = y - lastY;
       lastY = y;
 
-      if (isMenuOpen || y <= headerHeight + 24 || header.querySelector(":focus-visible")) {
+      const heroHeight = afterHero ? document.querySelector(".home-artwork")?.getBoundingClientRect().height || 0 : 0;
+      if (isMenuOpen || y <= heroHeight + headerHeight + 24 || header.querySelector(":focus-visible")) {
         travel = 0;
         setIsScrollHidden(false);
         return;
@@ -73,7 +74,7 @@ export function SiteHeader() {
       window.cancelAnimationFrame(frameId);
       resizeObserver.disconnect();
     };
-  }, [pathname, isMenuOpen]);
+  }, [pathname, isMenuOpen, afterHero]);
 
   useEffect(() => {
     if (!isMenuOpen) return;

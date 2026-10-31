@@ -3,8 +3,9 @@ import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { MediaPathField } from "@/components/admin/media-path-field";
 import { requireAdminSession } from "@/lib/admin-session";
 import { prisma } from "@/lib/db";
+import { HOME_STYLES, resolveHomeStyle } from "@/lib/home-style";
 
-import { updateSiteSettings } from "./actions";
+import { updateHomeStyle, updateSiteSettings } from "./actions";
 
 export default async function AdminSitePage() {
   await requireAdminSession();
@@ -14,8 +15,30 @@ export default async function AdminSitePage() {
   ]);
   const mediaOptions = assets.map(({ id, title, filePath, category }) => ({ id, title, filePath, category }));
 
-  return <div className="admin-stack">
+  return <div className="admin-stack home-management">
     <AdminPageHeader title="首页管理" description="管理首页内容与站点品牌。" />
+    <AdminActionForm action={updateHomeStyle} successMessage="首页样式已切换。" disableWhilePending>
+      <section className="admin-form-section home-style-section">
+        <div className="admin-section-heading home-style-heading"><div><h3>首页样式</h3><p>20 幅插画与经典文字版。选择画面后应用，原有文案与下方内容都会保留。</p><p>当前使用：{HOME_STYLES.find((style) => style.value === resolveHomeStyle(setting.homeStyle))?.label}</p></div></div>
+        <fieldset className="home-style-options">
+          <legend className="home-visually-hidden">选择首页样式</legend>
+          {HOME_STYLES.map((style) => (
+            <label className="home-style-option" key={style.value}>
+              {style.value === "classic" ? <span className="home-style-classic-preview" aria-hidden="true">由此，上达群星</span> : (
+                /* Static rendered thumbnails keep the picker light; the homepage loads the full SVG. */
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img className="home-style-thumbnail" src={`/images/home/thumbs/${style.value}.webp`} alt="" width={600} height={338} loading="lazy" />
+              )}
+              <span className="home-style-caption">
+                <input type="radio" name="homeStyle" value={style.value} defaultChecked={resolveHomeStyle(setting.homeStyle) === style.value} />
+                <span><strong>{style.number ? `${style.number} · ` : ""}{style.label}</strong><small>{style.description}</small></span>
+              </span>
+            </label>
+          ))}
+        </fieldset>
+        <div className="admin-form-submit"><button className="button-link" type="submit">应用首页样式</button><a className="admin-text-action" href="/" target="_blank" rel="noreferrer">查看首页 ↗</a></div>
+      </section>
+    </AdminActionForm>
     <AdminActionForm action={updateSiteSettings} successMessage="站点设置已保存。">
       <section className="admin-form-section">
         <div className="admin-section-heading"><span>01</span><div><h3>站点身份</h3><p>网站名称与协会标识。</p></div></div>

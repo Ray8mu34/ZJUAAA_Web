@@ -38,6 +38,7 @@ model SiteSetting {
   contactFormUrl        String   @default("https://example.com/contact")
   bilibiliUrl           String   @default("https://space.bilibili.com/")
   heroImagePath         String?
+  homeStyle             String   @default("classic")
   logoImagePath         String?
   contactImagePrimaryPath String?
   contactImageSecondaryPath String?

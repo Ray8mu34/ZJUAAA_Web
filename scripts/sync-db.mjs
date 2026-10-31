@@ -69,6 +69,7 @@ const columns = new Set(
 );
 
 const additions = [
+  ["homeStyle", "TEXT NOT NULL DEFAULT 'classic'"],
   ["heroImagePath", "TEXT"],
   ["logoImagePath", "TEXT"],
   ["contactImagePrimaryPath", "TEXT"],
