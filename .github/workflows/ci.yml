@@ -18,6 +18,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: cp .env.example .env
+      - run: npm run db:generate
       - run: npm run db:init
       - run: npm run db:seed-admin
       - run: npm run db:seed-categories
@@ -37,4 +38,5 @@ jobs:
           INTERNAL_PASSWORD: ci-internal-password-long-enough
           AUDIT_LOG_DIR: ./logs
       - run: npm run ops:scan-orphan-uploads
-      - run: npm run test:e2e
+      # Homepage tests change a shared database setting; run suites serially.
+      - run: npm run test:e2e -- --workers=1
