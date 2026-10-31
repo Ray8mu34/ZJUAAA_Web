@@ -19,8 +19,8 @@ jobs:
       - run: npm ci
       - run: cp .env.example .env
       - run: npm run db:generate
-      - run: npm run db:init
-      - run: npm run db:sync
+      # CI starts with an empty database; derive every field from the schema.
+      - run: npx prisma db push --skip-generate
       - run: npm run db:seed-admin
       - run: npm run db:seed-categories
       - run: npx playwright install --with-deps chromium
