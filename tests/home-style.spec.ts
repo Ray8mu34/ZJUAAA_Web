@@ -19,11 +19,11 @@ test("admin can switch full-screen artwork and restore the classic homepage", as
     await page.getByRole("button", { name: "登录后台" }).click();
     await page.waitForURL("**/admin");
     await page.goto("/admin/site");
-    await page.getByRole("radio", { name: /昼夜交界/ }).check();
+    await page.getByRole("radio", { name: /倒悬的地平线/ }).check();
     await page.getByRole("button", { name: "应用首页样式" }).click();
     await expect(page.getByText("首页样式已切换。", { exact: true })).toBeVisible();
     await page.reload();
-    await expect(page.getByRole("radio", { name: /昼夜交界/ })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /倒悬的地平线/ })).toBeChecked();
     await page.screenshot({ path: ".design-qa/home-style-admin.png" });
 
     for (const viewport of [{ width: 1600, height: 900 }, { width: 2560, height: 1080 }, { width: 390, height: 844 }]) {
