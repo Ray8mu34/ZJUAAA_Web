@@ -19,7 +19,7 @@ export default async function AdminSitePage() {
     <AdminPageHeader title="首页管理" description="管理首页内容与站点品牌。" />
     <AdminActionForm action={updateHomeStyle} successMessage="首页样式已切换。" disableWhilePending>
       <section className="admin-form-section home-style-section">
-        <div className="admin-section-heading home-style-heading"><div><h3>首页样式</h3><p>20 幅插画与经典文字版。选择画面后应用，原有文案与下方内容都会保留。</p><p>当前使用：{HOME_STYLES.find((style) => style.value === resolveHomeStyle(setting.homeStyle))?.label}</p></div></div>
+        <div className="admin-section-heading home-style-heading"><div><h3>首页样式</h3><p>21 幅插画与经典文字版。选择画面后应用，原有文案与下方内容都会保留。</p><p>当前使用：{HOME_STYLES.find((style) => style.value === resolveHomeStyle(setting.homeStyle))?.label}</p></div></div>
         <fieldset className="home-style-options">
           <legend className="home-visually-hidden">选择首页样式</legend>
           {HOME_STYLES.map((style) => (

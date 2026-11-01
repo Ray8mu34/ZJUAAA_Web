@@ -1,0 +1,74 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>样机验证</title><style>@font-face{font-family:Club;src:url(../原型/assets/sans.woff)}*{box-sizing:border-box}body{font:15px/1.9 Club,'Microsoft YaHei',sans-serif;max-width:1040px;margin:40px auto;padding:0 28px 60px;color:#142c42}h1{font-size:28px;margin:0 0 32px}h2{font-size:20px;margin:40px 0 18px}h3{font-size:17px}p{margin:16px 0}a{color:#245c82;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;margin:24px 0;font-size:13px}th,td{border-bottom:1px solid #d8dde2;padding:12px;text-align:left;vertical-align:top}th{background:#f3f5f6}pre{padding:20px;background:#f3f5f6;overflow:auto;font-size:12px;line-height:1.7}code{font-family:Consolas,Club,monospace}li{margin:8px 0}img{max-width:100%}</style></head><body><h1>样机验证</h1>
+<p>以下是随包离线HTML的实测，不等同于原站部署验收。</p>
+<table>
+<thead>
+<tr>
+<th>视口</th>
+<th>首屏八项可见</th>
+<th>无横向溢出</th>
+<th>同一nav吸顶</th>
+<th>刷新与双向箭头反馈</th>
+<th>主题按钮反馈</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1440 × 682</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>1440 × 900</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>1920 × 1080</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>800 × 600</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>390 × 844</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>320 × 568</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>844 × 390</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+<td>通过</td>
+</tr>
+</tbody></table>
+<p>七个视口均未出现脚本错误。第02款导航名义字色#142c42与底色#f8f0e3的相对亮度对比计算值约12.64:1；实际截图导航区域为该暖白留白。主体与蒙版分开：原人物和望远镜不处于新增过渡层内。正文照片完整位于过渡后。</p>
+<p><strong>尚未进行的验证</strong>：原站真实路由、登录与权限、线上刷新接口、原有主题状态、20份原SVG在全部设备上的表现。没有原项目文件，不能将这些写成已通过。正式接入按实施说明逐项核验。</p>
+<p>接入适配器另在1440×900与390×844的模拟原站DOM中核验：原nav节点身份与八个href未变；尾段分别为128/96 px；正文起点分别为1028/940 px；滚动吸顶稳定；卸载后原节点位置恢复。这验证接入机制，不代表已修改真实项目。</p>
+</body></html>

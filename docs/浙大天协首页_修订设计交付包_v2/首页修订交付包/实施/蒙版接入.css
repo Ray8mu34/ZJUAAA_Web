@@ -1,0 +1,103 @@
+/* 主案：完整首屏 H + 蓝色中间层。桌面128px，≤800px屏幕96px。 */
+.hero-join {
+  --join-tail: 128px;
+  --join-tint-start: var(--body-bg, #080e1b);
+  --join-tint-mid: var(--body-bg, #080e1b);
+  --join-tint-deep: var(--body-bg, #080e1b);
+  --join-feather: 8px;
+  --join-paint: none; /* 经核验的实色渐变或原 SVG 边缘色带 */
+  --join-canvas: transparent; /* 原画原有底纸色，不是统一暖白 */
+}
+/* 仅第02款采用此组颜色；其他款必须单独核验后配置。 */
+.hero-join[data-style="02"] {
+  --join-tint-start: #76b8c8; /* 原地面青色 */
+  --join-tint-mid: #426a7b;   /* 设计插值色，并非采样值 */
+  --join-tint-deep: #142c42;  /* 原画深蓝 */
+}
+.hero-join__hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--join-canvas);
+  background-image: var(--join-paint);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 100% var(--join-feather);
+}
+/* 绘画层：保留内部 SVG 的原 viewBox、比例和现有构图规则。 */
+.hero-join__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* 只有原画下缘留有足够主体安全距离，才启用末端羽化。 */
+.hero-join[data-edge-ready="true"][data-feather="on"] .hero-join__art {
+  --join-art-mask: linear-gradient(to bottom,
+    #000 0,
+    #000 calc(100% - var(--join-feather)),
+    #000 calc(100% - var(--join-feather) * .75),
+    transparent calc(100% - 1px),
+    transparent 100%);
+  -webkit-mask-image: var(--join-art-mask);
+  mask-image: var(--join-art-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-mode: alpha;
+}
+/* 过渡层：位于首屏之后；不占用/压缩首屏 H。 */
+.hero-join__tail {
+  display: none;
+  position: relative;
+  height: var(--join-tail);
+  margin: 0;
+  padding: 0;
+  background: var(--join-tail-base, linear-gradient(to bottom,
+    var(--join-tint-start) 0%,
+    var(--join-tint-mid) 45%,
+    var(--join-tint-deep) 76%,
+    var(--body-bg, #080e1b) calc(100% - 1px)));
+  pointer-events: none;
+}
+.hero-join[data-edge-ready="true"] .hero-join__tail { display: block; }
+.hero-join__tail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--join-paint);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  --join-tail-mask: linear-gradient(to bottom,
+    #000 0,
+    rgb(0 0 0 / .96) 15%,
+    rgb(0 0 0 / .78) 32%,
+    rgb(0 0 0 / .38) 50%,
+    rgb(0 0 0 / .08) 68%,
+    transparent 86%);
+  -webkit-mask-image: var(--join-tail-mask);
+  mask-image: var(--join-tail-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  mask-mode: alpha;
+}
+/* 不支持 CSS 渐变蒙版时保留原画与原有直接分界。 */
+@supports not ((mask-image: linear-gradient(#000, transparent)) or
+               (-webkit-mask-image: linear-gradient(#000, transparent))) {
+  .hero-join__tail { display: none !important; }
+}
+
+@media (max-width: 800px) {
+  .hero-join { --join-tail: 96px; }
+}
+
+/* Map this selector to the existing theme state; do not add another theme setting. */
+:root[data-theme="light"] .hero-join[data-style="02"] {
+  --join-tail-base: linear-gradient(to bottom, var(--join-canvas), var(--body-bg, #f3f5f6));
+}
+:root[data-theme="light"] .hero-join[data-style="02"] .hero-join__tail::before { display: none; }

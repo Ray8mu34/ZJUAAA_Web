@@ -1,0 +1,25 @@
+/* Integration selectors are deliberately scoped: never apply these to content cards. */
+/* Existing hero must use position:relative and overflow:visible for the pinned nav. */
+.scene-nav-slot{position:absolute;left:0;top:calc(var(--scene-nav-y,71%) - 26px);width:100%;height:52px;z-index:20}
+.scene-nav{position:relative;width:100%;height:52px;margin:0;border:0;box-shadow:none;background:transparent;color:var(--scene-nav-ink,#142c42)}
+/* Add this class to the existing link group; retain its original a[href] elements. */
+.scene-nav-links{display:flex;align-items:center;justify-content:center;gap:10px;margin:0;padding:0;list-style:none}
+.scene-nav-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 7px;color:inherit;background:transparent;font-size:16px;line-height:1.5;font-weight:400;text-decoration:none;white-space:nowrap}
+.scene-nav-links a:hover,.scene-nav-links a[aria-current="page"]{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
+.scene-nav :is(a,button):focus-visible{outline:2px solid currentColor;outline-offset:4px}
+.scene-nav-inner{height:100%;width:min(730px,calc(100% - 40px));margin:auto;display:flex;align-items:center;justify-content:center;gap:16px}
+.scene-nav-theme{display:flex;align-items:center;justify-content:center;flex:0 0 44px;min-width:44px;min-height:44px;padding:0;border:0;color:inherit;background:transparent}
+.scene-nav.is-pinned{position:fixed;top:0;left:0;background:var(--body-bg,#080e1b);color:var(--body-fg,#f2f3f6)}
+.scene-nav.is-pinned [aria-current="page"]{color:var(--active-ink,#70cbd0)}
+@media(max-width:800px){
+ .scene-nav-slot{top:calc(var(--scene-nav-mobile-y,72%) - 66px);height:132px}
+ .scene-nav{height:132px}
+ .scene-nav-inner{width:calc(100% - 32px);max-width:480px;flex-direction:column;gap:0}
+ .scene-nav-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;gap:0}
+ .scene-nav-links a{padding:0 2px;font-size:14px;min-height:44px}
+ .scene-nav-theme{width:44px;height:44px}
+ .scene-nav.is-pinned{height:88px}
+ .scene-nav.is-pinned .scene-nav-inner{position:relative;max-width:620px;width:calc(100% - 16px);padding-right:36px}
+ .scene-nav.is-pinned .scene-nav-links a{font-size:13px;padding:0 1px}
+ .scene-nav.is-pinned .scene-nav-theme{position:absolute;right:-4px;top:22px}
+}

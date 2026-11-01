@@ -95,7 +95,7 @@ test("every artwork can be selected in admin and renders its own SVG", async ({ 
     await page.setViewportSize({ width: 1440, height: 1000 });
     for (const artwork of HOME_ARTWORKS) {
       await page.goto("/admin/site");
-      await expect(page.locator('input[name="homeStyle"]')).toHaveCount(21);
+      await expect(page.locator('input[name="homeStyle"]')).toHaveCount(22);
       await page.locator(`input[value="${artwork.value}"]`).check();
       await page.getByRole("button", { name: "应用首页样式" }).click();
       await expect(page.getByText("首页样式已切换。", { exact: true })).toBeVisible();

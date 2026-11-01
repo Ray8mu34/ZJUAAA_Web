@@ -4,9 +4,10 @@ import { MediaFrame } from "@/components/site/media-frame";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { StarfieldBackground } from "@/components/site/starfield-background";
-import { resolveHomeStyle } from "@/lib/home-style";
+import { NIGHT_OBSERVATORY, resolveHomeStyle } from "@/lib/home-style";
 import { getHomeArtwork } from "@/lib/home-artworks";
 import { HomeArtworkHero } from "@/components/site/home-artwork-hero";
+import { HomeNightHero } from "@/components/site/home-night-hero";
 import { prisma } from "@/lib/db";
 import { shuffleItems } from "@/lib/random-order";
 import { readFile } from "node:fs/promises";
@@ -93,15 +94,17 @@ export default async function HomePage() {
   const heroSubtitle = spreadText(setting.heroSubtitleZh);
   const manifesto = setting.manifestoZh?.trim() || "由此，上达群星";
   const homePhotos = shuffleItems(featuredPhotos).slice(0, 15);
-  const artwork = getHomeArtwork(resolveHomeStyle(setting.homeStyle));
-  const isImageHome = Boolean(artwork);
+  const homeStyle = resolveHomeStyle(setting.homeStyle);
+  const artwork = getHomeArtwork(homeStyle);
+  const isNightHome = homeStyle === NIGHT_OBSERVATORY.value;
+  const isImageHome = Boolean(artwork) || isNightHome;
   const edgeLayers: EdgeLayer[] = artwork
     ? JSON.parse(await readFile(path.join(process.cwd(), "public/images/home/edges", `${artwork.value}.json`), "utf8"))
     : [];
 
   return (
     <>
-      {artwork ? <HomeArtworkHero artwork={artwork} edgeLayers={edgeLayers} /> : <StarfieldBackground />}
+      {isNightHome ? <HomeNightHero /> : artwork ? <HomeArtworkHero artwork={artwork} edgeLayers={edgeLayers} /> : <StarfieldBackground />}
       <SiteHeader afterHero={isImageHome} />
       <main>
         {!isImageHome && <section className="hero">

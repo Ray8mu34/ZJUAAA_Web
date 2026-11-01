@@ -45,7 +45,7 @@ describe("homepage style persistence", () => {
   });
   it("ships all twenty independent vector artworks with matching thumbnail files", () => {
     expect(HOME_ARTWORKS).toHaveLength(20);
-    expect(new Set(HOME_STYLES.map((style) => style.value)).size).toBe(21);
+    expect(new Set(HOME_STYLES.map((style) => style.value)).size).toBe(22);
     for (const artwork of HOME_ARTWORKS) {
       const svg = readFileSync(`public/images/home/${artwork.value}.svg`, "utf8");
       expect(svg).toContain('viewBox="0 0 1672 941"');

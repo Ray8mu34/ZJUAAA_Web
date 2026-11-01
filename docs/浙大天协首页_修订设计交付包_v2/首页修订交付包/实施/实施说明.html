@@ -1,0 +1,102 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V2 实施说明</title><style>@font-face{font-family:Club;src:url(../原型/assets/sans.woff)}*{box-sizing:border-box}body{font:15px/1.9 Club,'Microsoft YaHei',sans-serif;max-width:1040px;margin:40px auto;padding:0 28px 60px;color:#142c42}h1{font-size:28px;margin:0 0 32px}h2{font-size:20px;margin:40px 0 18px}h3{font-size:17px}p{margin:16px 0}a{color:#245c82;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;margin:24px 0;font-size:13px}th,td{border-bottom:1px solid #d8dde2;padding:12px;text-align:left;vertical-align:top}th{background:#f3f5f6}pre{padding:20px;background:#f3f5f6;overflow:auto;font-size:12px;line-height:1.7}code{font-family:Consolas,Club,monospace}li{margin:8px 0}img{max-width:100%}</style></head><body><h1>V2 实施说明</h1>
+<h2>1. 固定交付范围</h2>
+<p>采用 <strong>完整首屏 + 蓝色中间层过渡</strong>。过渡高度桌面为 <strong>128 px</strong>，视口宽度 <strong>≤800 px</strong> 时为 <strong>96 px</strong>。首屏仍为 <code>100svh</code>；原插画的 <code>viewBox</code>、长宽比、主体位置与原有构图规则不变。正文保留原排版、原内容和默认背景 <strong><code>#080e1b</code></strong>。尾段只显示颜色衔接，不放照片、文字或其他元素。本文只规定首页接缝与导航约束，不重构正文。</p>
+<p>本次只有截图，没有原 SVG 文件、项目路由或接口代码。截图原型可直接审阅位置与过渡；真实 SVG 和真实路由须由现有项目接入，不能把演示中的本页锚点当作正式页面地址。</p>
+<h2>2. 两个绘制层与坐标</h2>
+<p><code>蒙版接入.css</code> 只包含原画层和独立过渡层。过渡层以青蓝到深蓝的渐变为底，其上覆盖逐渐透明的原底纸色。示例中的内联色值只对应第 02 款，不能复制给另外十九款。</p>
+<pre><code class="language-html">&lt;div class=&quot;hero-join&quot; data-style=&quot;02&quot; data-edge-ready=&quot;true&quot; data-feather=&quot;on&quot;
+     style=&quot;--join-canvas:#f8f0e3;
+            --join-paint:linear-gradient(#f8f0e3,#f8f0e3)&quot;&gt;
+  &lt;section class=&quot;hero-join__hero&quot;&gt;
+    &lt;div class=&quot;hero-join__art&quot;&gt;
+      &lt;!-- 放回原完整 SVG；不改 viewBox，不加拉伸或重新排布 --&gt;
+    &lt;/div&gt;
+    &lt;!-- 导航不放进 hero-join__art，不受蒙版影响 --&gt;
+  &lt;/section&gt;
+  &lt;div class=&quot;hero-join__tail&quot; aria-hidden=&quot;true&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;main&gt;&lt;!-- 原正文及原页面内容 --&gt;&lt;/main&gt;
+</code></pre>
+<p>令首屏高为 H、过渡高度为 L：桌面 L=128 px，≤800 px 时 L=96 px。首屏范围为 <code>[0,H]</code>，过渡层为 <code>[H,H+L]</code>，正文从 <code>H+L</code> 开始。L 是额外滚动距离，不是首屏内边距；不能把 H+L 的图片挤回 H。参考 CSS 不为内部 SVG 设置 <code>transform</code>、<code>object-fit</code> 或新的缩放规则。</p>
+<p>**第 02 款：**原画末尾 8 px 只羽化到原暖白底纸，人物和望远镜保持完整；尾段在相同暖白下方加入原画青蓝中间色，再接回原正文深色。<code>#f8f0e3</code> 为本次截图读数，正式接入以原 SVG 该底纸的实际填色为准。必须保证羽化起点低于人物、脚架等全部主体底边至少 8 px；即 <code>羽化高度 ≤ H−主体底边−8px</code>。羽化取 <code>min(8, H−主体底边−8)</code>；可用羽化空间少于 4 px 时设 <code>data-feather=&quot;off&quot;</code>，不移动或缩小主体来腾地方。</p>
+<p>如果原画采用 contain 且实际画面底边早于 H，8 px 羽化必须对齐实际画面底边。不能对空白画布末端加蒙版后声称已经处理了原图边缘。尾段仍从 H 开始。原始渲染方式与原图尺寸未提供，本条须在真实项目中核验。</p>
+<p>过渡层底色与上层蒙版按下表固定设置。上层底纸在 86% 位置完全消失；底层最后 1 px 等于正文背景。原图末端 8 px 的保护规则不变，图片构图不因过渡配色调整而改变。</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>位置与取值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>底层渐变</td>
+<td>0%：<code>#76b8c8</code>；45%：<code>#426a7b</code>；76%：<code>#142c42</code>；末端1px：<code>#080e1b</code></td>
+</tr>
+<tr>
+<td>上层原底纸 alpha</td>
+<td>0%：1；15%：0.96；32%：0.78；50%：0.38；68%：0.08；86%起：0</td>
+</tr>
+</tbody></table>
+<p><code>#76b8c8</code> 对应原地面青色，<code>#142c42</code> 对应原画深蓝；<code>#426a7b</code> 是为衔接设计的插值色，不是原图采样值。实际原 SVG 提供后仍须核对源填色，不能把截图读数等同于已核验的 SVG token。</p>
+<h2>3. 其他十九款的边缘接入</h2>
+<p>逐款读取<strong>原 SVG 在最终响应式排版中的实际下缘</strong>，不要使用缩略图平均色，也不要统一设置暖白或复制第 02 款的青蓝配色。每款只选以下一种明确处理。</p>
+<table>
+<thead>
+<tr>
+<th>下缘情况</th>
+<th><code>--join-paint</code> 的接法</th>
+<th>校验要求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>下缘为一个连续实色，主体已在其上方结束</td>
+<td><code>linear-gradient(实际颜色,实际颜色)</code>；<code>--join-canvas</code> 保留原画底色</td>
+<td>画面末行与尾段首行一致</td>
+</tr>
+<tr>
+<td>有多个主要色块抵达下缘</td>
+<td>从原 SVG 制作一份专用边缘色带，将对应颜色、横向分界和透明区映射到尾段；把该真实色带设为 <code>--join-paint</code></td>
+<td>色带顶边逐段对应原下缘，不用一种均值色覆盖</td>
+</tr>
+<tr>
+<td>人物或其他主体直接触及下缘</td>
+<td>原画不羽化；仅处理独立尾段，色带接续主体以外的背景 / 地面</td>
+<td>不使人物、器材、文字或辨识性轮廓半透明</td>
+</tr>
+</tbody></table>
+<p>每款同时配置自己的 <code>--join-tint-start</code>、<code>--join-tint-mid</code>、<code>--join-tint-deep</code>；中间色若为设计插值，应在配置中标明。复杂多色过渡可用 <code>--join-tail-base</code> 指定经核验的整层背景，但终点必须是正文背景。第 02 款以外没有在此 CSS 中预置配色。</p>
+<p>多色色带的具体制作规则：令原画最终可见下缘为颜色剖面 <code>E(x)</code>。色带顶边保留每一段的实际填色与分界 x 坐标；向下仅延续这些色区，再由统一 alpha 蒙版消失到正文深底。色带是新增的背景衔接资产，不是把原插画或截图最后一行拉长。原 SVG 的结构性轮廓若延伸到下缘，需沿原轮廓续接背景区域；不得将人物或地标复制进尾段。移动与桌面下缘不同，则分别输出两份色带，按对应视口选择，不能复用错误的横向分界。</p>
+<p>专用色带使用真实项目资产 URL；本包不伪造十九款的色带文件或路径。未取得原 SVG、未完成边缘校验时，保留 <code>data-edge-ready=&quot;false&quot;</code> 或不设置该属性；参考 CSS 保留完整原画并隐藏尾段。核验后再改为 <code>true</code>。蒙版本身使用 CSS 渐变，不请求外部蒙版图。</p>
+<h2>4. 导航、主题与数据</h2>
+<p>首屏直接显示<strong>主页、知识科普、社团活动、天文摄影、天文手册、内部资料、关于我们、联系我们</strong>。八项全部使用真实链接，一次点击到原有页面；移动端可排成两行，但不能隐藏在二级菜单里。主题切换按钮同样直接可见。</p>
+<p>导航始终使用同一份 DOM。绝对定位锚点将其放在画内；该锚点滚出视口上沿后，同一个 nav 切换为 <code>position:fixed; top:0</code>，向上滚回时恢复画内位置。锚点不占正文流，不克隆链接，也不放进蒙版层。导航祖先不得有会改变 fixed 参考框的 transform、filter 或 perspective；画面的变换仅留在绘画层。原导航条的空壳高度和背景必须同时删除，避免留下另一条色带。</p>
+<p>所有 href 从原项目路由表读取；内部资料仍由原权限逻辑控制。主题切换继续使用原站逻辑；尾段终点 <code>--body-bg</code> 绑定正文实际主题背景，未传入时回退到 <code>#080e1b</code>。深色主题采用本页蓝色中间层；浅色主题将尾段改为原纸色直接过渡到实际正文浅色，关闭蓝色中间层。主题判断复用原项目的主题状态，不另建设置页。不改变 SVG 本身的颜色。正文接口、数据顺序、署名和详情入口维持原实现。</p>
+<h2>5. 导航接入顺序</h2>
+<ol>
+<li>加载 <code>导航接入.css</code> 与 <code>蒙版接入.css</code>。</li>
+<li>依照 <code>接入示例.js</code> 提供现有首屏、原绘画层、导航、导航内层、链接组、主题按钮的 DOM 引用，并提供 <code>getSubjectBottomPx()</code> 返回原SVG主体在最终排版中的底边位置；不根据样机猜测生产选择器。</li>
+<li><code>导航接入.js</code> 移动原 nav；链接、主题事件和登录判断随原节点保留。<code>scene-nav-links</code> 加在八个链接原有的共同容器上，不复制一份。</li>
+<li>第02款桌面导航中心在首屏 y=71%，常规文字16 px。≤800 px时 y=72%，八项为4列×2行、14 px、每项44 px高；主题图标在其下方占44 px。手机吸顶后八项仍为4×2，文字13 px，主题图标置右，整体88 px高。</li>
+<li>原页锚点滚动偏移须计入导航高度：桌面52+24 px，手机88+20 px。正常页面路由不变。</li>
+<li>组件卸载时调用清理函数。已有页面切换事件、主题状态和首页风格选择由原项目管理。</li>
+</ol>
+<p><strong>样机边界：</strong><code>原型/index.html</code> 的“主页”回到首屏；“知识科普、社团活动、天文摄影”演示同页定位；“天文手册、内部资料、关于我们、联系我们”是待绑定的 <code>#route-*</code> 标记，不提供虚构栏目页。正式接入全部保留原 href，不把样机锚点带到线上。刷新和左右箭头只使用截图样本演示反馈，不替换原正文组件、数据接口或文章作者。</p>
+<h2>6. 接入后逐项核验</h2>
+<ol>
+<li>原画图形坐标、长宽比与接入前一致；首屏高度仍为 H；正文起点桌面为 H+128，≤800 px 时为 H+96。</li>
+<li>第 02 款人物、望远镜和脚架未变浅；暖白原画末端与尾段首行同色；青蓝中间层连续，尾段末行与正文背景同色。</li>
+<li>每款多色下缘逐段连续；桌面和手机分别核对，不能用第 02 款通过代替全部通过。</li>
+<li>1440×900、1920×1080、390×844 和手机横屏中，八项导航与主题按钮直接可见，链接一次到达目标。</li>
+<li>刷新、后退及直接访问原路由有效；正文照片不跨入尾段；导航不受蒙版影响。</li>
+</ol>
+<h2>技术依据与设计取值</h2>
+<p>CSS 渐变可作为 <code>mask-image</code>，其默认按 alpha 生效；SVG <code>&lt;mask&gt;</code> 的默认 luminance 行为与此不同。参考代码使用 CSS 渐变并显式声明 alpha，避免混用。相关事实见 MDN：</p>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/mask-image">https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/mask-image</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/mask-mode">https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/mask-mode</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/gradient/linear-gradient">https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/gradient/linear-gradient</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position">https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/position</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length">https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length</a></li>
+</ul>
+<p>桌面 128 px / ≤800 px 时 96 px 的过渡高度、02 款末端 8 px 羽化、8 px 主体安全距离、<code>#426a7b</code> 插值色和具体 alpha 曲线是本次设计决策，不是浏览器标准规定的数值。</p>
+</body></html>
