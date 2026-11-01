@@ -16,6 +16,7 @@ Outputs (1920 x 1080, same viewBox so both layers share one cover crop):
     conda run -n dl_env python scripts/artwork/build-night-observatory.py
 """
 import argparse
+import json
 import math
 from pathlib import Path
 
@@ -87,40 +88,8 @@ def band_to_screen(u, v):
 
 
 # Named stars in screen coordinates: (x, y, radius, color).
-STARS = {
-    "vega": (735, 250, 2.7, "#d6e4ff"), "deneb": (520, 230, 2.1, "#f1f4ff"),
-    "altair": (655, 560, 2.3, "#f6f7ff"), "antares": (1230, 708, 2.4, "#ffab78"),
-    "arcturus": (1765, 262, 2.6, "#ffd39f"),
-    # Cygnus, Northern Cross
-    "sadr": (580, 291, 1.6, "#fff6e8"), "gienah": (634, 239, 1.5, "#fff1dc"),
-    "delta_cyg": (526, 343, 1.4, "#eef3ff"), "albireo": (690, 405, 1.4, "#ffd9a8"),
-    "zeta_cyg": (671, 201, 1.1, "#fff3e2"),
-    # Lyra parallelogram
-    "zeta_lyr": (748, 274, 1.0, "#eef2ff"), "delta_lyr": (768, 279, .9, "#ffe2c4"),
-    "sulafat": (762, 312, 1.1, "#e8efff"), "sheliak": (742, 307, 1.0, "#e8efff"),
-    # Aquila
-    "tarazed": (668, 544, 1.4, "#ffd7a8"), "alshain": (643, 578, 1.1, "#fff8ee"),
-    "delta_aql": (712, 612, 1.1, "#fff8ee"), "lambda_aql": (770, 648, 1.1, "#eef3ff"),
-    "zeta_aql": (742, 505, 1.3, "#f3f6ff"), "theta_aql": (610, 640, 1.1, "#eef3ff"),
-    # Sagittarius, the Teapot
-    "alnasl": (1040, 700, 1.3, "#ffe7c4"), "kaus_media": (1000, 690, 1.3, "#ffdcb0"),
-    "kaus_australis": (1010, 735, 1.6, "#eef3ff"), "kaus_borealis": (985, 655, 1.4, "#ffe4bd"),
-    "phi_sgr": (950, 690, 1.2, "#eef3ff"), "nunki": (900, 672, 1.6, "#e6eeff"),
-    "tau_sgr": (905, 717, 1.2, "#ffe0b8"), "ascella": (946, 728, 1.4, "#f2f5ff"),
-    # Scorpius head (the tail is below the hills)
-    "dschubba": (1301, 640, 1.5, "#e6eeff"), "acrab": (1312, 608, 1.4, "#e6eeff"),
-    "pi_sco": (1306, 670, 1.2, "#e6eeff"), "sigma_sco": (1262, 690, 1.1, "#eef3ff"),
-    "tau_sco": (1205, 728, 1.2, "#e6eeff"),
-    # Ophiuchus and Hercules give the upper sky structure without chart lines.
-    "rasalhague": (1125, 405, 1.6, "#fff4e2"), "cebalrai": (1150, 462, 1.2, "#ffd9a8"),
-    "herc_1": (1052, 222, 1.1, "#fff1dc"), "herc_2": (1104, 236, 1.1, "#fff1dc"),
-    "herc_3": (1097, 282, 1.1, "#eef3ff"), "herc_4": (1046, 270, 1.0, "#fff1dc"),
-    "kornephoros": (1180, 300, 1.3, "#ffe2b8"),
-    # Corona Borealis
-    "crb_1": (1452, 232, .9, "#eef3ff"), "crb_2": (1468, 214, .9, "#eef3ff"),
-    "alphecca": (1490, 206, 1.4, "#f3f6ff"), "crb_4": (1512, 208, .9, "#eef3ff"),
-    "crb_5": (1530, 220, .9, "#eef3ff"), "crb_6": (1540, 240, .9, "#eef3ff"),
-}
+from catalog_projection import named_stars, stars_svg, project
+STARS = named_stars()
 
 FIGURES = [
     ("vega", "deneb"), ("deneb", "altair"), ("altair", "vega"),
@@ -271,67 +240,20 @@ def build_sky():
 
     # Emission nebulae: Lagoon and Trifid over the spout, Eagle/Omega up the band,
     # North America beside Deneb, and the warm glow around Antares.
-    for x, y, rx, ry, color, op, blur in [
-        (1034, 672, 13, 8, "#ff6f8e", .5, 5), (1030, 650, 7, 6, "#ff8aa3", .38, 2),
-        (952, 610, 9, 6, "#ff7898", .32, 5), (930, 586, 7, 5, "#ff7898", .28, 2),
-        (552, 214, 26, 20, "#ff6d86", .2, 10), (1232, 704, 34, 26, "#f2a066", .2, 10),
-        (1278, 650, 40, 30, "#6d8fe0", .14, 10),
+    for ra, dec, rx, ry, color, op, blur in [
+        (18.0617,-24.3867,13,8,"#ff6f8e",.28,5),
+        (18.0433,-23.03,7,6,"#ff8aa3",.20,2),
+        (18.3133,-13.8,9,6,"#ff7898",.16,5),
+        (20.98,44.33,26,20,"#ff6d86",.12,10),
     ]:
-        body.append(ellipse(x, y, rx, ry, fill=color, opacity=op, filter=f"url(#b{blur})"))
+        x,y=project(ra,dec)
+        body.append(ellipse(x,y,rx,ry,fill=color,opacity=op,filter=f"url(#b{blur})"))
 
-    # ------------------------------------------------------------ star field
-    n_bg = 2100
-    pts = np.column_stack([rng.uniform(0, W, n_bg), rng.uniform(0, 850, n_bg)])
-    n_band = 5200
-    u = rng.uniform(-200, 1350, n_band)
-    v = rng.normal(0, 1, n_band) * np.where(u < 200, 92, 60)
-    band = band_to_screen(u, v)
-    n_cluster = 1800  # dense core, Scutum and Cygnus star clouds
-    cu = np.concatenate([rng.normal(40, 85, 800), rng.normal(300, 48, 600), rng.normal(700, 70, 400)])
-    cv = rng.normal(0, 46, n_cluster)
-    cluster = band_to_screen(cu, cv)
-    n_grain = 18000  # the unresolved glow, as faint dots weighted toward the core
-    gu = np.concatenate([rng.uniform(-260, 1400, 7000), rng.normal(60, 130, 8000), rng.normal(330, 110, 3000)])
-    gv = rng.normal(0, 1, n_grain) * np.interp(gu, [-200, 150, 600, 1300], [100, 82, 62, 52])
-    grain = band_to_screen(gu, gv)
-    all_pts = np.vstack([pts, band, cluster, grain])
-    inside = (all_pts[:, 0] > -3) & (all_pts[:, 0] < W + 3) & (all_pts[:, 1] > -3) & (all_pts[:, 1] < 860)
-    # Brightness: a steep luminosity function, field stars slightly brighter than band grain.
-    mag = np.concatenate([1 - rng.power(4, n_bg), 1 - rng.power(6, n_band + n_cluster), rng.uniform(0, .25, n_grain)])
-    warm = np.concatenate([np.zeros(n_bg + n_band), np.ones(n_cluster), np.abs(gu - 60) < 280])
-    all_pts, mag, warm = all_pts[inside], mag[inside], warm[inside].astype(bool)
-    count = len(all_pts)
-    size = np.select([mag > .94, mag > .8, mag > .5, mag > .22, mag > .1], [2.2, 1.6, 1.15, .85, .65], .5)
-    op = np.round(np.clip(.3 + .75 * mag + rng.normal(0, .1, count), .2, 1) * 5) / 5
-    color = np.where(warm, rng.choice(5, count, p=[.34, .1, .02, .34, .2]),
-                     rng.choice(5, count, p=[.4, .27, .11, .14, .08]))
-    body.append('<g fill="none" stroke-linecap="round" mask="url(#horizon)">')
-    body += star_dots(all_pts, color, size, op)
-    body.append("</g>")
-
-    # Constellation chart lines: faint, broken around each star.
-    lines = []
-    for a, b in FIGURES:
-        (x1, y1, r1, _), (x2, y2, r2, _) = STARS[a], STARS[b]
-        d = math.hypot(x2 - x1, y2 - y1)
-        g1, g2 = (r1 * 2 + 6) / d, (r2 * 2 + 6) / d
-        p1 = (x1 + (x2 - x1) * g1, y1 + (y2 - y1) * g1)
-        p2 = (x2 - (x2 - x1) * g2, y2 - (y2 - y1) * g2)
-        dash = ' stroke-dasharray="2 6"' if (a, b) in DASHED else ""
-        lines.append(f'<path d="M{f(p1[0])},{f(p1[1])}L{f(p2[0])},{f(p2[1])}"{dash}/>')
-    body.append(f'<g fill="none" stroke="#b9cdf0" stroke-width="1" stroke-linecap="round" opacity=".2">{"".join(lines)}</g>')
-
-    # Named stars: halo, core, and fine spikes for the brightest four.
-    for name, (x, y, r, c) in STARS.items():
-        body.append(f'<circle cx="{x}" cy="{y}" r="{f(r * 5.5)}" fill="url(#soft)" opacity=".16"/>')
-        body.append(f'<circle cx="{x}" cy="{y}" r="{f(r * 2.6)}" fill="{c}" opacity=".18" filter="url(#b2)"/>')
-        body.append(f'<circle cx="{x}" cy="{y}" r="{f(r * .62)}" fill="#fff"/>')
-        body.append(f'<circle cx="{x}" cy="{y}" r="{f(r)}" fill="{c}" opacity=".85"/>')
-        if r >= 2.3:
-            s = r * 7
-            body.append(f'<path d="M{x - s},{y}L{x + s},{y}M{x},{y - s}L{x},{y + s}" stroke="{c}" stroke-width=".6" opacity=".35"/>')
+    # All resolved stars now use the same J2000 stereographic projection.
+    body.append('<g mask="url(#horizon)">' + stars_svg() + '</g>')
 
     body.append(f'<rect width="{W}" height="{H}" filter="url(#grain)" opacity=".05"/>')
+    body.insert(0, '<metadata>Star positions: HYG v4.1, David Nash / Astronexus, CC BY-SA 4.0, https://github.com/astronexus/HYG-Database . J2000 stereographic projection; adapted for this artwork. Galaxy texture is illustrative. https://creativecommons.org/licenses/by-sa/4.0/</metadata>')
     return svg(defs, body)
 
 
@@ -356,20 +278,20 @@ def ground_y(x):
 
 
 def spruce(x, base, h, w, seed):
-    """Tiered spruce silhouette: deliberate points at the tiers, straight trunk."""
-    r = np.random.default_rng(seed)
-    tiers = max(4, int(h / 11))
-    left, right = [], []
-    for i in range(tiers + 1):
-        t = i / tiers
-        y = base - h + t * h * .9
-        width = w * (.08 + .92 * t) * (1 + r.normal(0, .06))
-        tuck = width * .55
-        right += [(x + width / 2, y + h * .045), (x + tuck / 2, y + h * .055)]
-        left += [(x - width / 2 * (1 + r.normal(0, .05)), y + h * .045), (x - tuck / 2, y + h * .055)]
-    pts = [(x, base - h - 3)] + right + [(x + 1.6, base - h * .08), (x + 1.6, base + 3),
-                                          (x - 1.6, base + 3), (x - 1.6, base - h * .08)] + left[::-1]
-    return "M" + "L".join(f"{f(a)},{f(b)}" for a, b in pts) + "Z"
+    """Asymmetric boughs with curved tips and open spaces between branches."""
+    rng = np.random.default_rng(seed)
+    lean = rng.uniform(-.035,.035)*h
+    paths = [f'M{x- .7},{base}Q{x+lean},{base-h*.5} {x+lean},{base-h}L{x+1},{base}Z']
+    for side in (-1,1):
+        for t in np.linspace(.13,.91,max(9,int(h/5))):
+            t += rng.uniform(-.018,.018)
+            y=base-h+t*h
+            width=w*.5*(t**.8)*rng.uniform(.55,1.15)
+            root=x+lean*(1-t)
+            tip=root+side*width
+            drop=rng.uniform(.02,.06)*h
+            paths.append(f'M{f(root)},{f(y-h*.04)}Q{f(root+side*width*.48)},{f(y+drop*.2)} {f(tip)},{f(y+drop)}Q{f(root+side*width*.7)},{f(y+drop+h*.025)} {f(root)},{f(y+h*.035)}Z')
+    return ''.join(paths)
 
 
 def dome_slit(cx, by, R, phi, width, samples=26):
@@ -399,7 +321,7 @@ def observatory(cx):
     o = [
         '<radialGradient id="domeshade" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" '
         f'gradientTransform="translate({cx + 26} {top - 40}) scale(78)">'
-        '<stop offset="0" stop-color="#33445d"/><stop offset=".55" stop-color="#19253a"/>'
+        '<stop offset="0" stop-color="#263347"/><stop offset=".55" stop-color="#19253a"/>'
         '<stop offset="1" stop-color="#0d1523"/></radialGradient>'
         f'<linearGradient id="wallshade" x1="{cx - 48}" y1="0" x2="{cx + 48}" y2="0" gradientUnits="userSpaceOnUse">'
         '<stop offset="0" stop-color="#0d1522"/><stop offset=".7" stop-color="#172234"/>'
@@ -427,20 +349,20 @@ def observatory(cx):
              f'<path d="{slit}" fill="#5a1d22" opacity=".28" transform="translate(0 6)"/></g>')
     # Rim light on the side facing the core.
     g.append(f'<path d="M{cx + R * math.cos(1.2)},{top - R * math.sin(1.2)}A{R},{R} 0 0 1 {cx + R},{top}" '
-             f'fill="none" stroke="#7d93b8" stroke-width="1.1" opacity=".45" stroke-linecap="round"/>')
+             f'fill="none" stroke="#7d93b8" stroke-width=".7" opacity=".22" stroke-linecap="round"/>')
     g.append(f'<rect x="{cx - 52}" y="{top - 2}" width="104" height="5" rx="2" fill="#0c1420"/>')
     # Telescope: a white tube in the slit, aimed into the Milky Way; clipped to slit or open sky.
     ang = -48
     px, py = cx + 7, top - 16
     tube = (f'<g transform="translate({px} {py}) rotate({ang})">'
-            '<rect x="-30" y="-8" width="66" height="16" rx="2" fill="#a3b0c4"/>'
-            '<rect x="-30" y="-8" width="66" height="5" rx="2" fill="#c9d3e1"/>'
-            '<rect x="-30" y="3" width="66" height="5" fill="#76839a"/>'
-            '<rect x="30" y="-9.6" width="18" height="19.2" rx="1.5" fill="#8e9bb0"/>'
-            '<rect x="30" y="-9.6" width="18" height="5.5" rx="1.5" fill="#b5c1d2"/>'
+            '<rect x="-30" y="-8" width="66" height="16" rx="2" fill="#354153"/>'
+            '<rect x="-30" y="-8" width="66" height="5" rx="2" fill="#4b5666"/>'
+            '<rect x="-30" y="3" width="66" height="5" fill="#222e40"/>'
+            '<rect x="30" y="-9.6" width="18" height="19.2" rx="1.5" fill="#303d50"/>'
+            '<rect x="30" y="-9.6" width="18" height="5.5" rx="1.5" fill="#424f61"/>'
             '<ellipse cx="48" cy="0" rx="2.2" ry="9.6" fill="#1a2433"/>'
             '<rect x="6" y="-8.6" width="3" height="17.2" fill="#5f6b80"/>'
-            '<rect x="10" y="-15" width="22" height="5" rx="1.5" fill="#8e9bb0"/>'
+            '<rect x="10" y="-15" width="22" height="5" rx="1.5" fill="#303d50"/>'
             '<rect x="14" y="-11" width="2" height="3" fill="#5f6b80"/><rect x="26" y="-11" width="2" height="3" fill="#5f6b80"/>'
             '</g>')
     outside = f"M0,0H{W}V{top}H0Z{dome}"  # sky above the rail, minus the dome
@@ -474,7 +396,7 @@ def observer(x, target):
             '<stop offset="0" stop-color="#7dffa6" stop-opacity=".95"/><stop offset=".55" stop-color="#6dff9a" stop-opacity=".45"/>'
             '<stop offset=".93" stop-color="#6dff9a" stop-opacity=".08"/><stop offset="1" stop-color="#6dff9a" stop-opacity="0"/></linearGradient>'
             '<filter id="lb" x="-10%" y="-200%" width="120%" height="500%"><feGaussianBlur stdDeviation="2.4"/></filter>'
-            '<filter id="lamp" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="1.2"/></filter>')
+            '<filter id="lamp" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="8"/></filter>')
     g = [f'<g transform="translate({f(hand[0])} {f(hand[1])}) rotate({beam_ang:.2f})">'
          f'<rect y="-2.2" width="{f(length - 6)}" height="4.4" fill="url(#laser)" opacity=".5" filter="url(#lb)"/>'
          f'<rect y="-.55" width="{f(length - 6)}" height="1.1" fill="url(#laser)"/></g>']
@@ -505,39 +427,104 @@ def observer(x, target):
     return defs, g
 
 
+def roughen(points, seed, amp, waves=(70,34,16)):
+    pts=np.array(points,dtype=float)
+    rng=np.random.default_rng(seed)
+    for i,wave in enumerate(waves):
+        knots=np.arange(-wave,W+wave*2,wave)
+        values=rng.normal(0,amp/(2**i),len(knots))
+        pts[:,1]+=np.interp(pts[:,0],knots,values)
+    return pts
+
+
+def faces(top, light_x, base, seed, window=6):
+    """Shadowed mountain faces: from each peak, the slope turned away from the light
+    falls to the neighbouring valley; a descending spur and gully bound it below."""
+    pts = np.asarray(top, float)
+    ys, n = pts[:, 1], len(pts)
+    r = np.random.default_rng(seed)
+    peaks = [i for i in range(window, n - window) if ys[i] == ys[i - window:i + window + 1].min()]
+    valleys = [i for i in range(window, n - window) if ys[i] == ys[i - window:i + window + 1].max()]
+    polys, folds = [], []
+
+    def descent(x0, y0, drift, steps=9):
+        h = base - y0
+        t = np.linspace(0, 1, steps)
+        xs = x0 + drift * h * t ** 1.15 + np.concatenate([[0], np.cumsum(r.normal(0, h * .018, steps - 1))])
+        return list(zip(xs, y0 + h * t))
+
+    for i in peaks:
+        px, py = pts[i]
+        left = px < light_x  # the face away from the light
+        side = [v for v in valleys if (v < i if left else v > i)]
+        v = (max(side) if left else min(side)) if side else (0 if left else n - 1)
+        if abs(v - i) < 3 or base - py < 30:
+            continue
+        sgn = 1 if left else -1
+        crest = [tuple(q) for q in (pts[v:i + 1] if left else pts[i:v + 1][::-1])]
+        spur = descent(px, py, .75 * sgn)
+        gully = descent(*pts[v], .4 * sgn)
+        poly = crest + spur + gully[::-1]
+        polys.append("M" + "L".join(f"{f(a)},{f(b)}" for a, b in poly) + "Z")
+        # A secondary fold inside wide faces breaks the flat plane.
+        if abs(px - pts[v][0]) > 70:
+            m = (i + v) // 2
+            folds.append("M" + "L".join(f"{f(a)},{f(b)}" for a, b in descent(*pts[m], .6 * sgn, 7)[:4]))
+    return "".join(polys), "".join(folds)
+
+
 def build_land():
     defs, body = [], []
     defs.append(
         '<linearGradient id="distant" x1="0" y1="570" x2="0" y2="800" gradientUnits="userSpaceOnUse">'
-        '<stop offset="0" stop-color="#2a4058"/><stop offset="1" stop-color="#22364c"/></linearGradient>'
+        '<stop offset="0" stop-color="#192333"/><stop offset="1" stop-color="#162131"/></linearGradient>'
         '<linearGradient id="mist" x1="0" y1="700" x2="0" y2="880" gradientUnits="userSpaceOnUse">'
         '<stop offset="0" stop-color="#5a7c92" stop-opacity="0"/><stop offset=".55" stop-color="#5a7c92" stop-opacity=".16"/>'
         '<stop offset="1" stop-color="#5a7c92" stop-opacity="0"/></linearGradient>'
         '<linearGradient id="far" x1="0" y1="590" x2="0" y2="860" gradientUnits="userSpaceOnUse">'
-        '<stop offset="0" stop-color="#1c2c43"/><stop offset=".5" stop-color="#142238"/><stop offset="1" stop-color="#101b2d"/></linearGradient>'
+        '<stop offset="0" stop-color="#152033"/><stop offset=".5" stop-color="#142238"/><stop offset="1" stop-color="#101b2d"/></linearGradient>'
         '<linearGradient id="mid" x1="0" y1="730" x2="0" y2="900" gradientUnits="userSpaceOnUse">'
         '<stop offset="0" stop-color="#121e31"/><stop offset="1" stop-color="#0c1525"/></linearGradient>'
         f'<linearGradient id="fore" x1="0" y1="800" x2="0" y2="1000" gradientUnits="userSpaceOnUse">'
         f'<stop offset="0" stop-color="#0d1728"/><stop offset=".55" stop-color="#0a1221"/><stop offset=".8" stop-color="{PAGE_BG}"/></linearGradient>'
         '<linearGradient id="haze" x1="0" y1="600" x2="0" y2="820" gradientUnits="userSpaceOnUse">'
-        '<stop offset="0" stop-color="#5d7f95" stop-opacity="0"/><stop offset="1" stop-color="#5d7f95" stop-opacity=".18"/></linearGradient>'
+        '<stop offset="0" stop-color="#35495f" stop-opacity="0"/><stop offset="1" stop-color="#35495f" stop-opacity=".18"/></linearGradient>'
         '<filter id="landgrain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">'
         '<feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="9" stitchTiles="stitch"/>'
         '<feColorMatrix type="matrix" values="0 0 0 0 .7 0 0 0 0 .78 0 0 0 0 .95 1.1 0 0 0 -.6"/></filter>'
     )
-    distant_top = ridge(DISTANT, 30, 7, spacing=12)
-    body.append(f'<path d="{land_path(distant_top)}" fill="url(#distant)" opacity=".85"/>')
-    far_top = ridge(FAR, 31, 9, spacing=9)
-    mid_top = ridge(MID, 32, 6, spacing=10)
+    distant_top = roughen(ridge(DISTANT, 30, 9, spacing=8, decay=.58), 60, 6)
+    far_top = roughen(ridge(FAR, 31, 13, spacing=7, decay=.6), 61, 9)
+    mid_top = roughen(ridge(MID, 32, 7, spacing=8, decay=.58), 62, 4, (60, 24))
+    distant_d = land_path(distant_top)
+    defs.append(
+        '<linearGradient id="shadeface" x1="0" y1="580" x2="0" y2="860" gradientUnits="userSpaceOnUse">'
+        '<stop offset="0" stop-color="#070d19" stop-opacity=".62"/><stop offset=".6" stop-color="#070d19" stop-opacity=".34"/>'
+        '<stop offset="1" stop-color="#070d19" stop-opacity=".08"/></linearGradient>'
+        '<filter id="softface" x="-5%" y="-5%" width="110%" height="110%"><feGaussianBlur stdDeviation="8"/></filter>'
+        f'<clipPath id="distantclip"><path d="{distant_d}"/></clipPath>'
+        f'<clipPath id="farclip"><path d="{land_path(far_top)}"/></clipPath>'
+        f'<clipPath id="midclip"><path d="{land_path(mid_top)}"/></clipPath>')
+
+    def shade(top, clip, base, seed, opacity):
+        polys, folds = faces(top, 1080, base, seed)
+        return (f'<g clip-path="url(#{clip})" opacity="{opacity}">'
+                f'<path d="{polys}" fill="url(#shadeface)" filter="url(#softface)"/>'
+                f'<path d="{folds}" fill="none" stroke="#070d19" stroke-width="1.4" stroke-linecap="round" opacity=".35"/></g>')
+
+    body.append(f'<path d="{distant_d}" fill="url(#distant)" opacity=".85"/>')
+    body.append(shade(distant_top, "distantclip", 800, 51, .18))
     fore_top = ridge(FORE, 33, 2.2, spacing=16)
     far_d, mid_d, fore_d = land_path(far_top), land_path(mid_top), land_path(fore_top)
     body.append(f'<path d="{far_d}" fill="url(#far)"/>')
+    body.append(shade(far_top, "farclip", 880, 52, .28))
     body.append(f'<path d="{far_d}" fill="url(#haze)"/>')
     # Faint rim where the airglow catches the distant crest.
-    body.append(f'<path d="{smooth(far_top)}" fill="none" stroke="#6f8ea6" stroke-width="1" opacity=".22"/>')
+    body.append(f'<path d="{smooth(far_top)}" fill="none" stroke="#6f8ea6" stroke-width="1" opacity="0"/>')
     # Valley mist between the far range and the near ridges.
     body.append(f'<rect y="700" width="{W}" height="180" fill="url(#mist)"/>')
     body.append(f'<path d="{mid_d}" fill="url(#mid)"/>')
+    body.append(shade(mid_top, "midclip", 920, 53, .15))
     trees = []
     rng = np.random.default_rng(41)
     mx, my = zip(*mid_top)
@@ -551,7 +538,16 @@ def build_land():
         trees.append(spruce(x, y, h, h * .42, int(x) + 7))
     body.append(f'<path d="{"".join(trees)}" fill="#0f1a2c"/>')
     body.append(f'<path d="{fore_d}" fill="url(#fore)"/>')
-    body.append(f'<path d="{smooth(fore_top)}" fill="none" stroke="#2a3d58" stroke-width="1.2" opacity=".55"/>')
+    body.append(f'<path d="{smooth(fore_top)}" fill="none" stroke="#2a3d58" stroke-width="1.2" opacity="0"/>')
+
+    grass = []
+    rng_grass = np.random.default_rng(321)
+    for gx in np.linspace(0, W, 780):
+        gy = float(np.interp(gx, *zip(*fore_top))) + 1
+        height = rng_grass.uniform(1.5, 5.5)
+        lean = rng_grass.uniform(-3, 3)
+        grass.append(f'M{f(gx)},{f(gy)}q{f(lean*.25)},-{f(height*.7)} {f(lean)},-{f(height)}')
+    body.append(f'<path d="{"".join(grass)}" fill="none" stroke="#0c1524" stroke-width=".65"/>')
 
     d_defs, dome = observatory(800)
     o_defs, obs = observer(1420, STARS["antares"][:2])
@@ -579,10 +575,14 @@ def svg(defs, body):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--land-only", action="store_true", help="Preserve the approved sky byte-for-byte")
     parser.add_argument("--out-dir", default=str(ROOT / "public/images/home"))
     args = parser.parse_args()
     out = Path(args.out_dir)
-    (out / "night-observatory-sky.svg").write_text(build_sky(), encoding="utf-8")
+    if not args.land_only:
+        selected = [STARS[n][:3] for n in ('vega','deneb','altair','antares','arcturus','sadr','albireo','rasalhague')]
+        (ROOT / 'src/lib/night-sky-stars.json').write_text(json.dumps([[round(float(v),3) for v in row] for row in selected]),encoding='utf-8')
+        (out / "night-observatory-sky.svg").write_text(build_sky(), encoding="utf-8")
     (out / "night-observatory-land.svg").write_text(build_land(), encoding="utf-8")
     for name in ("sky", "land"):
         print(name, (out / f"night-observatory-{name}.svg").stat().st_size // 1024, "KB")

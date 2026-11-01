@@ -4,11 +4,8 @@ import { NIGHT_OBSERVATORY } from "@/lib/home-style";
 import { SITE_NAV_ITEMS } from "@/lib/site-navigation";
 import { ThemeToggle } from "./theme-toggle";
 
-// Field stars that twinkle over the static sky layer (1920 x 1080 scene coordinates).
-const TWINKLES: [number, number, number][] = [
-  [1322, 138, 1.3], [1606, 418, 1.1], [244, 472, 1.2], [1498, 524, 1], [388, 92, 1.1], [1872, 96, 1.2],
-  [1188, 560, .9], [860, 132, 1], [1702, 330, .9], [132, 268, 1.1], [1416, 352, .9], [312, 640, .8]
-];
+// Generated from the same HYG projection as the SVG; no invented bright stars.
+import TWINKLES from "@/lib/night-sky-stars.json";
 // Minor ticks between the nine dial slots (eight links and the theme switch).
 const TICKS = Array.from({ length: 33 }, (_, k) => k / 4).filter((value) => value % 1 !== 0);
 

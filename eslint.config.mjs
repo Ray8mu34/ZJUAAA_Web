@@ -14,6 +14,7 @@ const eslintConfig = [
   {
     ignores: [
       ".next/**",
+      ".next-night/**",
       ".design-qa/**",
       "coverage/**",
       "node_modules/**",

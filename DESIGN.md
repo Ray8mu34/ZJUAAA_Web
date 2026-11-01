@@ -59,3 +59,9 @@ Runtime QA scripts use an explicitly supplied isolated SQLite database on local 
 Homepage photo refresh changes the images directly without a visible success message; errors retain their inline retry feedback. The photography gallery load-more action uses a 4px rectangular outline button.
 
 Publicity list previews use the canonical `getImageVariantUrl(..., "thumb")` 480px WebP cache directly. Timeline images load lazily; originals are requested only when a work is expanded. Cached and conditional media requests stat the source without reading its bytes; cold thumbnail conversions are deduplicated and limited to two concurrent decodes. Existing media permissions and original-image watermark behavior are preserved.
+
+Night observatory refinement: preserve the approved sky SVG byte-for-byte using the generator's --land-only option. Foreground uses subdued night exposure, asymmetric curved conifer boughs, separate grass silhouettes and dim instrument reflections. Navigation uses a restrained horizon scale with non-glowing ticks, readable labels and two rows on mobile. These rules apply only to style 21.
+
+Style 21 now uses HYG v4.1 J2000 catalogue stars under a single stereographic projection. Fixed Galactic-center/Deneb anchors preserve composition. No independent decorative star coordinates; twinkles and the laser use the same projected catalogue. Milky Way texture remains an artistic rendering, not a survey map. See scripts/artwork/data/README.md for provenance and limits.
+
+The admin homepage picker exposes only classic, study-02, study-07 and night-observatory. Other artwork is temporarily archived from the picker; retain assets, renderer support and saved selections without migration. VISIBLE_HOME_STYLES owns picker visibility; HOME_STYLES remains the full compatibility registry.

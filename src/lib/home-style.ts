@@ -13,6 +13,12 @@ export const HOME_STYLES = [
 
 export type HomeStyle = (typeof HOME_STYLES)[number]["value"];
 
+/** Temporarily archived artwork stays resolvable for existing saved selections. */
+export const VISIBLE_HOME_STYLES = HOME_STYLES.filter((style) =>
+  style.value === "classic" || style.value === "study-02" ||
+  style.value === "study-07" || style.value === NIGHT_OBSERVATORY.value
+);
+
 export function isHomeStyle(value: unknown): value is HomeStyle {
   return HOME_STYLES.some((style) => style.value === value);
 }

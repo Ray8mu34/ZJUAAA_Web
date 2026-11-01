@@ -160,9 +160,14 @@ body:has(.hero-join):has(.site-header.mobile-menu-open) { padding-top: 0; }
 }
 /* Horizon azimuth scale: arcs, ticks and stops share one circle below the viewport. */
 .night-dial {
-  --R: 1800px; --step: 4deg; --mid: 4; --lift: 150px;
+  --R: 3200px; --step: 2.7deg; --mid: 4; --lift: 178px;
   position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none;
   animation: night-dial-in 1.2s ease-out .3s both;
+}
+/* A faint cool pool of light gives the scale its own quiet ground. */
+.night-dial::before {
+  content: ''; position: absolute; left: 50%; bottom: calc(var(--lift) - 150px); width: min(1500px, 120%); height: 300px; transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgb(110 140 190 / .1), transparent);
 }
 .night-dial ul { margin: 0; padding: 0; list-style: none; }
 .night-dial li, .night-tick {
@@ -173,51 +178,55 @@ body:has(.hero-join):has(.site-header.mobile-menu-open) { padding-top: 0; }
 .night-dial-arc {
   --half: calc(sin(calc((var(--mid) + .8) * var(--step))) * var(--R));
   position: absolute; left: calc(50% - var(--R)); top: calc(100% - var(--lift)); width: calc(2 * var(--R)); aspect-ratio: 1;
-  border: 1px solid rgb(172 198 236 / .26); border-radius: 50%;
-  mask-image: linear-gradient(90deg, transparent calc(50% - var(--half) - 160px), #000 calc(50% - var(--half) + 40px), #000 calc(50% + var(--half) - 40px), transparent calc(50% + var(--half) + 160px));
+  border: 1px solid rgb(182 206 240 / .4); border-radius: 50%;
+  mask-image: linear-gradient(90deg, transparent calc(50% - var(--half) - 200px), #000 calc(50% - var(--half) + 30px), #000 calc(50% + var(--half) - 30px), transparent calc(50% + var(--half) + 200px));
 }
-.night-dial-arc.is-inner { --R2: calc(var(--R) - 9px); left: calc(50% - var(--R2)); top: calc(100% - var(--lift) + 9px); width: calc(2 * var(--R2)); border-color: rgb(172 198 236 / .12); }
+.night-dial-arc.is-inner { --R2: calc(var(--R) - 10px); left: calc(50% - var(--R2)); top: calc(100% - var(--lift) + 10px); width: calc(2 * var(--R2)); border-color: rgb(182 206 240 / .16); }
 .night-dial-arc.is-second { display: none; }
-.night-tick { width: 1px; height: 6px; margin: 1px 0 0 -.5px; background: rgb(172 198 236 / .3); transform: rotate(var(--a)); transform-origin: 50% 0; }
-.night-dial li { display: grid; justify-items: center; width: 112px; margin-left: -56px; margin-top: -9px; pointer-events: auto; }
+.night-tick { width: 1px; height: 8px; margin: 1px 0 0 -.5px; background: rgb(182 206 240 / .4); transform: rotate(var(--a)); transform-origin: 50% 0; }
+.night-tick:nth-of-type(3n + 2) { height: 10px; }
+.night-dial li { display: grid; justify-items: center; width: 140px; margin-left: -70px; margin-top: -11px; pointer-events: auto; }
 .night-dial a, .night-dial .theme-toggle {
-  display: grid; justify-items: center; gap: 7px; min-height: 44px; padding: 0 6px 6px; border: 0; background: none; box-shadow: none;
-  color: rgb(214 226 244 / .8); text-decoration: none; text-shadow: 0 0 14px #080e1b, 0 0 4px #080e1b; transition: color .25s;
+  display: grid; justify-items: center; gap: 9px; min-height: 48px; padding: 0 8px 8px; border: 0; background: none; box-shadow: none;
+  color: rgb(234 241 252 / .9); text-decoration: none; text-shadow: 0 1px 12px #080e1b, 0 0 3px #080e1b; transition: color .25s;
 }
-.night-label { font-size: 15px; line-height: 1.4; letter-spacing: .16em; margin-right: -.16em; white-space: nowrap; }
-.night-mark { position: relative; width: 18px; height: 18px; }
-.night-mark::before { content: ''; position: absolute; inset: 6.5px; border-radius: 50%; background: #e4ecfb; box-shadow: 0 0 6px 1px rgb(190 214 255 / .55); transition: transform .25s; }
+.night-label { font-size: 17px; font-weight: 500; line-height: 1.4; letter-spacing: .14em; margin-right: -.14em; white-space: nowrap; }
+.night-mark { position: relative; width: 22px; height: 22px; }
+.night-mark::before { content: ''; position: absolute; inset: 7.5px; border-radius: 50%; background: #eef3fd; box-shadow: 0 0 8px 2px rgb(190 214 255 / .5); transition: transform .25s; }
 .night-mark::after {
-  content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgb(228 236 251 / .85); opacity: 0; transform: scale(.5); transition: opacity .25s, transform .25s;
+  content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgb(232 239 252 / .9); opacity: 0; transform: scale(.5); transition: opacity .25s, transform .25s;
   mask-image: conic-gradient(#000 0 35deg, transparent 0 55deg, #000 0 125deg, transparent 0 145deg, #000 0 215deg, transparent 0 235deg, #000 0 305deg, transparent 0 325deg, #000 0);
 }
 .night-dial a:is(:hover, :focus-visible, [aria-current="page"]) { color: #fff; }
 .night-dial a:is(:hover, :focus-visible, [aria-current="page"]) .night-mark::after { opacity: 1; transform: none; }
-.night-dial a:hover .night-mark::before { transform: scale(1.3); }
-.night-dial a:focus-visible, .night-dial .theme-toggle:focus-visible { outline: 1px solid rgb(228 236 251 / .7); outline-offset: 2px; border-radius: 4px; }
+.night-dial a:hover .night-mark::before { transform: scale(1.25); }
+.night-dial a:focus-visible, .night-dial .theme-toggle:focus-visible { outline: 1px solid rgb(232 239 252 / .7); outline-offset: 2px; border-radius: 4px; }
 .night-dial-theme { gap: 0; }
-.night-dial-theme .night-mark::before { inset: 7.5px; background: rgb(172 198 236 / .5); box-shadow: none; }
-.night-dial .theme-toggle { width: 44px; height: 38px; padding: 0; place-items: center; cursor: pointer; }
+.night-dial-theme .night-mark::before { inset: 9px; background: rgb(182 206 240 / .6); box-shadow: none; }
+.night-dial .theme-toggle { width: 48px; height: 40px; padding: 0; place-items: center; cursor: pointer; }
+.night-dial .theme-toggle svg { width: 20px; height: 20px; }
 .night-dial .theme-toggle:hover { color: #fff; background: none; transform: none; }
 @keyframes night-dial-in { from { opacity: 0; transform: translateY(10px); } }
 .night-hero .hero-join-tail { background: #080e1b; }
 .night-hero .hero-join-tail::before { display: none; }
 html[data-theme="light"] .night-hero .hero-join-tail { background: linear-gradient(#080e1b, var(--home-body-bg)); }
 html[data-theme="light"] .night-hero .hero-join-tail::before { display: none; }
-@media (max-height: 680px) and (min-width: 801px) { .night-dial { --lift: 118px; } }
-@media (max-width: 1100px) and (min-width: 801px) { .night-dial { --step: 3.3deg; } .night-label { font-size: 14px; letter-spacing: .1em; } }
+@media (max-height: 700px) and (min-width: 801px) { .night-dial { --lift: 132px; } }
+@media (max-width: 1240px) and (min-width: 801px) { .night-dial { --step: 2.2deg; } .night-dial li { width: 120px; margin-left: -60px; } .night-label { font-size: 16px; letter-spacing: .08em; margin-right: -.08em; } }
 /* Narrow screens: two arcs of four stops; the theme switch moves to the upper right. */
 @media (max-width: 800px) {
   .night-stage { --fx: .52; }
-  .night-dial { --R: 900px; --step: 5.4deg; --mid: 1.5; --lift: 158px; }
-  .night-dial li { --slot: var(--col); top: calc(100% - var(--lift) + var(--row) * 74px + var(--R) * (1 - cos(var(--a)))); width: 92px; margin-left: -46px; }
-  .night-dial-arc.is-second { display: block; top: calc(100% - var(--lift) + 74px); }
+  .night-dial { --R: 1400px; --step: 3.75deg; --mid: 1.5; --lift: 172px; }
+  .night-dial::before { width: 140%; }
+  .night-dial li { --slot: var(--col); top: calc(100% - var(--lift) + var(--row) * 80px + var(--R) * (1 - cos(var(--a)))); width: 96px; margin-left: -48px; }
+  .night-dial-arc.is-second { display: block; top: calc(100% - var(--lift) + 80px); }
   .night-dial-arc.is-inner, .night-tick { display: none; }
-  .night-label { font-size: 14px; letter-spacing: .08em; margin-right: -.08em; }
+  .night-dial a { gap: 7px; }
+  .night-label { font-size: 15px; letter-spacing: .06em; margin-right: -.06em; }
   .night-dial li.night-dial-theme { left: auto; right: 6px; top: 8px; margin: 0; width: auto; }
   .night-dial-theme .night-mark { display: none; }
 }
-@media (max-width: 360px) { .night-dial { --step: 4.6deg; --lift: 146px; } .night-label { font-size: 13px; letter-spacing: .04em; } }
+@media (max-width: 360px) { .night-dial { --step: 3.2deg; --lift: 160px; } .night-label { font-size: 14px; letter-spacing: .02em; margin-right: -.02em; } }
 @supports not (left: calc(sin(1deg) * 1px)) {
   .night-dial ul { position: absolute; left: 0; right: 0; bottom: 64px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px; }
   .night-dial li { position: static; margin: 0; width: auto; }
@@ -227,3 +236,23 @@ html[data-theme="light"] .night-hero .hero-join-tail::before { display: none; }
   .night-motion circle, .night-meteor, .night-dial { animation: none; }
   .night-motion circle { opacity: .5; }
 }
+/* Quiet horizon scale: navigation reads as instrument engraving, not floating stars. */
+.night-dial { --R: 4800px; --step: 1.75deg; --lift: 116px; }
+.night-dial::before { background: none; }
+.night-dial-arc { border-color: rgb(182 206 240 / .22); }
+.night-dial-arc.is-inner { display: none; }
+.night-tick { height: 4px; background: rgb(182 206 240 / .25); }
+.night-tick:nth-of-type(3n + 2) { height: 6px; }
+.night-mark::before { inset: 5px 10px; border-radius: 0; box-shadow: none; background: #99aabd; }
+.night-mark::after { inset: 3px 7px; border: 0; border-bottom: 2px solid #eef3fd; border-radius: 0; mask-image: none; }
+.night-label { font-size: 16px; letter-spacing: .08em; font-weight: 400; }
+.night-dial a { gap: 5px; }
+@media (min-width: 801px) and (max-width: 1240px) { .night-dial { --step: 1.3deg; } }
+@media (max-width: 800px) {
+ .night-dial { --R: 1400px; --step: 3.5deg; --mid: 1.5; --lift: 150px; }
+ .night-dial li { top: calc(100% - var(--lift) + var(--row) * 66px + var(--R) * (1 - cos(var(--a)))); }
+ .night-dial-arc.is-second { top: calc(100% - var(--lift) + 66px); }
+ .night-label { font-size: 15px; letter-spacing: .02em; }
+}
+@media (max-width: 360px) { .night-dial { --step: 3deg; } .night-label { font-size: 14px; } }
+@media (max-height: 500px) and (min-width: 801px) { .night-dial { --lift: 85px; } }

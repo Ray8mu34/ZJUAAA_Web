@@ -79,7 +79,7 @@ test("admin can switch full-screen artwork and restore the classic homepage", as
   }
 });
 
-test("every artwork can be selected in admin and renders its own SVG", async ({ page }) => {
+test("visible flat artworks can be selected in admin and render their own SVG", async ({ page }) => {
   test.setTimeout(240_000);
   const username = process.env.ADMIN_USERNAME;
   const password = process.env.ADMIN_PASSWORD;
@@ -93,9 +93,9 @@ test("every artwork can be selected in admin and renders its own SVG", async ({ 
     await page.getByRole("button", { name: "登录后台" }).click();
     await page.waitForURL("**/admin");
     await page.setViewportSize({ width: 1440, height: 1000 });
-    for (const artwork of HOME_ARTWORKS) {
+    for (const artwork of HOME_ARTWORKS.filter((artwork) => artwork.number === "02" || artwork.number === "07")) {
       await page.goto("/admin/site");
-      await expect(page.locator('input[name="homeStyle"]')).toHaveCount(22);
+      await expect(page.locator('input[name="homeStyle"]')).toHaveCount(4);
       await page.locator(`input[value="${artwork.value}"]`).check();
       await page.getByRole("button", { name: "应用首页样式" }).click();
       await expect(page.getByText("首页样式已切换。", { exact: true })).toBeVisible();
